@@ -19,6 +19,8 @@ final class SettingsWindowController {
         let window = window ?? makeWindow()
         NSApp.activate()
         window.makeKeyAndOrderFront(nil)
+        // Se macOS rifiuta l'attivazione (apertura non partita da un clic) la finestra resterebbe dietro.
+        window.orderFrontRegardless()
     }
 
     private func makeWindow() -> NSWindow {

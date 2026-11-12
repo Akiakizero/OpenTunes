@@ -37,14 +37,18 @@ struct GeneralSettingsView: View {
                 }
                 Toggle("Colora le superfici con la tinta della copertina", isOn: $settings.tintsWithArtwork)
             }
-            Section("HUD") {
-                Toggle("Mostra l'HUD al cambio brano", isOn: $settings.hudOnTrackChange)
-                Toggle("Mostra l'HUD al cambio volume", isOn: $settings.hudOnVolumeChange)
-            }
-            Section("Notifiche") {
-                Picker("Notifica al cambio brano", selection: $settings.notificationMode) {
+            Section {
+                Toggle("Mostra l'HUD sullo schermo", isOn: $settings.hudOnTrackChange)
+                Picker("Notifica di sistema", selection: $settings.notificationMode) {
                     ForEach(NotificationMode.allCases) { Text($0.label).tag($0) }
                 }
+            } header: {
+                Text("Cambio brano")
+            } footer: {
+                Text("L'HUD compare anche con play/pausa e salto di brano. Entrambi sono spenti finché non li attivi.")
+            }
+            Section("Volume") {
+                Toggle("Mostra l'HUD al cambio volume", isOn: $settings.hudOnVolumeChange)
             }
         }
         .formStyle(.grouped)

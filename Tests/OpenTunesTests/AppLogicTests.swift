@@ -109,3 +109,17 @@ struct AppSettingsTests {
         #expect(reloaded.leftClick == .playPause)
     }
 }
+
+@MainActor
+@Suite("Preferenze predefinite")
+struct DefaultSettingsTests {
+    @Test("HUD e notifiche al cambio brano sono spenti di default")
+    func trackChangeAlertsOffByDefault() throws {
+        let suite = "org.opentunes.tests.\(UUID().uuidString)"
+        let defaults = try #require(UserDefaults(suiteName: suite))
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let settings = AppSettings(defaults: defaults)
+        #expect(!settings.hudOnTrackChange)
+        #expect(settings.notificationMode == .off)
+    }
+}

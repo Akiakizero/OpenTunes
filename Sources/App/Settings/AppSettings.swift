@@ -153,11 +153,12 @@ final class AppSettings {
         floatingSize = Self.value(defaults, "floatingSize") ?? .large
         floatingHidesInFullScreen = defaults.object(forKey: "floatingHidesInFullScreen") as? Bool ?? true
         tintsWithArtwork = defaults.object(forKey: "tintsWithArtwork") as? Bool ?? true
-        hudOnTrackChange = defaults.object(forKey: "hudOnTrackChange") as? Bool ?? true
+        // HUD e notifiche al cambio brano sono opzionali: spenti finché l'utente non li attiva.
+        hudOnTrackChange = defaults.object(forKey: "hudOnTrackChange") as? Bool ?? false
         hudOnVolumeChange = defaults.object(forKey: "hudOnVolumeChange") as? Bool ?? true
         hudPosition = Self.value(defaults, "hudPosition") ?? .bottom
 
-        notificationMode = Self.value(defaults, "notificationMode") ?? .whenFloatingHidden
+        notificationMode = Self.value(defaults, "notificationMode") ?? .off
 
         ignoredBundleIDs = defaults.stringArray(forKey: "ignoredBundleIDs") ?? ["us.zoom.xos"]
         normalizesBrowserTitles = defaults.object(forKey: "normalizesBrowserTitles") as? Bool ?? true
