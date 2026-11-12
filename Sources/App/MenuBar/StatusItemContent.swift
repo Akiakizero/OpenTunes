@@ -112,3 +112,13 @@ struct StatusItemContent: View {
         }
     }
 }
+
+#Preview("Elemento in menu bar") {
+    VStack(spacing: DesignSystem.Spacing.m) {
+        StatusItemContent(role: .combined, model: .preview(), state: StatusItemState(), layout: StatusItemLayout()) { _ in }
+            .frame(height: DesignSystem.Size.menuBarControl + DesignSystem.Spacing.xs)
+        StatusItemContent(role: .combined, model: .preview(track: PreviewData.longTrack), state: StatusItemState(), layout: StatusItemLayout()) { _ in }
+            .frame(height: DesignSystem.Size.menuBarControl + DesignSystem.Spacing.xs)
+    }
+    .padding(DesignSystem.Spacing.l)
+}

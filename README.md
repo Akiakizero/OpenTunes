@@ -9,6 +9,9 @@ qualsiasi player che pubblica il Now Playing di sistema) e permette di controlla
 
 ## Funzioni
 
+![Menu bar, popover e finestra flottante](docs/media/opentunes-fase1.gif)
+
+
 - **Menu bar**: copertina, titolo con formato personalizzabile (`{artist} — {title}`, solo titolo, …) che scorre
   se è troppo lungo, pulsanti. Elementi riordinabili, controlli anche come elemento separato.
   Modalità compatta automatica quando lo spazio accanto al notch non basta.

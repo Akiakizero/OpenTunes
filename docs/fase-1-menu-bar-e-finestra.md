@@ -73,7 +73,7 @@
 - [x] `.dmg` allegato alla release GitHub tramite Actions
 - [ ] Tap Homebrew personale (`brew install <utente>/tap/opentunes`) — cask pronto in `packaging/homebrew/opentunes.rb`, manca il repository del tap
 - [x] Istruzioni `xattr -dr com.apple.quarantine` nel README finché l'app non è notarizzata
-- [ ] GIF della menu bar e della finestra flottante nel README
+- [x] GIF della menu bar e della finestra flottante nel README (`docs/media/opentunes-fase1.gif`, dalle anteprime con dati finti; da sostituire con una registrazione dal vivo via `scripts/record-gif.sh`)
 
 ## Riferimenti open-source
 
@@ -118,4 +118,4 @@
 - Verifica dal vivo (tema scuro, Firefox/YouTube): menu bar compatta a destra del notch, popover, finestra flottante,
   HUD di cambio brano e volume, titoli YouTube ripuliti. Stesse superfici controllate anche in tema chiaro;
   il cursore di trasparenza non è ancora stato provato (le superfici usano solo materiali di sistema).
-- Restano aperti: gate d'uso (una settimana), prima release `v0.1` (tag), repository del tap Homebrew, GIF nel README.
+- Restano aperti: gate d'uso (una settimana), prova del cursore di trasparenza, prima release `v0.1` (tag e remote GitHub), repository del tap Homebrew.
