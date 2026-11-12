@@ -1,0 +1,32 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Al push di un tag `v*` compila, esegue i test, crea il .dmg e lo allega a una release GitHub.
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install XcodeGen
+        run: brew install xcodegen
+      - name: Test
+        run: |
+          set -o pipefail
+          xcodegen generate
+          xcodebuild -scheme OpenTunes -destination 'platform=macOS' \
+            -derivedDataPath build/DerivedData test
+      - name: Build .dmg
+        run: scripts/make-dmg.sh
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" dist/*.dmg dist/*.dmg.sha256 \
+            --title "OpenTunes $GITHUB_REF_NAME" --generate-notes

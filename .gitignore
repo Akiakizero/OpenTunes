@@ -1,0 +1,26 @@
+# macOS
+.DS_Store
+
+# Xcode / XcodeGen (il progetto si rigenera da project.yml)
+*.xcodeproj/
+*.xcworkspace/
+xcuserdata/
+DerivedData/
+build/
+*.xcresult
+
+# Swift Package Manager
+.build/
+.swiftpm/
+
+# Artefatti compilati dell'adapter (si rigenerano con scripts/build-mediaremote-adapter.sh)
+Resources/MediaRemoteAdapter/
+
+# Sorgenti dei progetti di riferimento: solo per studio, mai committati
+reference/
+
+# Pacchetti di release (scripts/make-dmg.sh)
+dist/
+
+# Screenshot di terzi usati solo come riferimento: mai pubblicarli
+docs/riferimenti-ui/

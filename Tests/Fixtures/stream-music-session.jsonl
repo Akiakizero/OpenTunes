@@ -1,0 +1,6 @@
+{"type":"data","diff":false,"payload":{"bundleIdentifier":"com.apple.Music","playing":true,"title":"Svegliarsi la mattina","artist":"Zero Assoluto","album":"Appena prima di partire","durationMicros":215000000,"elapsedTimeMicros":12000000,"timestampEpochMicros":1762944000000000,"playbackRate":1,"shuffleMode":1,"repeatMode":3,"artworkMimeType":"image/png","artworkData":"iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==","isMusicApp":true}}
+{"type":"data","diff":true,"payload":{"elapsedTimeMicros":60000000,"timestampEpochMicros":1762944048000000}}
+{"type":"data","diff":true,"payload":{"album":null}}
+{"type":"data","diff":true,"payload":{"playing":false,"playbackRate":0,"elapsedTimeMicros":61500000,"timestampEpochMicros":1762944049500000}}
+{"type":"data","diff":false,"payload":{"bundleIdentifier":"com.apple.Music","playing":true,"title":"Sei parte di me","artist":"Zero Assoluto","album":"Appena prima di partire","durationMicros":198000000,"elapsedTimeMicros":0,"timestampEpochMicros":1762944060000000,"playbackRate":1}}
+{"type":"data","diff":false,"payload":{}}
