@@ -15,9 +15,9 @@ struct LastFMProfileView: View {
         var id: String { rawValue }
         var label: String {
             switch self {
-            case .recent: "Scrobble"
-            case .loved: "Amati"
-            case .artists: "Artisti"
+            case .recent: String(localized: "Scrobble")
+            case .loved: String(localized: "Amati")
+            case .artists: String(localized: "Artisti")
             }
         }
     }

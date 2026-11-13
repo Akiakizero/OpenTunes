@@ -1,0 +1,3 @@
+[{"id":2,"trackName":"Brano di prova","artistName":"Artista","albumName":"Live","duration":260,"instrumental":false,"plainLyrics":"Versione live","syncedLyrics":"[00:02.00] Versione live"},
+ {"id":3,"trackName":"Brano di prova","artistName":"Artista","albumName":"Album","duration":201,"instrumental":false,"plainLyrics":"Solo testo","syncedLyrics":null},
+ {"id":4,"trackName":"Brano di prova","artistName":"Artista","albumName":"Album","duration":199.5,"instrumental":false,"plainLyrics":"Sincronizzato","syncedLyrics":"[00:03.00] Sincronizzato"}]

@@ -17,6 +17,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private lazy var notch = NotchController(model: model)
     private lazy var dockIcon = DockIconController(model: model)
     private lazy var widgetBridge = WidgetBridge(model: model)
+    private lazy var discoverWindow = DiscoverWindowController(model: model)
+    private lazy var statisticsWindow = StatisticsWindowController(model: model)
+    private lazy var commandLine = CommandLineBridge(model: model)
+    private lazy var discord = DiscordController(model: model)
+    private lazy var midi = MIDIControl(model: model)
     private var debugWindow: NSWindow?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
@@ -25,6 +30,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let environment = ProcessInfo.processInfo.environment
         guard environment["XCTestConfigurationFilePath"] == nil, environment["XCODE_RUNNING_FOR_PREVIEWS"] != "1" else { return }
         model.onEvent = { [weak self] event in self?.handle(event) }
+        model.onOpenDiscover = { [weak self] in self?.discoverWindow.show() }
+        model.onOpenStatistics = { [weak self] in self?.statisticsWindow.show() }
+        model.discord = discord
+        model.midi = midi
+        AppIntentBridge.model = model
+        model.updater = Updater()
         model.start()
 
         statusBar.onOpenSettings = { [weak self] in self?.settingsWindow.show() }
@@ -36,12 +47,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         notch.start()
         dockIcon.start()
         widgetBridge.start()
+        commandLine.start()
+        discord.start()
+        midi.start()
         _ = notifier
         Hotkeys.register(model: model)
         showDebugSurface(environment["OPENTUNES_DEBUG_SHOW"])
     }
 
-    /// Solo per debug e screenshot: `OPENTUNES_DEBUG_SHOW=popover|hud|volume|settings|desktop|notch` apre una superficie all'avvio.
+    /// Solo per debug e screenshot: `OPENTUNES_DEBUG_SHOW=popover|hud|volume|settings|desktop|notch|discover|stats` apre una superficie all'avvio.
     private func showDebugSurface(_ name: String?) {
         guard let name else { return }
         Task {
@@ -54,6 +68,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             case "settings": settingsWindow.show()
             case "desktop": model.settings.desktopWidgetVisible = true
             case "notch": notch.showOpenForDebug()
+            case "discover": discoverWindow.show()
+            case "stats": statisticsWindow.show()
             default: break
             }
         }
@@ -65,13 +81,24 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         return false
     }
 
-    /// `opentunes://player` (clic sul widget WidgetKit) apre il player della menu bar.
+    /// `opentunes://player` (clic sul widget WidgetKit) apre il player della menu bar; gli altri comandi
+    /// (`opentunes://next`, `…/volume?level=40`) arrivano da CLI, Raycast, Alfred e simili (vedi `URLCommand`).
     func application(_ application: NSApplication, open urls: [URL]) {
-        guard urls.contains(where: { $0.scheme == "opentunes" }), model.hasTrack else {
-            settingsWindow.show()
-            return
+        for url in urls {
+            guard let command = URLCommand(url: url) else { continue }
+            switch command {
+            case .player:
+                if model.hasTrack, statusBar.isEnabled { statusBar.togglePopover() } else { settingsWindow.show() }
+            case .settings:
+                settingsWindow.show()
+            case .discover where model.settings.urlCommandsEnabled && model.settings.discoverEnabled:
+                discoverWindow.show()
+            case .statistics where model.settings.urlCommandsEnabled && model.settings.statisticsEnabled:
+                statisticsWindow.show()
+            default:
+                model.run(command)
+            }
         }
-        statusBar.togglePopover()
     }
 
     private func handle(_ event: AppModel.Event) {
@@ -100,7 +127,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func showDebugWindow() {
         let window = debugWindow ?? {
             let window = NSWindow(contentViewController: NSHostingController(rootView: DebugView(store: model.store)))
-            window.title = "OpenTunes — Diagnostica"
+            window.title = String(localized: "OpenTunes — Diagnostica")
             window.isReleasedWhenClosed = false
             window.setContentSize(NSSize(width: 560, height: 680))
             window.center()

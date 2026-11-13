@@ -3,22 +3,29 @@
 import Foundation
 
 /// Client dell'API di ListenBrainz (`submit-listens`, `validate-token`), autenticato con il token utente.
+///
+/// Funziona anche con i server compatibili: un'istanza di ListenBrainz propria o Maloja
+/// (`https://server/apis/listenbrainz/1/`), passando `baseURL`.
 public struct ListenBrainzClient: Sendable {
     public static let baseURL = URL(string: "https://api.listenbrainz.org/1/")!
+
+    /// Indirizzo dell'API in uso (quello ufficiale o un server compatibile).
+    public let baseURL: URL
     /// Blocco usato dalla coda (il servizio ne accetta di più, ma 50 resta allineato a Last.fm).
     public static let maxBatch = 50
 
     public var token: String
     private let transport: HTTPTransport
 
-    public init(token: String, transport: @escaping HTTPTransport = HTTP.live) {
+    public init(token: String, baseURL: URL? = nil, transport: @escaping HTTPTransport = HTTP.live) {
         self.token = token
+        self.baseURL = baseURL ?? Self.baseURL
         self.transport = transport
     }
 
     /// Nome utente associato al token, o errore `.unauthorized` se il token non vale.
     public func validateToken() async throws -> String {
-        var request = URLRequest(url: Self.baseURL.appending(path: "validate-token"))
+        var request = URLRequest(url: baseURL.appending(path: "validate-token"))
         request.setValue("Token \(token)", forHTTPHeaderField: "Authorization")
         let json = try await send(request)
         guard json["valid"] == .bool(true), let user = json["user_name"]?.text else {
@@ -38,9 +45,23 @@ public struct ListenBrainzClient: Sendable {
         _ = try await send(submitRequest(type: tracks.count == 1 ? "single" : "import", tracks: tracks))
     }
 
+    /// Indirizzo dell'API da quello scritto dall'utente: `https://server` di Maloja diventa
+    /// `https://server/apis/listenbrainz/1/`; un indirizzo che finisce già con `/1` resta com'è. `nil` = server ufficiale.
+    public static func serverURL(from text: String) -> URL? {
+        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty, var components = URLComponents(string: trimmed.contains("://") ? trimmed : "https://\(trimmed)"),
+            components.host?.isEmpty == false
+        else { return nil }
+        var path = components.path
+        while path.hasSuffix("/") { path.removeLast() }
+        if !path.hasSuffix("/1") { path += "/apis/listenbrainz/1" }
+        components.path = path + "/"
+        return components.url
+    }
+
     func submitRequest(type: String, tracks: [ScrobbleTrack]) throws -> URLRequest {
         guard !token.isEmpty else { throw ScrobbleServiceError.notConfigured("token ListenBrainz mancante") }
-        var request = URLRequest(url: Self.baseURL.appending(path: "submit-listens"))
+        var request = URLRequest(url: baseURL.appending(path: "submit-listens"))
         request.httpMethod = "POST"
         request.setValue("Token \(token)", forHTTPHeaderField: "Authorization")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")

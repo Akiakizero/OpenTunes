@@ -88,7 +88,7 @@ struct PlaybackControls: View {
         .disabled(repeatMode == nil)
     }
 
-    private func button(_ action: PlaybackAction, symbol: String, label: String) -> some View {
+    private func button(_ action: PlaybackAction, symbol: String, label: LocalizedStringKey) -> some View {
         Button { self.action(action) } label: {
             Image(systemName: symbol)
                 .frame(minWidth: hitSize, minHeight: hitSize)

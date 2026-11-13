@@ -40,14 +40,14 @@ struct TrackActionsView: View {
     }
 
     private var hasMenu: Bool {
-        model.store.supportsTrackActions || !model.store.switchablePlayers.isEmpty
+        model.showsMusicActions || model.switchTarget != nil || model.canShare || model.discoverAction != nil
     }
 
     private var loveHelp: String {
         switch (model.scrobbler.isLastFMConnected, model.store.supportsTrackActions) {
-        case (true, true) where model.settings.syncsLoveWithMusic: "Love su Last.fm e preferito in Musica"
-        case (true, _): "Love su Last.fm"
-        default: "Preferito in Musica"
+        case (true, true) where model.settings.syncsLoveWithMusic: String(localized: "Love su Last.fm e preferito in Musica")
+        case (true, _): String(localized: "Love su Last.fm")
+        default: String(localized: "Preferito in Musica")
         }
     }
 }
@@ -57,7 +57,7 @@ struct TrackActionsMenuItems: View {
     let model: AppModel
 
     var body: some View {
-        if model.store.supportsTrackActions {
+        if model.showsMusicActions {
             Picker(selection: Binding(
                 get: { model.musicState?.stars ?? 0 },
                 set: { model.performTrackAction(.setRating($0)) }
@@ -76,10 +76,24 @@ struct TrackActionsMenuItems: View {
                 Label("Aggiungi alla libreria", systemImage: "plus.circle")
             }
         }
-        if let other = model.store.switchablePlayers.first {
+        if let other = model.switchTarget {
             Divider()
             Button { model.switchPlayer() } label: {
                 Label("Passa a \(other.displayName)", systemImage: "arrow.left.arrow.right")
+            }
+        }
+        if model.canShare {
+            Divider()
+            Button { model.copyShareLink() } label: {
+                Label("Copia link universale", systemImage: "link")
+            }
+            Button { model.shareLinkWithPicker() } label: {
+                Label("Condividi…", systemImage: "square.and.arrow.up")
+            }
+        }
+        if let discover = model.discoverAction {
+            Button { discover() } label: {
+                Label("Scopri: top album e simili…", systemImage: "sparkles")
             }
         }
     }

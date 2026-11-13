@@ -30,27 +30,78 @@ struct TitleFormatTests {
     }
 }
 
-@Suite("Modalità compatta accanto al notch")
-struct NotchLayoutTests {
+@Suite("Riduzione automatica dell'elemento in menu bar")
+struct MenuBarFitTests {
     let notch: ClosedRange<CGFloat> = 660...850
+    let widths: [MenuBarLevel: CGFloat] = [.full: 300, .compact: 70, .icon: 30]
+    let start = Date(timeIntervalSinceReferenceDate: 0)
 
-    @Test("Senza notch non è mai compatta")
+    func observe(_ fit: inout MenuBarFit, edge: CGFloat, notch: ClosedRange<CGFloat>?, hidden: Bool = false, at seconds: TimeInterval,
+                 widths: [MenuBarLevel: CGFloat]? = nil) {
+        fit.update(.init(rightEdge: edge, widths: widths ?? self.widths, notch: notch, isHidden: hidden, now: start + seconds))
+    }
+
+    @Test("Senza notch e con l'elemento visibile resta piena")
     func noNotch() {
-        #expect(!NotchLayout.shouldBeCompact(itemFrame: CGRect(x: 100, y: 0, width: 300, height: 24), fullWidth: 300, notch: nil, isCompact: false))
+        var fit = MenuBarFit()
+        observe(&fit, edge: 400, notch: nil, at: 0)
+        #expect(fit.level == .full)
     }
 
-    @Test("Diventa compatta se l'elemento finisce sotto il notch")
-    func overlapsNotch() {
-        #expect(NotchLayout.shouldBeCompact(itemFrame: CGRect(x: 800, y: 0, width: 300, height: 24), fullWidth: 300, notch: notch, isCompact: false))
-        #expect(!NotchLayout.shouldBeCompact(itemFrame: CGRect(x: 900, y: 0, width: 300, height: 24), fullWidth: 300, notch: notch, isCompact: false))
+    @Test("Con il notch sceglie il livello più grande che sta a destra")
+    func notchCap() {
+        var fit = MenuBarFit()
+        observe(&fit, edge: 1100, notch: notch, at: 0)   // 1100 - 300 = 800 < 850
+        #expect(fit.level == .compact)
+        var tight = MenuBarFit()
+        observe(&tight, edge: 900, notch: notch, at: 0)  // 900 - 70 = 830 < 850, 900 - 30 = 870
+        #expect(tight.level == .icon)
     }
 
-    @Test("Torna piena solo se c'è spazio con margine")
-    func hysteresis() {
-        // Bordo destro a 1200: la versione piena (300) inizierebbe a 900 → c'è spazio.
-        #expect(!NotchLayout.shouldBeCompact(itemFrame: CGRect(x: 1150, y: 0, width: 50, height: 24), fullWidth: 300, notch: notch, isCompact: true))
-        // Inizierebbe a 855: oltre il notch ma dentro il margine → resta compatta.
-        #expect(NotchLayout.shouldBeCompact(itemFrame: CGRect(x: 1105, y: 0, width: 50, height: 24), fullWidth: 300, notch: notch, isCompact: true))
+    @Test("Con il notch risale solo con margine")
+    func notchHysteresis() {
+        var fit = MenuBarFit()
+        observe(&fit, edge: 1100, notch: notch, at: 0)
+        #expect(fit.level == .compact)
+        observe(&fit, edge: 1155, notch: notch, at: 10)  // 855: dentro il margine
+        #expect(fit.level == .compact)
+        observe(&fit, edge: 1200, notch: notch, at: 20)  // 900
+        #expect(fit.level == .full)
+    }
+
+    @Test("Senza notch: nascosto scende di un livello alla volta e non oscilla")
+    func hiddenStepsDown() {
+        var fit = MenuBarFit()
+        observe(&fit, edge: 1200, notch: nil, hidden: true, at: 0)
+        #expect(fit.level == .compact)
+        // Ancora nascosto dopo il cambio: scende a icona.
+        observe(&fit, edge: 1200, notch: nil, hidden: true, at: 2)
+        #expect(fit.level == .icon)
+        // Visibile come icona: compatta (70 pt) è già fallita, quindi non si riprova subito.
+        observe(&fit, edge: 1200, notch: nil, at: 10)
+        #expect(fit.level == .icon)
+        // Dopo 5 minuti si riprova.
+        observe(&fit, edge: 1200, notch: nil, at: 400)
+        #expect(fit.level == .compact)
+    }
+
+    @Test("Senza notch risale subito se il titolo è più corto di quello che non stava")
+    func shorterTitle() {
+        var fit = MenuBarFit()
+        observe(&fit, edge: 1200, notch: nil, hidden: true, at: 0)
+        #expect(fit.level == .compact)
+        observe(&fit, edge: 1200, notch: nil, at: 5)
+        #expect(fit.level == .compact)
+        observe(&fit, edge: 1200, notch: nil, at: 10, widths: [.full: 200, .compact: 70, .icon: 30])
+        #expect(fit.level == .full)
+    }
+
+    @Test("Reset torna alla versione piena")
+    func reset() {
+        var fit = MenuBarFit()
+        observe(&fit, edge: 900, notch: notch, at: 0)
+        fit.reset()
+        #expect(fit.level == .full)
     }
 }
 

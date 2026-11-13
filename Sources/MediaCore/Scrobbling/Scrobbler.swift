@@ -21,12 +21,15 @@ public final class Scrobbler {
         public var excludedBundleIDs: Set<String>
         /// Chiave dell'app (personale o del progetto); `nil` = Last.fm non configurabile.
         public var credentials: LastFMCredentials?
+        /// Server compatibile con ListenBrainz (istanza propria, Maloja); `nil` = listenbrainz.org.
+        public var listenBrainzServer: URL?
 
         public init(
             rules: ScrobbleRules = .lastFM, cleaner: TitleCleaner.Options = .init(), lastFMEnabled: Bool = true,
             listenBrainzEnabled: Bool = true, excludedBundleIDs: Set<String> = PlayerApp.browserBundleIDs,
-            credentials: LastFMCredentials? = nil
+            credentials: LastFMCredentials? = nil, listenBrainzServer: URL? = nil
         ) {
+            self.listenBrainzServer = listenBrainzServer
             self.rules = rules
             self.cleaner = cleaner
             self.lastFMEnabled = lastFMEnabled
@@ -462,7 +465,7 @@ public final class Scrobbler {
     /// Verifica il token e lo salva nel Portachiavi.
     public func connectListenBrainz(token: String) async throws {
         let token = token.trimmingCharacters(in: .whitespacesAndNewlines)
-        let user = try await ListenBrainzClient(token: token, transport: transport).validateToken()
+        let user = try await ListenBrainzClient(token: token, baseURL: configuration.listenBrainzServer, transport: transport).validateToken()
         try secrets.setSecret(token, for: SecretAccount.listenBrainzToken)
         try secrets.setSecret(user, for: SecretAccount.listenBrainzUser)
         listenBrainzToken = token
@@ -508,7 +511,36 @@ public final class Scrobbler {
         try? data.write(to: url, options: .atomic)
     }
 
+    // MARK: Scopri (top album, simili)
+
+    /// Top album dell'utente collegato. Lancia `notConfigured` se Last.fm non è collegato.
+    public func topAlbums(period: LastFMPeriod, limit: Int = 25) async throws -> [LastFMAlbum] {
+        guard let user = lastFMUser, let client = discoveryClient() else {
+            throw ScrobbleServiceError.notConfigured("Last.fm non collegato")
+        }
+        return try await client.topAlbums(user: user, period: period, limit: limit)
+    }
+
+    /// Artisti simili: basta la chiave API, non serve l'accesso.
+    public func similarArtists(to artist: String) async throws -> [LastFMSimilarItem] {
+        guard let client = discoveryClient() else { throw ScrobbleServiceError.notConfigured("API key Last.fm mancante") }
+        return try await client.similarArtists(artist: artist)
+    }
+
+    public func similarTracks(artist: String, title: String) async throws -> [LastFMSimilarItem] {
+        guard let client = discoveryClient() else { throw ScrobbleServiceError.notConfigured("API key Last.fm mancante") }
+        return try await client.similarTracks(artist: artist, title: title)
+    }
+
+    /// `true` se si possono chiedere i dati pubblici di Last.fm (chiave del progetto o personale).
+    public var canDiscover: Bool { configuration.credentials != nil }
+
     // MARK: Client
+
+    /// Client per le chiamate pubbliche (non firmate): non richiede la sessione.
+    private func discoveryClient() -> LastFMClient? {
+        configuration.credentials.map { LastFMClient(credentials: $0, sessionKey: lastFMSessionKey, transport: transport) }
+    }
 
     private func lastFMClient() -> LastFMClient? {
         guard let credentials = configuration.credentials, let session = lastFMSessionKey else { return nil }
@@ -516,7 +548,7 @@ public final class Scrobbler {
     }
 
     private func listenBrainzClient() -> ListenBrainzClient? {
-        listenBrainzToken.map { ListenBrainzClient(token: $0, transport: transport) }
+        listenBrainzToken.map { ListenBrainzClient(token: $0, baseURL: configuration.listenBrainzServer, transport: transport) }
     }
 
     private func log(_ message: String) {

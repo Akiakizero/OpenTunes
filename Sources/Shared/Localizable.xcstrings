@@ -1,0 +1,4313 @@
+{
+  "sourceLanguage" : "it",
+  "strings" : {
+    "" : {
+      "shouldTranslate" : false
+    },
+    "%@" : {},
+    "%@  [%@]  %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@  [%2$@]  %3$@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@  [%2$@]  %3$@"
+          }
+        }
+      }
+    },
+    "%@ / %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ / %2$@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ / %2$@"
+          }
+        }
+      }
+    },
+    "%@ scrobble" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ scrobbles"
+          }
+        }
+      }
+    },
+    "%@ · %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ · %2$@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ · %2$@"
+          }
+        }
+      }
+    },
+    "%@ è aperta e usa già il notch: puoi spegnere qui il player di OpenTunes." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ is open and already uses the notch: you can turn off the OpenTunes player here."
+          }
+        }
+      }
+    },
+    "%@ — %@ · %lld ascolti" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ — %2$@ · %3$lld plays"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ — %2$@ · %3$lld ascolti"
+          }
+        }
+      }
+    },
+    "%@, %@, %lld ascolti" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@, %2$@, %3$lld plays"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@, %2$@, %3$lld ascolti"
+          }
+        }
+      }
+    },
+    "%lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld"
+          }
+        }
+      }
+    },
+    "%lld ascolti in attesa di invio" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld plays waiting to be sent"
+          }
+        }
+      }
+    },
+    "%lld ascolti in coda — invia ora" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld plays queued — send now"
+          }
+        }
+      }
+    },
+    "%lld pt" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld pt"
+          }
+        }
+      }
+    },
+    "%lld%%" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld%%"
+          }
+        }
+      }
+    },
+    "1 ascolto in attesa di invio" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 play waiting to be sent"
+          }
+        }
+      }
+    },
+    "1 ascolto in coda — invia ora" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 play queued — send now"
+          }
+        }
+      }
+    },
+    "1 mese" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 month"
+          }
+        }
+      }
+    },
+    "12 mesi" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "12 months"
+          }
+        }
+      }
+    },
+    "30 giorni" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "30 days"
+          }
+        }
+      }
+    },
+    "7 giorni" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "7 days"
+          }
+        }
+      }
+    },
+    "API key" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "API key"
+          }
+        }
+      }
+    },
+    "Abbassa il volume" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volume down"
+          }
+        }
+      }
+    },
+    "Accedi a Last.fm…" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sign in to Last.fm…"
+          }
+        }
+      }
+    },
+    "Accedi di nuovo…" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sign in again…"
+          }
+        }
+      }
+    },
+    "Accendile in Impostazioni › Funzioni." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turn them on in Settings › Features."
+          }
+        }
+      }
+    },
+    "Accendili in Impostazioni › Funzioni." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turn them on in Settings › Features."
+          }
+        }
+      }
+    },
+    "Account" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Account"
+          }
+        }
+      }
+    },
+    "Aggiorna stato permessi" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Refresh permission status"
+          }
+        }
+      }
+    },
+    "Aggiornamenti automatici non disponibili in questa build: aggiorna da GitHub o con Homebrew." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Automatic updates aren't available in this build: update from GitHub or with Homebrew."
+          }
+        }
+      }
+    },
+    "Aggiunge o toglie il love su Last.fm (o il preferito in Musica)." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Loves or unloves the track on Last.fm (or favorites it in Music)."
+          }
+        }
+      }
+    },
+    "Aggiungi alla libreria" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add to Library"
+          }
+        }
+      }
+    },
+    "Aggiungi alla libreria di Musica" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add to Music library"
+          }
+        }
+      }
+    },
+    "Aggiungi il widget «In riproduzione» dal Centro notifiche o con un clic destro sulla scrivania › Modifica widget. Le taglie sono tre; la grande mostra anche gli ascolti recenti su Last.fm. Spento, il widget resta dove l'hai messo ma non riceve più il brano." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add the “Now Playing” widget from Notification Center or by right-clicking the desktop › Edit Widgets. It comes in three sizes; the large one also shows your recent Last.fm plays. When turned off, the widget stays where you put it but no longer receives the track."
+          }
+        }
+      }
+    },
+    "Aggiungi ~/.local/bin al PATH (es. in ~/.zshrc: export PATH=\"$HOME/.local/bin:$PATH\"). Il clic sul widget (opentunes://player) funziona sempre." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add ~/.local/bin to your PATH (e.g. in ~/.zshrc: export PATH=\"$HOME/.local/bin:$PATH\"). Clicking the widget (opentunes://player) always works."
+          }
+        }
+      }
+    },
+    "Al centro" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Center"
+          }
+        }
+      }
+    },
+    "Al massimo 4 minuti di ascolto" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "At most 4 minutes of listening"
+          }
+        }
+      }
+    },
+    "Altro" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "More"
+          }
+        }
+      }
+    },
+    "Alza il volume" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volume up"
+          }
+        }
+      }
+    },
+    "Amati" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Loved"
+          }
+        }
+      }
+    },
+    "Ancora nessun ascolto" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No plays yet"
+          }
+        }
+      }
+    },
+    "Annulla" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Undo"
+          }
+        }
+      }
+    },
+    "Anteprima della menu bar" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Menu bar preview"
+          }
+        }
+      }
+    },
+    "Anteprima: titolo originale e titolo inviato" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preview: original title and submitted title"
+          }
+        }
+      }
+    },
+    "App aperte" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open apps"
+          }
+        }
+      }
+    },
+    "Apre la finestra flottante con il testo sincronizzato del brano." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opens the floating window with the synced lyrics of the song."
+          }
+        }
+      }
+    },
+    "Apri %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open %@"
+          }
+        }
+      }
+    },
+    "Apri %@ su Last.fm" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open %@ on Last.fm"
+          }
+        }
+      }
+    },
+    "Apri Impostazioni › Automazione" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open Settings › Automation"
+          }
+        }
+      }
+    },
+    "Apri OpenTunes al login" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open OpenTunes at login"
+          }
+        }
+      }
+    },
+    "Apri il player" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open the player"
+          }
+        }
+      }
+    },
+    "Apri il profilo su Last.fm" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open profile on Last.fm"
+          }
+        }
+      }
+    },
+    "Apri la diagnostica…" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open Diagnostics…"
+          }
+        }
+      }
+    },
+    "Apri le statistiche…" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open statistics…"
+          }
+        }
+      }
+    },
+    "Apri passando sopra con il mouse" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open on hover"
+          }
+        }
+      }
+    },
+    "Apri su Last.fm" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open on Last.fm"
+          }
+        }
+      }
+    },
+    "Artista" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Artist"
+          }
+        }
+      }
+    },
+    "Artisti" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Artists"
+          }
+        }
+      }
+    },
+    "Artisti simili" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Similar artists"
+          }
+        }
+      }
+    },
+    "Ascoltati di recente" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recently played"
+          }
+        }
+      }
+    },
+    "Ascolti" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plays"
+          }
+        }
+      }
+    },
+    "Ascolti in attesa" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pending plays"
+          }
+        }
+      }
+    },
+    "Ascolti su questo Mac" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plays on this Mac"
+          }
+        }
+      }
+    },
+    "Ascolto registrato" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Play scrobbled"
+          }
+        }
+      }
+    },
+    "Aspetto" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Appearance"
+          }
+        }
+      }
+    },
+    "Attiva ripetizione" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turn on repeat"
+          }
+        }
+      }
+    },
+    "Attiva shuffle" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turn on shuffle"
+          }
+        }
+      }
+    },
+    "Automazione %@: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Automation %1$@: %2$@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Automazione %1$@: %2$@"
+          }
+        }
+      }
+    },
+    "Automazione e integrazioni" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Automation and integrations"
+          }
+        }
+      }
+    },
+    "Avanti/indietro nel brano" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seek forward/back"
+          }
+        }
+      }
+    },
+    "Avanzamento" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Progress"
+          }
+        }
+      }
+    },
+    "Azioni sul brano" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Track actions"
+          }
+        }
+      }
+    },
+    "Azioni: brano in riproduzione, play/pausa, successivo, precedente, love, copia il link universale, mostra il testo. Frasi in italiano e in inglese, es. «Che brano sta suonando su OpenTunes?»." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Actions: now playing, play/pause, next, previous, love, copy universal link, show lyrics. Phrases in English and Italian, e.g. “What's playing on OpenTunes”."
+          }
+        }
+      }
+    },
+    "Blocca posizione e misura" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lock position and size"
+          }
+        }
+      }
+    },
+    "Brani simili" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Similar tracks"
+          }
+        }
+      }
+    },
+    "Brano" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Song"
+          }
+        }
+      }
+    },
+    "Brano in riproduzione" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Now playing"
+          }
+        }
+      }
+    },
+    "Brano precedente" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Previous track"
+          }
+        }
+      }
+    },
+    "Brano strumentale" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Instrumental"
+          }
+        }
+      }
+    },
+    "Brano successivo" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Next track"
+          }
+        }
+      }
+    },
+    "Bundle ID" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bundle ID"
+          }
+        }
+      }
+    },
+    "CC %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "CC %lld"
+          }
+        }
+      }
+    },
+    "Calcolate dalla cronologia su questo Mac (fino a 10.000 ascolti), senza Last.fm." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Computed from the history on this Mac (up to 10,000 plays), without Last.fm."
+          }
+        }
+      }
+    },
+    "Cambia player attivo" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Switch active player"
+          }
+        }
+      }
+    },
+    "Cambio brano" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Track change"
+          }
+        }
+      }
+    },
+    "Cancella la cronologia locale" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clear local history"
+          }
+        }
+      }
+    },
+    "Caricamento del profilo…" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Loading profile…"
+          }
+        }
+      }
+    },
+    "Cerca il brano su song.link e copia il link che funziona con tutti i servizi." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Looks up the song on song.link and copies a link that works with every service."
+          }
+        }
+      }
+    },
+    "Cerca le copertine mancanti su iTunes" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Look up missing artwork on iTunes"
+          }
+        }
+      }
+    },
+    "Cerco il testo…" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Looking for lyrics…"
+          }
+        }
+      }
+    },
+    "Chiudi finestra" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Close Window"
+          }
+        }
+      }
+    },
+    "Chiuso mostra la copertina a sinistra del notch e l'indicatore di riproduzione a destra; si apre con un clic o passandoci sopra. Sui Mac senza notch è una capsula al centro della menu bar." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "When closed it shows the artwork left of the notch and the playback indicator on the right; it opens with a click or on hover. On Macs without a notch it's a capsule in the middle of the menu bar."
+          }
+        }
+      }
+    },
+    "Clic centrale" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Middle click"
+          }
+        }
+      }
+    },
+    "Clic destro" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Right click"
+          }
+        }
+      }
+    },
+    "Clic sinistro" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Left click"
+          }
+        }
+      }
+    },
+    "Coda e cronologia" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Queue and history"
+          }
+        }
+      }
+    },
+    "Collega" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connect"
+          }
+        }
+      }
+    },
+    "Collega Last.fm" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connect Last.fm"
+          }
+        }
+      }
+    },
+    "Collega Last.fm nelle impostazioni di OpenTunes per vedere qui i tuoi ascolti." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connect Last.fm in OpenTunes settings to see your plays here."
+          }
+        }
+      }
+    },
+    "Collega Last.fm nelle impostazioni." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connect Last.fm in settings."
+          }
+        }
+      }
+    },
+    "Collegato: Discord mostra «%@»." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connected: Discord shows “%@”."
+          }
+        }
+      }
+    },
+    "Colore non valido: %@ (usa #RRGGBB)." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Invalid color: %@ (use #RRGGBB)."
+          }
+        }
+      }
+    },
+    "Colori dalla copertina (tema)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Colors from artwork (theme)"
+          }
+        }
+      }
+    },
+    "Comandi Rapidi" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shortcuts"
+          }
+        }
+      }
+    },
+    "Comandi Rapidi e Siri sono spenti nelle impostazioni di OpenTunes." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shortcuts and Siri are turned off in OpenTunes settings."
+          }
+        }
+      }
+    },
+    "Comandi Rapidi, Siri e Spotlight" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shortcuts, Siri and Spotlight"
+          }
+        }
+      }
+    },
+    "Comandi via URL e riga di comando" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "URL and command-line commands"
+          }
+        }
+      }
+    },
+    "Comandi via URL e riga di comando (opentunes://)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "URL and command-line commands (opentunes://)"
+          }
+        }
+      }
+    },
+    "Comando" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Command"
+          }
+        }
+      }
+    },
+    "Compatta" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compact"
+          }
+        }
+      }
+    },
+    "Comportamento" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Behavior"
+          }
+        }
+      }
+    },
+    "Con lo spettro reale macOS chiede una volta il permesso «Registrazione audio di sistema»: l'audio viene solo analizzato, niente viene registrato. Senza, le barre sono un'animazione." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "With the real spectrum macOS asks once for “System Audio Recording” permission: audio is only analyzed, nothing is recorded. Without it the bars are an animation."
+          }
+        }
+      }
+    },
+    "Con questa opzione OpenTunes compare anche nel Dock." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "With this option OpenTunes also appears in the Dock."
+          }
+        }
+      }
+    },
+    "Condividi…" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Share…"
+          }
+        }
+      }
+    },
+    "Consenti l'accesso a Musica e Spotify" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Allow access to Music and Spotify"
+          }
+        }
+      }
+    },
+    "Controlla adesso" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check now"
+          }
+        }
+      }
+    },
+    "Controlla aggiornamenti…" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check for Updates…"
+          }
+        }
+      }
+    },
+    "Controlla gli aggiornamenti automaticamente" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check for updates automatically"
+          }
+        }
+      }
+    },
+    "Controlli e titolo come due elementi separati" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Controls and title as two separate items"
+          }
+        }
+      }
+    },
+    "Controllo da MIDI" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MIDI control"
+          }
+        }
+      }
+    },
+    "Copertina" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Artwork"
+          }
+        }
+      }
+    },
+    "Copertina ai lati del notch, player completo passandoci sopra." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Artwork beside the notch, full player on hover."
+          }
+        }
+      }
+    },
+    "Copertina come icona del Dock" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Artwork as Dock icon"
+          }
+        }
+      }
+    },
+    "Copia" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copy"
+          }
+        }
+      }
+    },
+    "Copia il link universale" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copy universal link"
+          }
+        }
+      }
+    },
+    "Copia link" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copy link"
+          }
+        }
+      }
+    },
+    "Copia link universale" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copy universal link"
+          }
+        }
+      }
+    },
+    "Correggi l'album artist delle compilation e «- Single»" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fix compilation album artists and “- Single”"
+          }
+        }
+      }
+    },
+    "Crea un'applicazione su discord.com/developers" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Create an application at discord.com/developers"
+          }
+        }
+      }
+    },
+    "Crea una API key su Last.fm" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Create an API key on Last.fm"
+          }
+        }
+      }
+    },
+    "Diagnostica…" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diagnostics…"
+          }
+        }
+      }
+    },
+    "Dice quale brano sta suonando e con quale player." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tells which song is playing and in which player."
+          }
+        }
+      }
+    },
+    "Disattiva la finestra flottante" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turn off the floating window"
+          }
+        }
+      }
+    },
+    "Disattiva ripetizione" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turn off repeat"
+          }
+        }
+      }
+    },
+    "Disattiva shuffle" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turn off shuffle"
+          }
+        }
+      }
+    },
+    "Discord Rich Presence" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Discord Rich Presence"
+          }
+        }
+      }
+    },
+    "Discord non è aperto" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Discord is not open"
+          }
+        }
+      }
+    },
+    "Dispositivi" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Devices"
+          }
+        }
+      }
+    },
+    "Dock" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dock"
+          }
+        }
+      }
+    },
+    "Elementi" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Items"
+          }
+        }
+      }
+    },
+    "Elenco" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "List"
+          }
+        }
+      }
+    },
+    "Esci" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quit"
+          }
+        }
+      }
+    },
+    "Esci da OpenTunes" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quit OpenTunes"
+          }
+        }
+      }
+    },
+    "Esporta PNG…" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Export PNG…"
+          }
+        }
+      }
+    },
+    "Esporta…" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Export…"
+          }
+        }
+      }
+    },
+    "Eventi" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Events"
+          }
+        }
+      }
+    },
+    "Fai scorrere il titolo se è troppo lungo" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scroll the title when it's too long"
+          }
+        }
+      }
+    },
+    "Finestra flottante" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Floating window"
+          }
+        }
+      }
+    },
+    "Focus (copertina e testo)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Focus (artwork and lyrics)"
+          }
+        }
+      }
+    },
+    "Formati predefiniti" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preset formats"
+          }
+        }
+      }
+    },
+    "Formato" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Format"
+          }
+        }
+      }
+    },
+    "Formato del titolo" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Title format"
+          }
+        }
+      }
+    },
+    "Funzioni" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Features"
+          }
+        }
+      }
+    },
+    "Generali" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "General"
+          }
+        }
+      }
+    },
+    "Giorno" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Day"
+          }
+        }
+      }
+    },
+    "Grafico Last.fm" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last.fm chart"
+          }
+        }
+      }
+    },
+    "Grafico dei top artisti Last.fm" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last.fm top artists chart"
+          }
+        }
+      }
+    },
+    "Grande" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Large"
+          }
+        }
+      }
+    },
+    "Griglia" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Grid"
+          }
+        }
+      }
+    },
+    "HUD al cambio brano, play/pausa e salto" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "HUD on song change, play/pause and skip"
+          }
+        }
+      }
+    },
+    "HUD al cambio volume" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "HUD on volume change"
+          }
+        }
+      }
+    },
+    "I browser sono esclusi di default (video di YouTube e simili). I player nuovi fanno scrobbling finché non li escludi." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Browsers are excluded by default (YouTube videos and the like). New players scrobble until you exclude them."
+          }
+        }
+      }
+    },
+    "I permessi servono solo se il Now Playing di sistema non è disponibile e l'app usa AppleScript." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Permissions are only needed when the system Now Playing isn't available and the app uses AppleScript."
+          }
+        }
+      }
+    },
+    "I suggerimenti partono dal brano in riproduzione." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suggestions are based on the track that's playing."
+          }
+        }
+      }
+    },
+    "I top album arrivano dal tuo profilo Last.fm: collegalo in Impostazioni › Scrobbling." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Top albums come from your Last.fm profile: connect it in Settings › Scrobbling."
+          }
+        }
+      }
+    },
+    "ID applicazione" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Application ID"
+          }
+        }
+      }
+    },
+    "Il Now Playing di sistema non è disponibile: OpenTunes può leggere Musica e Spotify con il permesso Automazione." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The system Now Playing isn't available: OpenTunes can read Music and Spotify with the Automation permission."
+          }
+        }
+      }
+    },
+    "Il brano in riproduzione con i controlli. La taglia grande mostra anche Last.fm." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The track that's playing, with controls. The large size also shows Last.fm."
+          }
+        }
+      }
+    },
+    "Il love imposta anche il preferito in Musica" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Love also favorites the track in Music"
+          }
+        }
+      }
+    },
+    "Il tema non ha un nome." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The theme has no name."
+          }
+        }
+      }
+    },
+    "Il tema vale per popover, finestra flottante, HUD, notch e widget. Il visualizer segue l'audio in uscita (macOS chiede il permesso «Registrazione audio di sistema»; niente viene registrato) e si ferma in pausa. Senza permesso è un'animazione." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The theme applies to the popover, floating window, HUD, notch and widgets. The visualizer follows the audio output (macOS asks for the “System Audio Recording” permission; nothing is recorded) and stops when paused. Without permission it's an animation."
+          }
+        }
+      }
+    },
+    "Il token è salvato nel Portachiavi. Per Maloja o un'istanza propria di ListenBrainz scrivi l'indirizzo del server prima di collegare il token." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The token is stored in the Keychain. For Maloja or your own ListenBrainz instance, enter the server address before connecting the token."
+          }
+        }
+      }
+    },
+    "Impara" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Learn"
+          }
+        }
+      }
+    },
+    "Importa tema JSON…" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Import JSON theme…"
+          }
+        }
+      }
+    },
+    "Impossibile usare %@ come uscita" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't use %@ as output"
+          }
+        }
+      }
+    },
+    "Impostazioni" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Settings"
+          }
+        }
+      }
+    },
+    "Impostazioni…" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Settings…"
+          }
+        }
+      }
+    },
+    "In alto a destra" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Top right"
+          }
+        }
+      }
+    },
+    "In attesa dell'approvazione nel browser…" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Waiting for approval in the browser…"
+          }
+        }
+      }
+    },
+    "In basso al centro" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bottom center"
+          }
+        }
+      }
+    },
+    "In pausa" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Paused"
+          }
+        }
+      }
+    },
+    "In pausa: niente attività su Discord." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Paused: no activity on Discord."
+          }
+        }
+      }
+    },
+    "In riproduzione" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Playing"
+          }
+        }
+      }
+    },
+    "Incolla" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Paste"
+          }
+        }
+      }
+    },
+    "Indicatore degli ascolti in coda in menu bar" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Queued plays indicator in the menu bar"
+          }
+        }
+      }
+    },
+    "Inserisci la tua chiave in Impostazioni › Scrobbling." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enter your key in Settings › Scrobbling."
+          }
+        }
+      }
+    },
+    "Inserisci:" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Insert:"
+          }
+        }
+      }
+    },
+    "Installa" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Install"
+          }
+        }
+      }
+    },
+    "Installazione non riuscita: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Installation failed: %@"
+          }
+        }
+      }
+    },
+    "Integrazioni" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Integrations"
+          }
+        }
+      }
+    },
+    "Invia gli ascolti a Last.fm" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Send plays to Last.fm"
+          }
+        }
+      }
+    },
+    "Invia gli ascolti a ListenBrainz" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Send plays to ListenBrainz"
+          }
+        }
+      }
+    },
+    "Invia ora" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Send now"
+          }
+        }
+      }
+    },
+    "L'HUD compare anche con play/pausa e salto di brano. Entrambi sono spenti finché non li attivi." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The HUD also appears on play/pause and skip. Both are off until you turn them on."
+          }
+        }
+      }
+    },
+    "L'accesso avviene nel browser; la sessione è salvata nel Portachiavi. In un'app open source la secret dell'app è di fatto pubblica: puoi usare la tua chiave." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You sign in through the browser; the session is saved in the Keychain. In an open source app the app secret is effectively public: you can use your own key."
+          }
+        }
+      }
+    },
+    "La pulizia vale solo per gli ascolti inviati: OpenTunes mostra sempre il titolo originale." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cleanup only applies to submitted plays: OpenTunes always shows the original title."
+          }
+        }
+      }
+    },
+    "La ricerca invia artista e titolo all'iTunes Search API di Apple." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The lookup sends the artist and title to Apple's iTunes Search API."
+          }
+        }
+      }
+    },
+    "Larghezza massima" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Maximum width"
+          }
+        }
+      }
+    },
+    "Last.fm" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last.fm"
+          }
+        }
+      }
+    },
+    "Last.fm ha rifiutato la sessione: accedi di nuovo." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last.fm rejected the session: sign in again."
+          }
+        }
+      }
+    },
+    "Last.fm: accedi di nuovo dalle impostazioni" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last.fm: sign in again from settings"
+          }
+        }
+      }
+    },
+    "Layout" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Layout"
+          }
+        }
+      }
+    },
+    "Le opzioni di Discord, MIDI e della riga di comando sono nella scheda «Integrazioni»." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Discord, MIDI and command-line options are in the “Integrations” tab."
+          }
+        }
+      }
+    },
+    "Le scorciatoie funzionano in qualsiasi app." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shortcuts work in any app."
+          }
+        }
+      }
+    },
+    "Le statistiche si riempiono mentre ascolti musica." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Statistics fill up as you listen to music."
+          }
+        }
+      }
+    },
+    "Link copiato." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Link copied."
+          }
+        }
+      }
+    },
+    "Link universale e Condividi (song.link)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Universal link and Share (song.link)"
+          }
+        }
+      }
+    },
+    "Link universale: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Universal link: %@"
+          }
+        }
+      }
+    },
+    "Link, testi e Scopri inviano artista e titolo ai servizi indicati solo quando li usi." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Links, lyrics and Discover send artist and title to those services only when you use them."
+          }
+        }
+      }
+    },
+    "ListenBrainz" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ListenBrainz"
+          }
+        }
+      }
+    },
+    "Love" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Love"
+          }
+        }
+      }
+    },
+    "Love (Last.fm / Musica)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Love (Last.fm / Music)"
+          }
+        }
+      }
+    },
+    "Love (Last.fm o preferito di Musica)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Love (Last.fm or Music favorite)"
+          }
+        }
+      }
+    },
+    "Love / preferito" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Love / favorite"
+          }
+        }
+      }
+    },
+    "Love aggiunto." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Loved."
+          }
+        }
+      }
+    },
+    "Love del brano" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Love track"
+          }
+        }
+      }
+    },
+    "Love e menu bar" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Love and menu bar"
+          }
+        }
+      }
+    },
+    "Love non disponibile per questo brano." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Love is not available for this song."
+          }
+        }
+      }
+    },
+    "Love su Last.fm" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Love on Last.fm"
+          }
+        }
+      }
+    },
+    "Love su Last.fm e preferito in Musica" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Love on Last.fm and favorite in Music"
+          }
+        }
+      }
+    },
+    "Love tolto." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Love removed."
+          }
+        }
+      }
+    },
+    "MIDI" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MIDI"
+          }
+        }
+      }
+    },
+    "Mai" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Never"
+          }
+        }
+      }
+    },
+    "Menu bar" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Menu bar"
+          }
+        }
+      }
+    },
+    "Menu rapido" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quick menu"
+          }
+        }
+      }
+    },
+    "Metadati" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Metadata"
+          }
+        }
+      }
+    },
+    "Mette in pausa o riprende il brano in riproduzione." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pauses or resumes the current track."
+          }
+        }
+      }
+    },
+    "Mette in pausa o riprende il brano." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pauses or resumes the song."
+          }
+        }
+      }
+    },
+    "Mini player sempre in primo piano, da mostrare con una scorciatoia o dal menu." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Always-on-top mini player, shown with a shortcut or from the menu."
+          }
+        }
+      }
+    },
+    "Minuti" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Minutes"
+          }
+        }
+      }
+    },
+    "Modalità compatta automatica accanto al notch" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Automatic compact mode next to the notch"
+          }
+        }
+      }
+    },
+    "Modifica" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Edit"
+          }
+        }
+      }
+    },
+    "Monocromo" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Monochrome"
+          }
+        }
+      }
+    },
+    "Mostra OpenTunes nella menu bar" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show OpenTunes in the menu bar"
+          }
+        }
+      }
+    },
+    "Mostra finestra flottante" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show floating window"
+          }
+        }
+      }
+    },
+    "Mostra il testo" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show lyrics"
+          }
+        }
+      }
+    },
+    "Mostra il titolo al cambio brano" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show the title on track change"
+          }
+        }
+      }
+    },
+    "Mostra in menu bar quando ci sono ascolti in coda" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show in the menu bar when plays are queued"
+          }
+        }
+      }
+    },
+    "Mostra l'HUD al cambio volume" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show the HUD on volume change"
+          }
+        }
+      }
+    },
+    "Mostra l'HUD sullo schermo" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show the on-screen HUD"
+          }
+        }
+      }
+    },
+    "Mostra la copertina" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show artwork"
+          }
+        }
+      }
+    },
+    "Mostra la finestra adesso" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show the window now"
+          }
+        }
+      }
+    },
+    "Mostra la riga del testo sotto il titolo" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show the lyric line under the title"
+          }
+        }
+      }
+    },
+    "Mostra su Discord cosa stai ascoltando" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show what you're listening to on Discord"
+          }
+        }
+      }
+    },
+    "Mostra/nascondi finestra flottante" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show/hide floating window"
+          }
+        }
+      }
+    },
+    "Mouse" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mouse"
+          }
+        }
+      }
+    },
+    "Nascondi finestra" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hide window"
+          }
+        }
+      }
+    },
+    "Nascondi finestra flottante" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hide floating window"
+          }
+        }
+      }
+    },
+    "Nascondi il widget" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hide widget"
+          }
+        }
+      }
+    },
+    "Nascondi quando non c'è niente in riproduzione" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hide when nothing is playing"
+          }
+        }
+      }
+    },
+    "Nascondi sopra le app a schermo intero" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hide over full-screen apps"
+          }
+        }
+      }
+    },
+    "Nessun ascolto nel periodo" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No plays in this period"
+          }
+        }
+      }
+    },
+    "Nessun dato per ora." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No data yet."
+          }
+        }
+      }
+    },
+    "Nessun suggerimento" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No suggestions"
+          }
+        }
+      }
+    },
+    "Nessun testo per questo brano" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No lyrics for this track"
+          }
+        }
+      }
+    },
+    "Nessuna" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "None"
+          }
+        }
+      }
+    },
+    "Nessuna sorgente disponibile. Apri la finestra di diagnostica dal menu rapido." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No source available. Open the diagnostics window from the quick menu."
+          }
+        }
+      }
+    },
+    "Niente" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nothing"
+          }
+        }
+      }
+    },
+    "Niente da mostrare" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nothing to show"
+          }
+        }
+      }
+    },
+    "Niente in riproduzione" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nothing playing"
+          }
+        }
+      }
+    },
+    "Niente in riproduzione." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nothing playing."
+          }
+        }
+      }
+    },
+    "Non collegato." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not connected."
+          }
+        }
+      }
+    },
+    "Non mi piace" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dislike"
+          }
+        }
+      }
+    },
+    "Nota %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Note %lld"
+          }
+        }
+      }
+    },
+    "Notch" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notch"
+          }
+        }
+      }
+    },
+    "Note e Control Change di qualsiasi controller collegato (es. un pad MPD218). Scegli «Impara» e premi il pad da assegnare." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notes and Control Change from any connected controller (e.g. an MPD218 pad). Choose “Learn” and press the pad to assign."
+          }
+        }
+      }
+    },
+    "Notifica di sistema" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "System notification"
+          }
+        }
+      }
+    },
+    "Opacità non valida: %lf (da 0 a 1)." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Invalid opacity: %lf (0 to 1)."
+          }
+        }
+      }
+    },
+    "OpenTunes" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OpenTunes"
+          }
+        }
+      }
+    },
+    "OpenTunes non è pronto." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OpenTunes is not ready."
+          }
+        }
+      }
+    },
+    "OpenTunes è software libero (GPL-3.0-or-later). Non è affiliato a NepTunes né ad Apple." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OpenTunes is free software (GPL-3.0-or-later). It isn't affiliated with NepTunes or Apple."
+          }
+        }
+      }
+    },
+    "OpenTunes — Diagnostica" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OpenTunes — Diagnostics"
+          }
+        }
+      }
+    },
+    "OpenTunes: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OpenTunes: %@"
+          }
+        }
+      }
+    },
+    "Ore" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hours"
+          }
+        }
+      }
+    },
+    "Orizzontale" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Horizontal"
+          }
+        }
+      }
+    },
+    "Passa a %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Switch to %@"
+          }
+        }
+      }
+    },
+    "Passa da un player all'altro (Musica ↔ Spotify)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Switch between players (Music ↔ Spotify)"
+          }
+        }
+      }
+    },
+    "Pausa" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pause"
+          }
+        }
+      }
+    },
+    "Periodo" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Period"
+          }
+        }
+      }
+    },
+    "Personalizzato (JSON)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Custom (JSON)"
+          }
+        }
+      }
+    },
+    "Più opaco" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "More opaque"
+          }
+        }
+      }
+    },
+    "Più trasparente" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "More transparent"
+          }
+        }
+      }
+    },
+    "Play o pausa" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Play or pause"
+          }
+        }
+      }
+    },
+    "Play/Pausa" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Play/Pause"
+          }
+        }
+      }
+    },
+    "Play/pausa" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Play/pause"
+          }
+        }
+      }
+    },
+    "Player" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Players"
+          }
+        }
+      }
+    },
+    "Player attuale" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Current player"
+          }
+        }
+      }
+    },
+    "Player che fanno scrobbling" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Players that scrobble"
+          }
+        }
+      }
+    },
+    "Player ignorati" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ignored players"
+          }
+        }
+      }
+    },
+    "Player live sullo sfondo, sotto le finestre." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Live player on the desktop, below your windows."
+          }
+        }
+      }
+    },
+    "Player nel popover" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Player in the popover"
+          }
+        }
+      }
+    },
+    "Portachiavi: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keychain: %@"
+          }
+        }
+      }
+    },
+    "Posizione dell'HUD" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "HUD position"
+          }
+        }
+      }
+    },
+    "Precedente" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Previous"
+          }
+        }
+      }
+    },
+    "Preferito in Musica" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Favorite in Music"
+          }
+        }
+      }
+    },
+    "Premi un pad…" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Press a pad…"
+          }
+        }
+      }
+    },
+    "Pulisci i titoli dei browser" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clean up browser titles"
+          }
+        }
+      }
+    },
+    "Pulisci i titoli dei browser (es. «(Official Video)»)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clean up browser titles (e.g. “(Official Video)”)"
+          }
+        }
+      }
+    },
+    "Pulsante «Apri il player»" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“Open player” button"
+          }
+        }
+      }
+    },
+    "Pulsanti" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buttons"
+          }
+        }
+      }
+    },
+    "Quando registrare un ascolto" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "When to scrobble a play"
+          }
+        }
+      }
+    },
+    "Quello che riproducono queste app non compare in OpenTunes (utile per Zoom o i video nel browser)." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What these apps play doesn't appear in OpenTunes (useful for Zoom or browser videos)."
+          }
+        }
+      }
+    },
+    "Questa build non include una API key Last.fm: attiva «Usa una API key personale» e inserisci la tua." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This build doesn't include a Last.fm API key: turn on “Use a personal API key” and enter yours."
+          }
+        }
+      }
+    },
+    "Regola di Last.fm: metà del brano o 4 minuti, quello che arriva prima; i brani di 30 secondi o meno non contano. La pausa non azzera il tempo ascoltato." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last.fm rule: half the track or 4 minutes, whichever comes first; tracks of 30 seconds or less don't count. Pausing doesn't reset the time listened."
+          }
+        }
+      }
+    },
+    "Reinstalla" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reinstall"
+          }
+        }
+      }
+    },
+    "Riapri la pagina" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reopen the page"
+          }
+        }
+      }
+    },
+    "Richiedi permesso" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Request permission"
+          }
+        }
+      }
+    },
+    "Riga di comando e URL" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Command line and URLs"
+          }
+        }
+      }
+    },
+    "Rimuovi" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove"
+          }
+        }
+      }
+    },
+    "Ripeti" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Redo"
+          }
+        }
+      }
+    },
+    "Ripeti brano" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repeat track"
+          }
+        }
+      }
+    },
+    "Riproduci" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Play"
+          }
+        }
+      }
+    },
+    "Riprova" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Try again"
+          }
+        }
+      }
+    },
+    "Riscontri" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Feedback"
+          }
+        }
+      }
+    },
+    "Rotella" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scroll wheel"
+          }
+        }
+      }
+    },
+    "Salta a questo punto del brano" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jump to this point in the track"
+          }
+        }
+      }
+    },
+    "Salva" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save"
+          }
+        }
+      }
+    },
+    "Scelta dell'uscita audio" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Audio output picker"
+          }
+        }
+      }
+    },
+    "Scheda (copertina sopra)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Card (artwork on top)"
+          }
+        }
+      }
+    },
+    "Scheda Last.fm (profilo e top artisti)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last.fm tab (profile and top artists)"
+          }
+        }
+      }
+    },
+    "Scollega" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disconnect"
+          }
+        }
+      }
+    },
+    "Scopri" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Discover"
+          }
+        }
+      }
+    },
+    "Scopri: top album e brani simili (Last.fm)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Discover: top albums and similar songs (Last.fm)"
+          }
+        }
+      }
+    },
+    "Scopri: top album e simili…" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Discover: top albums and similar…"
+          }
+        }
+      }
+    },
+    "Scorciatoie" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shortcuts"
+          }
+        }
+      }
+    },
+    "Scorciatoie da tastiera globali" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Global keyboard shortcuts"
+          }
+        }
+      }
+    },
+    "Scrobble" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scrobbles"
+          }
+        }
+      }
+    },
+    "Scrobble puliti" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clean scrobbles"
+          }
+        }
+      }
+    },
+    "Scrobbling" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scrobbling"
+          }
+        }
+      }
+    },
+    "Segui l'audio reale (spettro)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Follow the real audio (spectrum)"
+          }
+        }
+      }
+    },
+    "Seleziona tutto" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Select All"
+          }
+        }
+      }
+    },
+    "Sempre" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Always"
+          }
+        }
+      }
+    },
+    "Senza menu bar, le impostazioni si aprono riaprendo OpenTunes dal Finder, da Spotlight o dal Launchpad." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Without the menu bar, settings open when you reopen OpenTunes from the Finder, Spotlight or Launchpad."
+          }
+        }
+      }
+    },
+    "Serve Discord aperto su questo Mac: OpenTunes gli parla in locale, senza account né token. La copertina arriva dall'iTunes Search API se «Cerca le copertine mancanti» è acceso. In pausa l'attività sparisce." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Discord must be open on this Mac: OpenTunes talks to it locally, with no account or token. Artwork comes from the iTunes Search API if “Look up missing artwork” is on. When paused the activity disappears."
+          }
+        }
+      }
+    },
+    "Serve l'ID di un'applicazione Discord." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A Discord application ID is required."
+          }
+        }
+      }
+    },
+    "Serve una chiave Last.fm" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A Last.fm key is required"
+          }
+        }
+      }
+    },
+    "Server" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Server"
+          }
+        }
+      }
+    },
+    "Settimana" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Week"
+          }
+        }
+      }
+    },
+    "Sezione" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Section"
+          }
+        }
+      }
+    },
+    "Shared secret" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shared secret"
+          }
+        }
+      }
+    },
+    "Si sposta trascinandola dallo sfondo e ricorda la posizione. Il clic destro mostra le altre opzioni." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Drag it by the background to move it; it remembers its position. Right-click for more options."
+          }
+        }
+      }
+    },
+    "Simili a %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Similar to %@"
+          }
+        }
+      }
+    },
+    "Simili a «%@»" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Similar to “%@”"
+          }
+        }
+      }
+    },
+    "Soglia" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Threshold"
+          }
+        }
+      }
+    },
+    "Solo copertina" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Artwork only"
+          }
+        }
+      }
+    },
+    "Solo se la finestra flottante è nascosta" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Only when the floating window is hidden"
+          }
+        }
+      }
+    },
+    "Somiglianza" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Similarity"
+          }
+        }
+      }
+    },
+    "Sorgente attiva" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Active source"
+          }
+        }
+      }
+    },
+    "Sorgente attiva: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Active source: %@"
+          }
+        }
+      }
+    },
+    "Sta sopra lo sfondo e sotto le finestre, su tutte le scrivanie. Trascinalo dallo sfondo e ridimensionalo dai bordi: posizione e misura si ricordano per ogni monitor." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "It sits above the wallpaper and below your windows, on every desktop. Drag it by the background and resize it from the edges: position and size are remembered per display."
+          }
+        }
+      }
+    },
+    "Statistiche" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Statistics"
+          }
+        }
+      }
+    },
+    "Statistiche di ascolto locali" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Local listening statistics"
+          }
+        }
+      }
+    },
+    "Statistiche di ascolto…" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Listening statistics…"
+          }
+        }
+      }
+    },
+    "Statistiche spente" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Statistics off"
+          }
+        }
+      }
+    },
+    "Stato dello scrobbling ed errori" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scrobbling status and errors"
+          }
+        }
+      }
+    },
+    "Stelle, «Non mi piace» e «Aggiungi alla libreria» (Musica)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stars, “Dislike” and “Add to Library” (Music)"
+          }
+        }
+      }
+    },
+    "Successivo" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Next"
+          }
+        }
+      }
+    },
+    "Suggerimenti non disponibili" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suggestions unavailable"
+          }
+        }
+      }
+    },
+    "Superfici" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Surfaces"
+          }
+        }
+      }
+    },
+    "Superfici attive" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Active surfaces"
+          }
+        }
+      }
+    },
+    "Taglia" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Size"
+          }
+        }
+      }
+    },
+    "Tema" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Theme"
+          }
+        }
+      }
+    },
+    "Tema esportato." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Theme exported."
+          }
+        }
+      }
+    },
+    "Tema non valido: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Invalid theme: %@"
+          }
+        }
+      }
+    },
+    "Tema personalizzato" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Custom theme"
+          }
+        }
+      }
+    },
+    "Tema «%@» attivo." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Theme “%@” active."
+          }
+        }
+      }
+    },
+    "Temi" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Themes"
+          }
+        }
+      }
+    },
+    "Testi o finestra flottante spenti nelle impostazioni." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lyrics or floating window turned off in settings."
+          }
+        }
+      }
+    },
+    "Testi sincronizzati (LRCLIB)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Synced lyrics (LRCLIB)"
+          }
+        }
+      }
+    },
+    "Testi spenti" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lyrics off"
+          }
+        }
+      }
+    },
+    "Testo" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lyrics"
+          }
+        }
+      }
+    },
+    "Testo non disponibile adesso" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lyrics unavailable right now"
+          }
+        }
+      }
+    },
+    "Testo: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lyrics: %@"
+          }
+        }
+      }
+    },
+    "Tinta dalla copertina" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tint from artwork"
+          }
+        }
+      }
+    },
+    "Titolo e artista" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Title and artist"
+          }
+        }
+      }
+    },
+    "Titolo, copertina e controlli in alto a destra, con il player completo al clic." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Title, artwork and controls at the top right, with the full player on click."
+          }
+        }
+      }
+    },
+    "Togli" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove"
+          }
+        }
+      }
+    },
+    "Togli il love" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unlove"
+          }
+        }
+      }
+    },
+    "Togli «Official Video», «Lyric Video»…" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove “Official Video”, “Lyric Video”…"
+          }
+        }
+      }
+    },
+    "Togli «Radio Edit», «Single Version»…" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove “Radio Edit”, “Single Version”…"
+          }
+        }
+      }
+    },
+    "Togli «Remastered», «2011 Remaster»…" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove “Remastered”, “2011 Remaster”…"
+          }
+        }
+      }
+    },
+    "Togli «feat. …» dal titolo" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove “feat. …” from the title"
+          }
+        }
+      }
+    },
+    "Token utente" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "User token"
+          }
+        }
+      }
+    },
+    "Top album" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Top albums"
+          }
+        }
+      }
+    },
+    "Top album non disponibili" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Top albums unavailable"
+          }
+        }
+      }
+    },
+    "Top artisti" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Top artists"
+          }
+        }
+      }
+    },
+    "Top artisti su Last.fm" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Top artists on Last.fm"
+          }
+        }
+      }
+    },
+    "Top brani" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Top songs"
+          }
+        }
+      }
+    },
+    "Trascina per riordinare. Con tutti gli elementi spenti resta la copertina." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Drag to reorder. With every item turned off, the artwork remains."
+          }
+        }
+      }
+    },
+    "Trova il token nelle impostazioni di ListenBrainz" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Find the token in your ListenBrainz settings"
+          }
+        }
+      }
+    },
+    "Tutte le superfici con i controlli sono spente: restano solo scorciatoie e widget di macOS." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All surfaces with controls are off: only shortcuts and macOS widgets remain."
+          }
+        }
+      }
+    },
+    "Ultime settimane" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recent weeks"
+          }
+        }
+      }
+    },
+    "Ultimi 7 giorni" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last 7 days"
+          }
+        }
+      }
+    },
+    "Ultimo ascolto" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last play"
+          }
+        }
+      }
+    },
+    "Un tema è un file JSON con nome, vetro (regular o clear), tinta (#RRGGBB o «artwork»), opacità e accento. Esporta il modello, modificalo e proponilo con una PR nella cartella themes/ del repository." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A theme is a JSON file with name, glass (regular or clear), tint (#RRGGBB or “artwork”), opacity and accent. Export the template, edit it and propose it with a PR in the repository's themes/ folder."
+          }
+        }
+      }
+    },
+    "Una superficie spenta resta spenta anche dopo il riavvio, finché non la riaccendi qui." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A surface you turn off stays off after restarting, until you turn it back on here."
+          }
+        }
+      }
+    },
+    "Usa una API key personale" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Use a personal API key"
+          }
+        }
+      }
+    },
+    "Uscita audio" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Audio output"
+          }
+        }
+      }
+    },
+    "Uscita audio: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Audio output: %@"
+          }
+        }
+      }
+    },
+    "Valutazione" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rating"
+          }
+        }
+      }
+    },
+    "Versione" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Version"
+          }
+        }
+      }
+    },
+    "Visualizer" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Visualizer"
+          }
+        }
+      }
+    },
+    "Visualizer a tempo di musica nel notch e nella finestra flottante" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Music-synced visualizer in the notch and floating window"
+          }
+        }
+      }
+    },
+    "Visualizer al posto dell'indicatore di riproduzione" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Visualizer instead of the playback indicator"
+          }
+        }
+      }
+    },
+    "Volume" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volume"
+          }
+        }
+      }
+    },
+    "Volume %lld%%" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volume %lld%%"
+          }
+        }
+      }
+    },
+    "Volume del player (Musica, Spotify)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Player volume (Music, Spotify)"
+          }
+        }
+      }
+    },
+    "Volume di %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ volume"
+          }
+        }
+      }
+    },
+    "Volume di %@, indipendente da quello di sistema" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ volume, independent of the system volume"
+          }
+        }
+      }
+    },
+    "Volume di %@: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ volume: %2$@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Volume di %1$@: %2$@"
+          }
+        }
+      }
+    },
+    "Volume di sistema" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "System volume"
+          }
+        }
+      }
+    },
+    "Volume e HUD" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volume and HUD"
+          }
+        }
+      }
+    },
+    "Widget di macOS" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS widgets"
+          }
+        }
+      }
+    },
+    "Widget disattivato in OpenTunes" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Widget turned off in OpenTunes"
+          }
+        }
+      }
+    },
+    "Widget sulla scrivania" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desktop widget"
+          }
+        }
+      }
+    },
+    "Widget «In riproduzione» del Centro notifiche e della scrivania." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“Now Playing” widget for Notification Center and the desktop."
+          }
+        }
+      }
+    },
+    "browser" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "browser"
+          }
+        }
+      }
+    },
+    "es. com.apple.Safari" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "e.g. com.apple.Safari"
+          }
+        }
+      }
+    },
+    "listenbrainz.org (o Maloja: https://server)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "listenbrainz.org (or Maloja: https://server)"
+          }
+        }
+      }
+    },
+    "minuti" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "minutes"
+          }
+        }
+      }
+    },
+    "nessuno" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "none"
+          }
+        }
+      }
+    },
+    "non installato" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "not installed"
+          }
+        }
+      }
+    },
+    "opentunes now · next · love · copy-link · volume 40 — oppure open opentunes://next da Raycast, Alfred, BetterTouchTool o Keyboard Maestro." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "opentunes now · next · love · copy-link · volume 40 — or open opentunes://next from Raycast, Alfred, BetterTouchTool or Keyboard Maestro."
+          }
+        }
+      }
+    },
+    "quello del progetto, se presente" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "the project's, if present"
+          }
+        }
+      }
+    },
+    "record_shortcut" : {},
+    "salvata nel Portachiavi" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "saved in the Keychain"
+          }
+        }
+      }
+    },
+    "{artist} — {title}" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "{artist} — {title}"
+          }
+        }
+      }
+    },
+    "~/.local/bin/opentunes" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "~/.local/bin/opentunes"
+          }
+        }
+      }
+    },
+    "▶︎ in riproduzione" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "▶︎ playing"
+          }
+        }
+      }
+    },
+    "❚❚ in pausa" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "❚❚ paused"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

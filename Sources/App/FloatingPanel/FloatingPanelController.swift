@@ -42,12 +42,20 @@ final class FloatingPanelController: NSObject, NSWindowDelegate {
 
     func start() {
         let settings = model.settings
-        tasks.append(observeChanges({ settings.floatingVisible }) { [weak self] visible in
+        tasks.append(observeChanges({ settings.showsFloatingWindow }) { [weak self] visible in
             visible ? self?.show() : self?.hide()
         })
         tasks.append(observeChanges({ settings.floatingSize }) { [weak self] _ in self?.applySize() })
+        // Monitor scollegato o risoluzione cambiata: la finestra torna su uno schermo visibile.
+        tasks.append(Task { [weak self] in
+            for await _ in NotificationCenter.default.notifications(named: NSApplication.didChangeScreenParametersNotification) {
+                self?.keepOnScreen()
+            }
+        })
         tasks.append(observeChanges({ settings.floatingHidesInFullScreen }) { [weak self] _ in self?.applyCollectionBehavior() })
-        tasks.append(observeChanges({ [model] in model.tint?.dominant }) { [weak self] _ in self?.applyTint() })
+        tasks.append(observeChanges({ [model] in "\(model.tint?.dominant.r ?? -1)\(model.tint?.dominant.g ?? -1)\(model.tint?.dominant.b ?? -1)\(model.settings.theme.rawValue)" }) {
+            [weak self] _ in self?.applyTint()
+        })
     }
 
     private func makePanel() -> FloatingPanel {
@@ -95,7 +103,7 @@ final class FloatingPanelController: NSObject, NSWindowDelegate {
     }
 
     private func applyTint() {
-        glass?.tintColor = model.tint?.dynamicColor(opacity: DesignSystem.glassTintOpacity)
+        glass?.apply(theme: model.settings.theme, tint: model.tint)
     }
 
     // MARK: Posizione
@@ -114,12 +122,24 @@ final class FloatingPanelController: NSObject, NSWindowDelegate {
         }
     }
 
+    private func keepOnScreen() {
+        guard let panel, panel.isVisible else { return }
+        let frame = panel.frame
+        guard !NSScreen.screens.contains(where: { $0.visibleFrame.intersects(frame) }) else { return }
+        UserDefaults.standard.removeObject(forKey: Self.originKey)
+        restoreOrigin(panel)
+    }
+
     func windowDidMove(_ notification: Notification) {
         guard let panel else { return }
         UserDefaults.standard.set(NSStringFromPoint(NSPoint(x: panel.frame.minX, y: panel.frame.maxY)), forKey: Self.originKey)
     }
 
     static func size(for size: FloatingSize) -> CGSize {
-        size == .compact ? DesignSystem.Size.floatingCompact : DesignSystem.Size.floatingLarge
+        switch size {
+        case .compact: DesignSystem.Size.floatingCompact
+        case .large: DesignSystem.Size.floatingLarge
+        case .focus: DesignSystem.Size.floatingFocus
+        }
     }
 }

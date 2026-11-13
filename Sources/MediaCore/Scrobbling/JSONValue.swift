@@ -63,6 +63,23 @@ public enum JSONValue: Sendable, Equatable, Decodable {
         }
     }
 
+    public var number: Double? {
+        switch self {
+        case .number(let n): n
+        case .string(let s): Double(s)
+        default: nil
+        }
+    }
+
+    public var bool: Bool? {
+        switch self {
+        case .bool(let b): b
+        case .number(let n): n != 0
+        case .string(let s): s == "true" || s == "1"
+        default: nil
+        }
+    }
+
     /// Elementi: un array resta tale, un valore singolo diventa un array di un elemento.
     public var list: [JSONValue] {
         switch self {

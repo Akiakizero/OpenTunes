@@ -82,6 +82,13 @@ final class NotchController {
                 self?.updateScreen()
             }
         })
+        // Dopo la sospensione lo schermo con il notch può essere cambiato (monitor esterno, coperchio chiuso).
+        observers.append(Task { [weak self] in
+            for await _ in NSWorkspace.shared.notificationCenter.notifications(named: NSWorkspace.didWakeNotification) {
+                self?.updateScreen()
+                self?.settle()
+            }
+        })
         notchTasks = observers
 
         // Il mouse si segue con i monitor: il pannello ignora i clic finché non è sopra la forma.
@@ -114,8 +121,11 @@ final class NotchController {
 
     private func updateScreen() {
         guard let panel, let presentation, let screen = NotchGeometry.preferredScreen() else { return }
-        presentation.geometry = NotchGeometry(screen: screen)
-        panel.setFrame(presentation.geometry.panelFrame, display: true)
+        let geometry = NotchGeometry(screen: screen)
+        guard geometry != presentation.geometry || panel.frame != geometry.panelFrame else { return }
+        presentation.geometry = geometry
+        panel.setFrame(geometry.panelFrame, display: true)
+        panel.orderFrontRegardless()
     }
 
     // MARK: Stati
@@ -172,7 +182,7 @@ final class NotchController {
         guard let panel, let presentation else { return nil }
         var local = presentation.shapeFrame
         if presentation.geometry.hasNotch {
-            local.origin.x += NotchPlayerView.horizontalOffset(for: presentation.state)
+            local.origin.x += NotchPlayerView.horizontalOffset(for: presentation.state, notchHeight: presentation.geometry.notchSize.height)
         }
         return NotchGeometry.hitRect(local: local, panelFrame: panel.frame)
     }

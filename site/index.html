@@ -1,0 +1,48 @@
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>OpenTunes — il brano in riproduzione, ovunque sul tuo Mac</title>
+  <meta name="description" content="App macOS open source (GPL-3.0) per il brano in riproduzione: menu bar, notch, finestra flottante, widget, testi sincronizzati e scrobbling Last.fm e ListenBrainz.">
+  <style>
+    :root { color-scheme: light dark; --fg: #1d1d1f; --muted: #6e6e73; --bg: #fbfbfd; --accent: #e8467c; }
+    @media (prefers-color-scheme: dark) { :root { --fg: #f5f5f7; --muted: #a1a1a6; --bg: #0b0b0d; } }
+    body { margin: 0; font: 17px/1.5 -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif; color: var(--fg); background: var(--bg); }
+    main { max-width: 860px; margin: 0 auto; padding: 64px 24px; }
+    h1 { font-size: 48px; line-height: 1.1; margin: 0 0 12px; letter-spacing: -0.02em; }
+    p.lead { font-size: 21px; color: var(--muted); margin: 0 0 32px; }
+    .actions { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 48px; }
+    .button { display: inline-block; padding: 12px 22px; border-radius: 999px; text-decoration: none; font-weight: 600; }
+    .primary { background: var(--accent); color: white; }
+    .secondary { border: 1px solid var(--muted); color: var(--fg); }
+    code { font: 15px ui-monospace, SFMono-Regular, Menlo, monospace; background: rgba(127,127,127,.15); padding: 2px 6px; border-radius: 6px; }
+    img { max-width: 100%; border-radius: 16px; }
+    ul { padding-left: 20px; }
+    li { margin: 6px 0; }
+    footer { color: var(--muted); font-size: 14px; margin-top: 64px; }
+  </style>
+</head>
+<body>
+<main>
+  <h1>OpenTunes</h1>
+  <p class="lead">Il brano in riproduzione, ovunque sul tuo Mac: menu bar, notch, finestra flottante e widget. Software libero, senza account.</p>
+  <div class="actions">
+    <a class="button primary" href="https://github.com/Akiakizero/OpenTunes/releases/latest">Scarica per macOS 26+</a>
+    <a class="button secondary" href="https://github.com/Akiakizero/OpenTunes">Codice su GitHub</a>
+  </div>
+  <p>Con Homebrew: <code>brew install --cask akiakizero/tap/opentunes</code></p>
+  <img src="media/opentunes-fase1.gif" alt="Menu bar, popover e finestra flottante di OpenTunes">
+  <h2>Cosa fa</h2>
+  <ul>
+    <li>Apple Music, Spotify, YouTube nel browser e qualsiasi player che pubblica il Now Playing di sistema.</li>
+    <li>Menu bar, popover, finestra flottante, player nel notch, widget sulla scrivania e widget di macOS: ognuno si può spegnere.</li>
+    <li>Testi sincronizzati da LRCLIB, link universale song.link, uscita audio e volume del player.</li>
+    <li>Scrobbling su Last.fm e ListenBrainz con coda offline, love, top album esportabili, artisti e brani simili.</li>
+    <li>Vetro di sistema (Liquid Glass) con la tinta della copertina, o temi monocromo, trasparente e opaco.</li>
+  </ul>
+  <footer>OpenTunes è distribuito con licenza GPL-3.0-or-later. Non è affiliato ad Apple, Spotify, Last.fm o NepTunes.</footer>
+</main>
+</body>
+</html>

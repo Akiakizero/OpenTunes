@@ -1,0 +1,18 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+name: Proponi un tema
+description: Un tema JSON per la cartella themes/
+labels: [theme]
+body:
+  - type: textarea
+    id: json
+    attributes:
+      label: File del tema
+      description: Il JSON esportato da Impostazioni › Integrazioni › Temi (vedi themes/README.md).
+      render: json
+    validations:
+      required: true
+  - type: textarea
+    id: screenshot
+    attributes:
+      label: Screenshot
+      description: Finestra flottante e popover con il tema attivo.

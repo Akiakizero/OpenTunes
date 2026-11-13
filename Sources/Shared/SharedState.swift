@@ -37,6 +37,8 @@ struct WidgetState: Codable, Equatable, Sendable {
     var lastFMUser: String?
     var recentTracks: [Entry] = []
     var topArtists: [Artist] = []
+    /// `true` se l'utente ha spento i widget nelle impostazioni (opzionale: gli stati salvati prima non lo hanno).
+    var isDisabled: Bool?
 
     var hasTrack: Bool { title != nil }
 
@@ -55,18 +57,63 @@ struct WidgetState: Codable, Equatable, Sendable {
     }
 
     static let empty = WidgetState()
+
+    /// Stato scritto quando l'utente spegne i widget: nessun dato del brano.
+    static var disabled: WidgetState {
+        var state = WidgetState()
+        state.isDisabled = true
+        return state
+    }
 }
 
-/// Cartella dell'App Group condivisa da app e widget.
+/// Cartella condivisa da app e widget.
+///
+/// Con una build firmata con un Team ID è l'App Group (`<TEAM>.org.opentunes.shared`). Con la firma ad-hoc l'App Group
+/// non ha il prefisso del team e macOS non lo autorizza: il widget in sandbox non lo vede (e l'app riceverebbe la richiesta
+/// «accedere ai dati di altre app»). In quel caso si usa `~/Library/Application Support/OpenTunes/Widget/`, che il widget
+/// legge grazie all'eccezione di sola lettura `temporary-exception.files.home-relative-path.read-only` nei suoi entitlement.
 enum SharedContainer {
     /// Identificatore dell'App Group, dall'Info.plist (impostato in `project.yml`).
     static var groupID: String? {
         Bundle.main.object(forInfoDictionaryKey: "OpenTunesAppGroup") as? String
     }
 
+    /// Nome dell'App Group senza prefisso del team: la build è ad-hoc.
+    static let unprefixedGroupID = "org.opentunes.shared"
+
+    /// Percorso della cartella di ripiego, relativo alla home (lo stesso negli entitlement del widget).
+    static let fallbackRelativePath = "Library/Application Support/OpenTunes/Widget"
+
+    static var usesAppGroup: Bool {
+        guard let groupID, !groupID.isEmpty else { return false }
+        return groupID != unprefixedGroupID
+    }
+
     static var url: URL? {
-        guard let groupID, !groupID.isEmpty else { return nil }
-        return FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: groupID)
+        if usesAppGroup, let groupID,
+            let url = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: groupID) {
+            return url
+        }
+        return fallbackURL
+    }
+
+    /// Cartella nella home reale dell'utente: in sandbox `NSHomeDirectory()` è il container del widget.
+    static var fallbackURL: URL? {
+        guard let home = realHomeDirectory else { return nil }
+        return URL(filePath: home, directoryHint: .isDirectory).appending(path: fallbackRelativePath, directoryHint: .isDirectory)
+    }
+
+    private static var realHomeDirectory: String? {
+        guard let entry = getpwuid(getuid()), let dir = entry.pointee.pw_dir else { return nil }
+        return String(cString: dir)
+    }
+
+    /// Crea la cartella se manca (solo l'app: il widget ha accesso in sola lettura).
+    @discardableResult
+    static func prepare() -> URL? {
+        guard let url else { return nil }
+        try? FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
+        return url
     }
 
     static var stateURL: URL? { url?.appending(path: "widget-state.json") }

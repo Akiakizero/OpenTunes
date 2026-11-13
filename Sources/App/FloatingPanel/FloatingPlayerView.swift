@@ -15,6 +15,7 @@ struct FloatingPlayerView: View {
                 switch model.settings.floatingSize {
                 case .compact: compact(track)
                 case .large: large(track)
+                case .focus: focus(track)
                 }
             } else {
                 idle
@@ -49,7 +50,27 @@ struct FloatingPlayerView: View {
     private func large(_ track: Track) -> some View {
         let width = DesignSystem.Size.floatingLarge.width - 2 * DesignSystem.Spacing.l
         return VStack(alignment: .leading, spacing: DesignSystem.Spacing.m) {
-            ArtworkView(image: model.artwork, identity: track.artworkHash, size: width, cornerRadius: DesignSystem.Radius.large)
+            Group {
+                if model.floatingShowsLyrics {
+                    LyricsView(model: model)
+                        .frame(width: width, height: width)
+                        .transition(.opacity)
+                } else {
+                    ArtworkView(image: model.artwork, identity: track.artworkHash, size: width, cornerRadius: DesignSystem.Radius.large)
+                        .overlay(alignment: .bottomTrailing) {
+                            if model.settings.visualizerEnabled {
+                                VisualizerBars(isPlaying: model.playback.isPlaying, colors: model.visualizerColors, levels: model.spectrumLevels)
+                                    .frame(width: DesignSystem.Size.visualizer.width, height: DesignSystem.Size.visualizer.height)
+                                    .padding(DesignSystem.Spacing.s)
+                                    .surfaceGlass(tint: nil, cornerRadius: DesignSystem.Radius.small)
+                                    .padding(DesignSystem.Spacing.s)
+                                    .transition(.opacity)
+                            }
+                        }
+                        .transition(.opacity)
+                }
+            }
+            .animation(DesignSystem.Motion.artworkChange, value: model.floatingShowsLyrics)
             HStack(alignment: .center, spacing: DesignSystem.Spacing.s) {
                 VStack(alignment: .leading, spacing: DesignSystem.Spacing.xxs) {
                     MarqueeText(text: track.title, font: DesignSystem.Typography.title, maxWidth: textWidth(compact: false))
@@ -59,6 +80,15 @@ struct FloatingPlayerView: View {
                         .lineLimit(1)
                 }
                 Spacer(minLength: 0)
+                if model.settings.lyricsEnabled {
+                    Button { model.floatingShowsLyrics.toggle() } label: {
+                        Image(systemName: model.floatingShowsLyrics ? "quote.bubble.fill" : "quote.bubble")
+                            .contentTransition(.symbolEffect(.replace))
+                    }
+                    .buttonStyle(.glass)
+                    .help(model.floatingShowsLyrics ? "Mostra la copertina" : "Mostra il testo")
+                    .accessibilityLabel(model.floatingShowsLyrics ? "Mostra la copertina" : "Mostra il testo")
+                }
                 if model.canLove {
                     Button { model.toggleLove() } label: {
                         Image(systemName: model.isLoved ? "heart.fill" : "heart")
@@ -89,6 +119,31 @@ struct FloatingPlayerView: View {
         .padding(DesignSystem.Spacing.l)
     }
 
+    /// Modalità focus: copertina grande a sinistra con titolo e controlli, testo sincronizzato a destra.
+    private func focus(_ track: Track) -> some View {
+        let side = DesignSystem.Size.focusArtwork
+        return HStack(alignment: .top, spacing: DesignSystem.Spacing.l) {
+            VStack(alignment: .leading, spacing: DesignSystem.Spacing.s) {
+                ArtworkView(image: model.artwork, identity: track.artworkHash, size: side, cornerRadius: DesignSystem.Radius.large)
+                MarqueeText(text: track.title, font: DesignSystem.Typography.title, maxWidth: side)
+                Text(track.artist ?? " ")
+                    .font(DesignSystem.Typography.subtitle)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+                PlaybackControls(variant: .standard, isPlaying: model.playback.isPlaying) { model.perform($0) }
+                    .frame(width: side)
+            }
+            .frame(width: side)
+            if model.settings.lyricsEnabled {
+                LyricsView(model: model)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else {
+                ContentUnavailableView("Testi spenti", systemImage: "quote.bubble", description: Text("Accendili in Impostazioni › Funzioni."))
+            }
+        }
+        .padding(DesignSystem.Spacing.l)
+    }
+
     private var idle: some View {
         VStack(spacing: DesignSystem.Spacing.s) {
             Image(systemName: "music.note").font(.title).foregroundStyle(.secondary)
@@ -104,8 +159,8 @@ struct FloatingPlayerView: View {
             let controls = 3 * DesignSystem.Size.control + 2 * DesignSystem.Spacing.l
             return size.width - artwork - controls - 4 * DesignSystem.Spacing.m
         }
-        // Larghezza meno margini e pulsanti love e "Altro".
-        return DesignSystem.Size.floatingLarge.width - 2 * DesignSystem.Spacing.l - 2 * (DesignSystem.Size.control + DesignSystem.Spacing.s)
+        // Larghezza meno margini e pulsanti testo, love e "Altro".
+        return DesignSystem.Size.floatingLarge.width - 2 * DesignSystem.Spacing.l - 3 * (DesignSystem.Size.control + DesignSystem.Spacing.s)
     }
 
     @ViewBuilder private var menuItems: some View {
@@ -124,6 +179,7 @@ struct FloatingPlayerView: View {
         }
         Divider()
         Button("Nascondi finestra") { model.settings.floatingVisible = false }
+        Button("Disattiva la finestra flottante") { model.settings.setEnabled(.floating, false) }
     }
 }
 

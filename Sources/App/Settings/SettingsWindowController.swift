@@ -28,13 +28,14 @@ final class SettingsWindowController {
         tabs.tabStyle = .toolbar
         tabs.canPropagateSelectedChildViewControllerTitle = true
         let openDebug: () -> Void = { [weak self] in self?.onOpenDebug() }
-        add(GeneralSettingsView(model: model), title: "Generali", symbol: "gearshape", to: tabs)
-        add(MenuBarSettingsView(model: model), title: "Menu bar", symbol: "menubar.rectangle", to: tabs)
-        add(PositionSettingsView(model: model), title: "Posizione", symbol: "macwindow.on.rectangle", to: tabs)
-        add(SurfacesSettingsView(model: model), title: "Superfici", symbol: "rectangle.3.group", to: tabs)
-        add(ScrobblingSettingsView(model: model), title: "Scrobbling", symbol: "dot.radiowaves.up.forward", to: tabs)
-        add(ShortcutsSettingsView(), title: "Scorciatoie", symbol: "keyboard", to: tabs)
-        add(OtherSettingsView(model: model, onOpenDebug: openDebug), title: "Altro", symbol: "ellipsis.circle", to: tabs)
+        add(GeneralSettingsView(model: model), title: String(localized: "Generali"), symbol: "gearshape", to: tabs)
+        add(MenuBarSettingsView(model: model), title: String(localized: "Menu bar"), symbol: "menubar.rectangle", to: tabs)
+        add(SurfacesSettingsView(model: model), title: String(localized: "Superfici"), symbol: "rectangle.3.group", to: tabs)
+        add(FeaturesSettingsView(model: model), title: String(localized: "Funzioni"), symbol: "switch.2", to: tabs)
+        add(ScrobblingSettingsView(model: model), title: String(localized: "Scrobbling"), symbol: "dot.radiowaves.up.forward", to: tabs)
+        add(IntegrationsSettingsView(model: model), title: String(localized: "Integrazioni"), symbol: "puzzlepiece.extension", to: tabs)
+        add(ShortcutsSettingsView(), title: String(localized: "Scorciatoie"), symbol: "keyboard", to: tabs)
+        add(OtherSettingsView(model: model, onOpenDebug: openDebug), title: String(localized: "Altro"), symbol: "ellipsis.circle", to: tabs)
 
         let window = NSWindow(contentViewController: tabs)
         window.styleMask = [.titled, .closable]

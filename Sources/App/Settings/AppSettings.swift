@@ -12,10 +12,10 @@ enum MenuBarElement: String, CaseIterable, Codable, Identifiable, Sendable {
 
     var label: String {
         switch self {
-        case .artwork: "Copertina"
-        case .title: "Titolo e artista"
-        case .controls: "Pulsanti"
-        case .love: "Love (Last.fm / Musica)"
+        case .artwork: String(localized: "Copertina")
+        case .title: String(localized: "Titolo e artista")
+        case .controls: String(localized: "Pulsanti")
+        case .love: String(localized: "Love (Last.fm / Musica)")
         }
     }
 
@@ -31,14 +31,14 @@ enum MouseAction: String, CaseIterable, Identifiable, Sendable {
 
     var label: String {
         switch self {
-        case .openPopover: "Apri il player"
-        case .playPause: "Play/pausa"
-        case .nextTrack: "Brano successivo"
-        case .previousTrack: "Brano precedente"
-        case .quickMenu: "Menu rapido"
-        case .toggleFloatingWindow: "Mostra/nascondi finestra flottante"
-        case .love: "Love"
-        case .none: "Niente"
+        case .openPopover: String(localized: "Apri il player")
+        case .playPause: String(localized: "Play/pausa")
+        case .nextTrack: String(localized: "Brano successivo")
+        case .previousTrack: String(localized: "Brano precedente")
+        case .quickMenu: String(localized: "Menu rapido")
+        case .toggleFloatingWindow: String(localized: "Mostra/nascondi finestra flottante")
+        case .love: String(localized: "Love")
+        case .none: String(localized: "Niente")
         }
     }
 }
@@ -51,18 +51,26 @@ enum ScrollAction: String, CaseIterable, Identifiable, Sendable {
 
     var label: String {
         switch self {
-        case .volume: "Volume"
-        case .seek: "Avanti/indietro nel brano"
-        case .none: "Niente"
+        case .volume: String(localized: "Volume")
+        case .seek: String(localized: "Avanti/indietro nel brano")
+        case .none: String(localized: "Niente")
         }
     }
 }
 
 enum FloatingSize: String, CaseIterable, Identifiable, Sendable {
     case compact, large
+    /// Modalità focus: copertina e testo grandi, uno accanto all'altro.
+    case focus
 
     var id: String { rawValue }
-    var label: String { self == .compact ? "Compatta" : "Grande" }
+    var label: String {
+        switch self {
+        case .compact: String(localized: "Compatta")
+        case .large: String(localized: "Grande")
+        case .focus: String(localized: "Focus (copertina e testo)")
+        }
+    }
 }
 
 /// Layout del widget live sulla scrivania.
@@ -73,9 +81,9 @@ enum DesktopWidgetLayout: String, CaseIterable, Identifiable, Sendable {
 
     var label: String {
         switch self {
-        case .card: "Scheda (copertina sopra)"
-        case .horizontal: "Orizzontale"
-        case .artwork: "Solo copertina"
+        case .card: String(localized: "Scheda (copertina sopra)")
+        case .horizontal: String(localized: "Orizzontale")
+        case .artwork: String(localized: "Solo copertina")
         }
     }
 }
@@ -87,9 +95,9 @@ enum NotificationMode: String, CaseIterable, Identifiable, Sendable {
 
     var label: String {
         switch self {
-        case .off: "Mai"
-        case .always: "Sempre"
-        case .whenFloatingHidden: "Solo se la finestra flottante è nascosta"
+        case .off: String(localized: "Mai")
+        case .always: String(localized: "Sempre")
+        case .whenFloatingHidden: String(localized: "Solo se la finestra flottante è nascosta")
         }
     }
 }
@@ -101,9 +109,46 @@ enum HUDPosition: String, CaseIterable, Identifiable, Sendable {
 
     var label: String {
         switch self {
-        case .bottom: "In basso al centro"
-        case .center: "Al centro"
-        case .topRight: "In alto a destra"
+        case .bottom: String(localized: "In basso al centro")
+        case .center: String(localized: "Al centro")
+        case .topRight: String(localized: "In alto a destra")
+        }
+    }
+}
+
+/// Superfici dell'app, ognuna attivabile o disattivabile in modo permanente dalle impostazioni.
+enum Surface: String, CaseIterable, Identifiable, Sendable {
+    case menuBar, notch, floating, desktopWidget, systemWidget
+
+    var id: String { rawValue }
+
+    var label: String {
+        switch self {
+        case .menuBar: String(localized: "Menu bar")
+        case .notch: String(localized: "Notch")
+        case .floating: String(localized: "Finestra flottante")
+        case .desktopWidget: String(localized: "Widget sulla scrivania")
+        case .systemWidget: String(localized: "Widget di macOS")
+        }
+    }
+
+    var symbol: String {
+        switch self {
+        case .menuBar: "menubar.rectangle"
+        case .notch: "macbook"
+        case .floating: "pip"
+        case .desktopWidget: "rectangle.on.rectangle"
+        case .systemWidget: "square.grid.2x2"
+        }
+    }
+
+    var summary: String {
+        switch self {
+        case .menuBar: String(localized: "Titolo, copertina e controlli in alto a destra, con il player completo al clic.")
+        case .notch: String(localized: "Copertina ai lati del notch, player completo passandoci sopra.")
+        case .floating: String(localized: "Mini player sempre in primo piano, da mostrare con una scorciatoia o dal menu.")
+        case .desktopWidget: String(localized: "Player live sullo sfondo, sotto le finestre.")
+        case .systemWidget: String(localized: "Widget «In riproduzione» del Centro notifiche e della scrivania.")
         }
     }
 }
@@ -115,6 +160,79 @@ final class AppSettings {
     @ObservationIgnored private let defaults: UserDefaults
     /// `false` per anteprime: le modifiche restano in memoria.
     @ObservationIgnored private let persists: Bool
+
+    // MARK: Superfici
+
+    /// Elemento in menu bar. Spento, le impostazioni si aprono riaprendo l'app dal Finder o da Spotlight.
+    var menuBarEnabled: Bool { didSet { save(menuBarEnabled, "menuBarEnabled") } }
+    /// Finestra flottante disponibile: spenta, scorciatoie e menu non la mostrano più.
+    var floatingEnabled: Bool { didSet { save(floatingEnabled, "floatingEnabled") } }
+    /// Widget WidgetKit: spento, l'app non scrive più lo stato e i widget mostrano che sono disattivati.
+    var systemWidgetEnabled: Bool { didSet { save(systemWidgetEnabled, "systemWidgetEnabled") } }
+
+    // MARK: Aspetto
+
+    var theme: SurfaceTheme { didSet { save(theme.rawValue, "theme") } }
+    /// File del tema personalizzato (JSON già validato), usato con `theme == .custom`.
+    var customThemeJSON: String { didSet { save(customThemeJSON, "customThemeJSON") } }
+    /// Barre animate al posto dell'indicatore di riproduzione (notch e finestra flottante).
+    var visualizerEnabled: Bool { didSet { save(visualizerEnabled, "visualizerEnabled") } }
+
+    /// Il visualizer segue l'audio reale (process tap): spento, è solo un'animazione e non serve alcun permesso.
+    var visualizerUsesAudio: Bool { didSet { save(visualizerUsesAudio, "visualizerUsesAudio") } }
+
+    // MARK: Funzioni (ognuna si può spegnere)
+
+    /// Brani ascoltati di recente nel popover.
+    var showsRecentTracks: Bool { didSet { save(showsRecentTracks, "showsRecentTracks") } }
+    /// Scheda Last.fm (profilo, recenti, top artisti) nel popover.
+    var showsLastFMProfile: Bool { didSet { save(showsLastFMProfile, "showsLastFMProfile") } }
+    /// Pulsante love (Last.fm / preferito di Musica) in popover, finestra flottante, menu e widget.
+    var loveEnabled: Bool { didSet { save(loveEnabled, "loveEnabled") } }
+    /// Stelle, dislike e «Aggiungi alla libreria» per i brani di Musica.
+    var musicActionsEnabled: Bool { didSet { save(musicActionsEnabled, "musicActionsEnabled") } }
+    /// «Passa a…» per cambiare player tra Musica e Spotify.
+    var switchPlayerEnabled: Bool { didSet { save(switchPlayerEnabled, "switchPlayerEnabled") } }
+    /// Link universale song.link e menu Condividi.
+    var shareLinksEnabled: Bool { didSet { save(shareLinksEnabled, "shareLinksEnabled") } }
+    /// Finestra «Scopri» (top album, simili) da Last.fm.
+    var discoverEnabled: Bool { didSet { save(discoverEnabled, "discoverEnabled") } }
+    /// Cursore del volume di sistema nel popover.
+    var showsSystemVolume: Bool { didSet { save(showsSystemVolume, "showsSystemVolume") } }
+    /// Scelta dell'uscita audio nel popover.
+    var showsAudioOutput: Bool { didSet { save(showsAudioOutput, "showsAudioOutput") } }
+    /// Volume interno di Musica e Spotify nel popover.
+    var showsPlayerVolume: Bool { didSet { save(showsPlayerVolume, "showsPlayerVolume") } }
+    /// Pulsante «Apri <player>» nel popover e nel menu.
+    var showsOpenPlayer: Bool { didSet { save(showsOpenPlayer, "showsOpenPlayer") } }
+    /// Stato dello scrobbling ed errori sotto i controlli.
+    var showsScrobbleStatus: Bool { didSet { save(showsScrobbleStatus, "showsScrobbleStatus") } }
+    /// Scorciatoie da tastiera globali.
+    var hotkeysEnabled: Bool { didSet { save(hotkeysEnabled, "hotkeysEnabled") } }
+
+    // MARK: Integrazioni (fase 5)
+
+    /// Discord Rich Presence (spenta di default: serve Discord aperto e un'applicazione Discord).
+    var discordEnabled: Bool { didSet { save(discordEnabled, "discordEnabled") } }
+    /// ID dell'applicazione Discord personale (vuoto = quella del progetto, se presente nella build).
+    var discordApplicationID: String { didSet { save(discordApplicationID, "discordApplicationID") } }
+    /// Comandi via URL `opentunes://…` (CLI, Raycast, Alfred, BetterTouchTool, Keyboard Maestro).
+    var urlCommandsEnabled: Bool { didSet { save(urlCommandsEnabled, "urlCommandsEnabled") } }
+    /// Comandi Rapidi, Siri e Spotlight (App Intents).
+    var appIntentsEnabled: Bool { didSet { save(appIntentsEnabled, "appIntentsEnabled") } }
+    /// Statistiche di ascolto locali (dal database della cronologia, senza Last.fm).
+    var statisticsEnabled: Bool { didSet { save(statisticsEnabled, "statisticsEnabled") } }
+    /// Controllo da MIDI (note e Control Change verso play/pausa, successivo, precedente).
+    var midiEnabled: Bool { didSet { save(midiEnabled, "midiEnabled") } }
+    /// Nota MIDI per ogni azione (la prima nota premuta in modalità «impara» si salva qui).
+    var midiMappings: [String: Int] { didSet { save(midiMappings, "midiMappings") } }
+
+    // MARK: Testi e condivisione
+
+    /// Cerca i testi su LRCLIB quando una superficie li mostra.
+    var lyricsEnabled: Bool { didSet { save(lyricsEnabled, "lyricsEnabled") } }
+    /// Riga del testo sotto il titolo nel notch aperto.
+    var notchShowsLyrics: Bool { didSet { save(notchShowsLyrics, "notchShowsLyrics") } }
 
     // MARK: Menu bar
 
@@ -137,7 +255,6 @@ final class AppSettings {
     var floatingVisible: Bool { didSet { save(floatingVisible, "floatingVisible") } }
     var floatingSize: FloatingSize { didSet { save(floatingSize.rawValue, "floatingSize") } }
     var floatingHidesInFullScreen: Bool { didSet { save(floatingHidesInFullScreen, "floatingHidesInFullScreen") } }
-    var tintsWithArtwork: Bool { didSet { save(tintsWithArtwork, "tintsWithArtwork") } }
     var hudOnTrackChange: Bool { didSet { save(hudOnTrackChange, "hudOnTrackChange") } }
     var hudOnVolumeChange: Bool { didSet { save(hudOnVolumeChange, "hudOnVolumeChange") } }
     var hudPosition: HUDPosition { didSet { save(hudPosition.rawValue, "hudPosition") } }
@@ -172,6 +289,8 @@ final class AppSettings {
 
     var lastFMEnabled: Bool { didSet { save(lastFMEnabled, "lastFMEnabled") } }
     var listenBrainzEnabled: Bool { didSet { save(listenBrainzEnabled, "listenBrainzEnabled") } }
+    /// Server compatibile con ListenBrainz (Maloja, istanza propria); vuoto = listenbrainz.org.
+    var listenBrainzServer: String { didSet { save(listenBrainzServer, "listenBrainzServer") } }
     /// Chiave personale Last.fm (la secret sta nel Portachiavi).
     var lastFMUsesCustomKey: Bool { didSet { save(lastFMUsesCustomKey, "lastFMUsesCustomKey") } }
     var lastFMCustomAPIKey: String { didSet { save(lastFMCustomAPIKey, "lastFMCustomAPIKey") } }
@@ -213,10 +332,46 @@ final class AppSettings {
         rightClick = Self.value(defaults, "rightClick") ?? .quickMenu
         scrollAction = Self.value(defaults, "scrollAction") ?? .volume
 
+        menuBarEnabled = defaults.object(forKey: "menuBarEnabled") as? Bool ?? true
+        floatingEnabled = defaults.object(forKey: "floatingEnabled") as? Bool ?? true
+        systemWidgetEnabled = defaults.object(forKey: "systemWidgetEnabled") as? Bool ?? true
+        // Prima della fase 4 c'era solo «Colora con la tinta della copertina»: spenta equivale al tema monocromo.
+        theme = Self.value(defaults, "theme")
+            ?? ((defaults.object(forKey: "tintsWithArtwork") as? Bool ?? true) ? .artwork : .monochrome)
+        visualizerEnabled = defaults.object(forKey: "visualizerEnabled") as? Bool ?? true
+        let savedTheme = defaults.string(forKey: "customThemeJSON") ?? ""
+        customThemeJSON = savedTheme
+        if let data = savedTheme.data(using: .utf8), let custom = try? CustomTheme.decode(data) {
+            CustomTheme.active = custom
+        }
+        visualizerUsesAudio = defaults.object(forKey: "visualizerUsesAudio") as? Bool ?? true
+        lyricsEnabled = defaults.object(forKey: "lyricsEnabled") as? Bool ?? true
+        func flag(_ key: String, _ fallback: Bool = true) -> Bool { defaults.object(forKey: key) as? Bool ?? fallback }
+        showsRecentTracks = flag("showsRecentTracks")
+        showsLastFMProfile = flag("showsLastFMProfile")
+        loveEnabled = flag("loveEnabled")
+        musicActionsEnabled = flag("musicActionsEnabled")
+        switchPlayerEnabled = flag("switchPlayerEnabled")
+        shareLinksEnabled = flag("shareLinksEnabled")
+        discoverEnabled = flag("discoverEnabled")
+        showsSystemVolume = flag("showsSystemVolume")
+        showsAudioOutput = flag("showsAudioOutput")
+        showsPlayerVolume = flag("showsPlayerVolume")
+        showsOpenPlayer = flag("showsOpenPlayer")
+        showsScrobbleStatus = flag("showsScrobbleStatus")
+        hotkeysEnabled = flag("hotkeysEnabled")
+        discordEnabled = flag("discordEnabled", false)
+        discordApplicationID = defaults.string(forKey: "discordApplicationID") ?? ""
+        urlCommandsEnabled = flag("urlCommandsEnabled")
+        appIntentsEnabled = flag("appIntentsEnabled")
+        statisticsEnabled = flag("statisticsEnabled")
+        midiEnabled = flag("midiEnabled", false)
+        midiMappings = defaults.dictionary(forKey: "midiMappings") as? [String: Int] ?? [:]
+        notchShowsLyrics = defaults.object(forKey: "notchShowsLyrics") as? Bool ?? true
+
         floatingVisible = defaults.bool(forKey: "floatingVisible")
         floatingSize = Self.value(defaults, "floatingSize") ?? .large
         floatingHidesInFullScreen = defaults.object(forKey: "floatingHidesInFullScreen") as? Bool ?? true
-        tintsWithArtwork = defaults.object(forKey: "tintsWithArtwork") as? Bool ?? true
         // HUD e notifiche al cambio brano sono opzionali: spenti finché l'utente non li attiva.
         hudOnTrackChange = defaults.object(forKey: "hudOnTrackChange") as? Bool ?? false
         hudOnVolumeChange = defaults.object(forKey: "hudOnVolumeChange") as? Bool ?? true
@@ -239,6 +394,7 @@ final class AppSettings {
 
         lastFMEnabled = defaults.object(forKey: "lastFMEnabled") as? Bool ?? true
         listenBrainzEnabled = defaults.object(forKey: "listenBrainzEnabled") as? Bool ?? true
+        listenBrainzServer = defaults.string(forKey: "listenBrainzServer") ?? ""
         lastFMUsesCustomKey = defaults.bool(forKey: "lastFMUsesCustomKey")
         lastFMCustomAPIKey = defaults.string(forKey: "lastFMCustomAPIKey") ?? ""
         scrobblePercent = defaults.object(forKey: "scrobblePercent") as? Double ?? 50
@@ -254,6 +410,46 @@ final class AppSettings {
         syncsLoveWithMusic = defaults.object(forKey: "syncsLoveWithMusic") as? Bool ?? true
         showsQueueIndicator = defaults.object(forKey: "showsQueueIndicator") as? Bool ?? true
     }
+
+    /// Importa un tema JSON (validato) e lo attiva.
+    func importTheme(_ data: Data) throws {
+        let custom = try CustomTheme.decode(data)
+        CustomTheme.active = custom
+        customThemeJSON = String(decoding: try custom.encoded(), as: UTF8.self)
+        // Riassegnare il tema avvisa le superfici anche se era già «Personalizzato».
+        theme = .custom
+    }
+
+    /// La tinta della copertina si usa solo con il tema «Tinta dalla copertina».
+    var tintsWithArtwork: Bool { theme.usesArtworkTint }
+
+    func isEnabled(_ surface: Surface) -> Bool {
+        switch surface {
+        case .menuBar: menuBarEnabled
+        case .notch: notchEnabled
+        case .floating: floatingEnabled
+        case .desktopWidget: desktopWidgetVisible
+        case .systemWidget: systemWidgetEnabled
+        }
+    }
+
+    func setEnabled(_ surface: Surface, _ enabled: Bool) {
+        switch surface {
+        case .menuBar: menuBarEnabled = enabled
+        case .notch: notchEnabled = enabled
+        case .floating:
+            floatingEnabled = enabled
+            if !enabled { floatingVisible = false }
+        case .desktopWidget: desktopWidgetVisible = enabled
+        case .systemWidget: systemWidgetEnabled = enabled
+        }
+    }
+
+    /// La finestra flottante è sullo schermo: abilitata e mostrata.
+    var showsFloatingWindow: Bool { floatingEnabled && floatingVisible }
+
+    /// Superfici attive da cui si raggiunge il player (per avvisare se si spengono tutte).
+    var hasInteractiveSurface: Bool { menuBarEnabled || notchEnabled || showsFloatingWindow || desktopWidgetVisible }
 
     /// Regole di scrobbling scelte dall'utente.
     var scrobbleRules: ScrobbleRules {

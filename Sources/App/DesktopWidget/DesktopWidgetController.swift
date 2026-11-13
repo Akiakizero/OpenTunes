@@ -5,12 +5,14 @@ import SwiftUI
 
 /// Finestra senza bordi a livello della scrivania: sopra lo sfondo e le icone, sotto tutte le altre finestre.
 ///
-/// Sotto le icone del Finder i clic finirebbero alla scrivania: per avere controlli usabili il widget
-/// sta un livello sopra le icone. Con `.stationary` resta fermo con Mission Control e «Mostra scrivania».
+/// Sotto le icone del Finder i clic finirebbero alla scrivania: per avere controlli usabili il widget sta sopra le icone,
+/// allo stesso livello dei widget di macOS (icone + 2). A icone + 1 su macOS 27 il Window Server tiene una finestra
+/// a tutto schermo («underbelly») davanti al widget, che così non si vede. Con `.stationary` resta fermo con
+/// Mission Control e «Mostra scrivania».
 final class DesktopWidgetWindow: NSWindow {
     init() {
         super.init(contentRect: .zero, styleMask: [.borderless, .resizable], backing: .buffered, defer: true)
-        level = NSWindow.Level(rawValue: Int(CGWindowLevelForKey(.desktopIconWindow)) + 1)
+        level = DesktopWidgetWindow.level
         collectionBehavior = [.canJoinAllSpaces, .stationary, .ignoresCycle, .fullScreenNone]
         backgroundColor = .clear
         isOpaque = false
@@ -19,6 +21,9 @@ final class DesktopWidgetWindow: NSWindow {
         isMovableByWindowBackground = true
         animationBehavior = .none
     }
+
+    /// Livello dei widget di macOS sulla scrivania.
+    static let level = NSWindow.Level(rawValue: Int(CGWindowLevelForKey(.desktopIconWindow)) + 2)
 
     // Key per slider e menu contestuale; non diventa mai main (non ruba il focus alle app).
     override var canBecomeKey: Bool { true }
@@ -99,7 +104,9 @@ final class DesktopWidgetController: NSObject, NSWindowDelegate {
             self?.applyLayout()
         })
         tasks.append(observeChanges({ settings.desktopWidgetLocked }) { [weak self] _ in self?.applyLock() })
-        tasks.append(observeChanges({ [model] in model.tint?.dominant }) { [weak self] _ in self?.applyTint() })
+        tasks.append(observeChanges({ [model] in "\(model.tint?.dominant.r ?? -1)\(model.tint?.dominant.g ?? -1)\(model.tint?.dominant.b ?? -1)\(model.settings.theme.rawValue)" }) {
+            [weak self] _ in self?.applyTint()
+        })
         tasks.append(Task { [weak self] in
             for await _ in NotificationCenter.default.notifications(named: NSApplication.didChangeScreenParametersNotification) {
                 self?.restoreFrame()
@@ -153,7 +160,7 @@ final class DesktopWidgetController: NSObject, NSWindowDelegate {
     }
 
     private func applyTint() {
-        glass?.tintColor = model.tint?.dynamicColor(opacity: DesignSystem.glassTintOpacity)
+        glass?.apply(theme: model.settings.theme, tint: model.tint)
     }
 
     // MARK: Posizione per monitor

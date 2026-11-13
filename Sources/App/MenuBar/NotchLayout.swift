@@ -2,28 +2,122 @@
 
 import AppKit
 
-/// Decide la modalità compatta della menu bar quando lo spazio a destra del notch non basta.
-///
-/// Gli elementi della status bar crescono verso sinistra (il bordo destro resta fermo).
-/// Senza notch non serve mai la modalità compatta: se manca spazio ci pensa il sistema.
-enum NotchLayout {
-    /// Isteresi: per tornare alla modalità piena servono questi punti liberi in più.
-    static let margin: CGFloat = 8
+/// Quanto spazio occupa l'elemento in menu bar: si riduce da solo quando lo spazio non basta.
+enum MenuBarLevel: Int, CaseIterable, Comparable, Sendable {
+    /// Solo copertina (o icona).
+    case icon
+    /// Copertina e play/pausa.
+    case compact
+    /// Gli elementi scelti dall'utente (titolo, pulsanti, love…).
+    case full
 
-    /// - Parameters:
-    ///   - itemFrame: frame attuale dell'elemento (o dell'unione degli elementi) in coordinate schermo.
-    ///   - fullWidth: larghezza che avrebbe l'elemento in modalità piena.
-    ///   - notch: intervallo orizzontale occupato dal notch, `nil` se lo schermo non ce l'ha.
-    ///   - isCompact: stato corrente.
-    static func shouldBeCompact(itemFrame: CGRect, fullWidth: CGFloat, notch: ClosedRange<CGFloat>?, isCompact: Bool) -> Bool {
-        guard let notch else { return false }
-        if isCompact {
-            // Resta compatta finché la versione piena finirebbe sotto il notch.
-            let predictedMinX = itemFrame.maxX - fullWidth
-            return predictedMinX < notch.upperBound + margin
+    static func < (lhs: Self, rhs: Self) -> Bool { lhs.rawValue < rhs.rawValue }
+
+    var smaller: MenuBarLevel { MenuBarLevel(rawValue: rawValue - 1) ?? .icon }
+    var bigger: MenuBarLevel { MenuBarLevel(rawValue: rawValue + 1) ?? .full }
+
+    var label: String {
+        switch self {
+        case .icon: "icona"
+        case .compact: "compatta"
+        case .full: "piena"
         }
-        // Un elemento che non sta tutto a destra del notch è coperto o nascosto dal sistema.
-        return itemFrame.minX < notch.upperBound
+    }
+}
+
+/// Sceglie il livello dell'elemento in menu bar in modo stabile (niente salti avanti e indietro).
+///
+/// Gli elementi della status bar crescono verso sinistra: il bordo destro resta fermo.
+/// - Con il notch lo spazio si calcola: il livello più grande che finisce a destra del notch. Per salire serve
+///   `margin` in più (isteresi), così un titolo che cambia di pochi punti non fa oscillare l'elemento.
+/// - Senza notch (o se il sistema nasconde l'elemento per altri motivi, es. troppe icone o menu dell'app lunghi)
+///   lo spazio non si conosce: quando l'elemento sparisce si scende di un livello e si ricorda la larghezza che non
+///   stava. Si risale solo se la versione più grande è più stretta di quella (titolo più corto), se a destra è cambiato
+///   qualcosa o dopo `retryInterval`; mai prima di `settleTime` dall'ultimo cambio.
+struct MenuBarFit: Equatable, Sendable {
+    struct Observation: Sendable {
+        /// Bordo destro dell'elemento (o dell'unione degli elementi) in coordinate schermo.
+        var rightEdge: CGFloat
+        /// Larghezza misurata per ogni livello.
+        var widths: [MenuBarLevel: CGFloat]
+        /// Intervallo orizzontale del notch, `nil` se lo schermo non ce l'ha.
+        var notch: ClosedRange<CGFloat>?
+        /// Il sistema non mostra l'elemento (coperto, fuori schermo).
+        var isHidden: Bool
+        var now: Date
+    }
+
+    struct Failure: Equatable, Sendable {
+        var width: CGFloat
+        var rightEdge: CGFloat
+        var date: Date
+    }
+
+    static let margin: CGFloat = 8
+    static let settleTime: TimeInterval = 3
+    static let retryInterval: TimeInterval = 300
+
+    private(set) var level: MenuBarLevel = .full
+    private(set) var failure: Failure?
+    private(set) var lastChange: Date = .distantPast
+
+    init(level: MenuBarLevel = .full) {
+        self.level = level
+    }
+
+    /// Aggiorna il livello; restituisce `true` se è cambiato.
+    @discardableResult
+    mutating func update(_ observation: Observation) -> Bool {
+        let o = observation
+        let settled = o.now.timeIntervalSince(lastChange) >= Self.settleTime
+        var target = level
+        if o.isHidden {
+            // Il sistema l'ha nascosto: si scende di uno e si ricorda cosa non stava.
+            if level > .icon, o.now.timeIntervalSince(lastChange) >= 1 {
+                failure = Failure(width: o.widths[level] ?? .infinity, rightEdge: o.rightEdge, date: o.now)
+                target = level.smaller
+            }
+        } else if level < .full, settled, canTry(level.bigger, o) {
+            target = level.bigger
+        }
+        if let notch = o.notch {
+            // Il livello più grande che sta a destra del notch (con margine per salire).
+            let cap = MenuBarLevel.allCases.reversed().first { candidate in
+                let width = o.widths[candidate] ?? .infinity
+                return o.rightEdge - width >= notch.upperBound + (candidate > level ? Self.margin : 0)
+            } ?? .icon
+            if cap < target {
+                target = cap
+            } else if !o.isHidden, cap > target, canTry(cap, o) {
+                // Con il notch lo spazio è noto: si sale subito fin dove c'è posto.
+                target = cap
+            }
+        }
+        guard target != level else { return false }
+        level = target
+        lastChange = o.now
+        return true
+    }
+
+    /// Si può provare `candidate`? Sì se non è già fallita una larghezza uguale o minore nelle stesse condizioni.
+    private func canTry(_ candidate: MenuBarLevel, _ o: Observation) -> Bool {
+        guard let failure else { return true }
+        let width = o.widths[candidate] ?? .infinity
+        return width + Self.margin < failure.width
+            || abs(o.rightEdge - failure.rightEdge) > Self.margin
+            || o.now.timeIntervalSince(failure.date) >= Self.retryInterval
+    }
+
+    /// Torna alla versione piena e dimentica i fallimenti (es. modalità automatica spenta, niente in riproduzione).
+    mutating func reset() {
+        level = .full
+        failure = nil
+        lastChange = .distantPast
+    }
+
+    /// Dimentica i fallimenti senza cambiare livello (cambio di schermo: lo spazio è diverso).
+    mutating func forgetFailures() {
+        failure = nil
     }
 }
 

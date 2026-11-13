@@ -35,9 +35,35 @@ Piano per fasi in `docs/` (fase 0 = fondamenta); analisi dei progetti di riferim
   lo stato nell'App Group (`$(TeamIdentifierPrefix)org.opentunes.shared`) con `WidgetBridge`; il codice comune ai due
   target sta in `Sources/Shared` (`WidgetState`, App Intents). I pulsanti sono `AudioPlaybackIntent`: girano nel processo
   dell'app e arrivano ad `AppModel` tramite `WidgetCommandBridge`. Ricaricare i widget solo se cambia qualcosa di visibile.
-- Widget sulla scrivania in `App/DesktopWidget` (livello `desktopIconWindow + 1`, posizione per UUID del display),
+- Widget sulla scrivania in `App/DesktopWidget` (livello `desktopIconWindow + 2` come i widget di macOS: a +1 lo copre la finestra «underbelly» del Window Server; posizione per UUID del display),
   player nel notch in `App/Notch` (pannello sopra la menu bar che ignora i clic finché il mouse non è sulla forma,
   seguito con monitor globali di `mouseMoved`), copertina nel Dock in `App/Dock`.
+- Fase 4: ogni superficie si spegne in modo permanente (`Surface`, `AppSettings.isEnabled/setEnabled`); con la menu bar
+  spenta le impostazioni si aprono riaprendo l'app. Testi (`LyricsService`, LRCLIB, cache su disco) e link universale
+  (`ShareLinkService`, iTunes → Odesli) stanno in MediaCore e passano da `HTTPTransport`; `AppModel+Extras.swift` li
+  collega alle superfici insieme a uscita audio (`AudioOutput`), volume del player e risveglio dal sopore.
+  Temi in `SurfaceTheme` (DesignSystem): usare `surfaceGlass(…, theme:)` e `NSGlassEffectView.apply(theme:tint:)`.
+  Visualizer reale: `AudioSpectrum` (process tap di Core Audio + FFT, idea da cava) acceso da `AppModel.needsSpectrum`;
+  senza permesso «Registrazione audio di sistema» le barre tornano all'animazione.
+  Finestra «Scopri» (top album, simili) in `App/Discover`. Aggiornamenti con Sparkle (`App/System/Updater.swift`,
+  attivo solo con `SPARKLE_PUBLIC_KEY`, vedi `docs/aggiornamenti.md`).
+- Fase 5: integrazioni in `App/Automation`: `URLCommand` (`opentunes://…`, eseguito da `AppModel.run` o da
+  `AppDelegate` per le finestre), CLI = script `Sources/App/Resources/opentunes-cli.sh` che usa gli URL e legge
+  `now-playing.json` scritto da `CommandLineBridge`; App Intents in `OpenTunesIntents.swift` (passano da
+  `AppIntentBridge.model`, `perform` sul main actor); Discord con `DiscordIPC`/`DiscordPresence` (MediaCore, socket Unix)
+  e `DiscordController`. Statistiche: `ListeningStats` (puro, MediaCore) dalla cronologia (`TrackHistory.plays(since:)`,
+  fino a 10.000 voci, miniature solo sulle ultime 500). MIDI in `App/System/MIDIControl.swift` (CoreMIDI, UMP).
+  Temi JSON: `CustomTheme` (DesignSystem, anche nel widget) con `SurfaceTheme.custom`.
+- Ogni funzione ha un interruttore in `AppSettings` (scheda Funzioni); le viste e `AppModel` controllano il flag
+  (`canShare`, `showsMusicActions`, `switchTarget`, `discoverAction`…), non solo la vista.
+- Menu bar: `MenuBarFit` (in `NotchLayout.swift`, puro e testato) sceglie piena/compatta/icona; con il notch calcola
+  lo spazio, senza notch scende quando il sistema nasconde l'elemento e ricorda la larghezza fallita.
+- Spettro: `SpectrumAnalyzer` è un porting dell'algoritmo di `cavacore.c` (MIT, testo in CREDITS); il tap si legge
+  dall'**ultimo** buffer dell'IOProc (prima vengono gli ingressi del dispositivo, es. il microfono delle AirPods).
+- Localizzazione: catalogo unico `Sources/Shared/Localizable.xcstrings` (base italiano, inglese). Testi nelle viste
+  come letterali (`LocalizedStringKey`); etichette `String` con `String(localized:)`. Dopo aver aggiunto testi:
+  compilare e sincronizzare con `xcrun xcstringstool sync Sources/Shared/Localizable.xcstrings --stringsdata …`
+  (i `.stringsdata` sono nelle Intermediates della build), poi tradurre le chiavi nuove.
 
 ## Build
 - Requisiti: Xcode 26+, `brew install xcodegen`. Se `xcode-select` punta ai Command Line Tools:
@@ -54,7 +80,7 @@ Piano per fasi in `docs/` (fase 0 = fondamenta); analisi dei progetti di riferim
 ## Debug
 - `OPENTUNES_LOG_FILE=/percorso` (es. con `open --env`) scrive gli eventi di `NowPlayingStore` in un file,
   comprese le decisioni della modalità compatta (`[menubar]`, con frame dell'elemento e del notch).
-- `OPENTUNES_DEBUG_SHOW=popover|hud|volume|settings|desktop|notch` apre quella superficie 3 s dopo l'avvio (screenshot, GIF).
+- `OPENTUNES_DEBUG_SHOW=popover|hud|volume|settings|desktop|notch|discover|stats` apre quella superficie 3 s dopo l'avvio (screenshot, GIF).
 - `scripts/record-gif.sh <nome> <x,y,l,a> [secondi]` crea `docs/media/<nome>.gif` (sequenza di screenshot + ffmpeg).
   Le GIF mostrano il brano e lo sfondo reali: registrarle con contenuti scelti apposta.
 - Le anteprime SwiftUI avviano l'app: `AppDelegate` non parte con `XCODE_RUNNING_FOR_PREVIEWS=1` e
@@ -64,7 +90,9 @@ Piano per fasi in `docs/` (fase 0 = fondamenta); analisi dei progetti di riferim
 ## Widget
 - Le anteprime di Xcode non supportano i widget su macOS. Per controllarli: `NowPlayingWidgetView(entry:family:)`
   con `ImageRenderer` (le viste a tempo come `ProgressView(timerInterval:)` lì non si disegnano).
-- Con la firma ad-hoc i widget possono non vedere l'App Group: per provarli compilare con `DEVELOPMENT_TEAM=…`.
+- Con la firma ad-hoc l'App Group senza Team ID non è autorizzato: `SharedContainer` usa allora
+  `~/Library/Application Support/OpenTunes/Widget/`, letta dal widget con l'eccezione sandbox `home-relative-path.read-only`
+  (in `project.yml`). Con `DEVELOPMENT_TEAM=…` si usa l'App Group `<TEAM>.org.opentunes.shared`.
 - Ogni nuova build ad-hoc fa ricomparire la richiesta del Portachiavi all'avvio (cambia la firma): l'app resta ferma
   in `KeychainStore.secret(for:)` finché l'utente non risponde.
 
@@ -74,7 +102,10 @@ Piano per fasi in `docs/` (fase 0 = fondamenta); analisi dei progetti di riferim
 - Anteprime SwiftUI: `AppModel.preview()` usa `NowPlayingStore.inject` (sincrono) e `PreviewData` (copertine disegnate).
 
 ## Release
-- `scripts/make-dmg.sh` → `dist/OpenTunes-<versione>.dmg`; il workflow `.github/workflows/release.yml` parte con un tag `v*`.
+- `scripts/make-dmg.sh` → `dist/OpenTunes-<versione>.dmg`; il workflow `.github/workflows/release.yml` parte con un tag `v*`
+  e, con le chiavi di Sparkle configurate, allega anche `appcast.xml` (`scripts/make-appcast.sh`).
+- Il primo `xcodebuild -resolvePackageDependencies` deve poter scaricare l'archivio binario di Sparkle da GitHub.
+- Sito: `site/index.html` (+ GIF di `docs/media`), pubblicato da `.github/workflows/pages.yml`.
 - Cask Homebrew da copiare nel tap: `packaging/homebrew/opentunes.rb`.
 
 ## Licenze

@@ -104,6 +104,16 @@ enum DesignSystem {
         static let notchPeekWidth: CGFloat = 200
         /// Capsula sugli schermi senza notch.
         static let notchlessCapsuleWidth: CGFloat = 200
+        /// Barre del visualizer (finestra flottante) e nel notch chiuso.
+        static let visualizer = CGSize(width: 26, height: 18)
+        static let notchVisualizer = CGSize(width: 26, height: 16)
+        /// Copertine nella griglia dei top album (Scopri) e lato dell'immagine esportata.
+        static let topAlbumCell: CGFloat = 96
+        static let topAlbumExportCell: CGFloat = 300
+        static let discoverWindow = CGSize(width: 560, height: 620)
+        /// Finestra flottante in modalità focus: copertina e testo affiancati.
+        static let floatingFocus = CGSize(width: 760, height: 470)
+        static let focusArtwork: CGFloat = 320
         static let progressTrack: CGFloat = 4
         static let progressTrackHover: CGFloat = 8
     }
@@ -112,11 +122,62 @@ enum DesignSystem {
     static let glassTintOpacity: Double = 0.35
 }
 
+/// Temi delle superfici: tutti usano il vetro di sistema, cambiano solo variante e tinta.
+enum SurfaceTheme: String, CaseIterable, Identifiable, Sendable {
+    /// Vetro normale con la tinta della copertina.
+    case artwork
+    /// Vetro normale senza tinta.
+    case monochrome
+    /// Vetro `clear`: lascia vedere di più lo sfondo.
+    case transparent
+    /// Vetro normale velato con il colore della finestra: più leggibile sopra sfondi movimentati.
+    case opaque
+    /// Tema importato da un file JSON (`CustomTheme.active`).
+    case custom
+
+    var id: String { rawValue }
+
+    var label: String {
+        switch self {
+        case .artwork: String(localized: "Tinta dalla copertina")
+        case .monochrome: String(localized: "Monocromo")
+        case .transparent: String(localized: "Più trasparente")
+        case .opaque: String(localized: "Più opaco")
+        case .custom: String(localized: "Personalizzato (JSON)")
+        }
+    }
+
+    @MainActor var usesArtworkTint: Bool { self == .artwork || (self == .custom && CustomTheme.active.usesArtworkTint) }
+    @MainActor var usesClearGlass: Bool { self == .transparent || (self == .custom && CustomTheme.active.glass == .clear) }
+
+    /// Velo sopra il vetro per il tema opaco.
+    static let opaqueVeilOpacity: Double = 0.7
+}
+
 extension View {
     /// Vetro di sistema con la tinta della copertina: l'unico "sfondo" ammesso per le superfici.
-    func surfaceGlass(tint: Color?, cornerRadius: CGFloat, interactive: Bool = false) -> some View {
-        glassEffect(
-            .regular.tint(tint?.opacity(DesignSystem.glassTintOpacity)).interactive(interactive),
-            in: .rect(cornerRadius: cornerRadius))
+    func surfaceGlass(
+        tint: Color?, cornerRadius: CGFloat, interactive: Bool = false, theme: SurfaceTheme = .artwork
+    ) -> some View {
+        surfaceGlass(tint: tint, in: .rect(cornerRadius: cornerRadius), interactive: interactive, theme: theme)
+    }
+
+    /// Come sopra, con una forma qualsiasi (es. la capsula del notch sui Mac senza notch).
+    func surfaceGlass(
+        tint: Color?, in shape: some Shape, interactive: Bool = false, theme: SurfaceTheme = .artwork
+    ) -> some View {
+        let base: Glass = theme.usesClearGlass ? .clear : .regular
+        let color: Color? = switch theme {
+        case .artwork: tint?.opacity(DesignSystem.glassTintOpacity)
+        case .monochrome, .transparent: nil
+        case .opaque: Color(nsColor: .windowBackgroundColor).opacity(SurfaceTheme.opaqueVeilOpacity)
+        case .custom:
+            if let fixed = CustomTheme.active.fixedTint {
+                fixed.color.opacity(CustomTheme.active.opacity)
+            } else {
+                tint?.opacity(CustomTheme.active.opacity)
+            }
+        }
+        return glassEffect(base.tint(color).interactive(interactive), in: shape)
     }
 }

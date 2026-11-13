@@ -23,24 +23,31 @@ enum QuickMenu {
         }
 
         let hasTrack = model.hasTrack
-        menu.addItem(item(model.playback.isPlaying ? "Pausa" : "Riproduci", symbol: model.playback.isPlaying ? "pause.fill" : "play.fill", enabled: hasTrack) {
+        menu.addItem(item(model.playback.isPlaying ? String(localized: "Pausa") : String(localized: "Riproduci"), symbol: model.playback.isPlaying ? "pause.fill" : "play.fill", enabled: hasTrack) {
             model.perform(.playPause)
         })
-        menu.addItem(item("Successivo", symbol: "forward.fill", enabled: hasTrack) { model.perform(.next) })
-        menu.addItem(item("Precedente", symbol: "backward.fill", enabled: hasTrack) { model.perform(.previous) })
+        menu.addItem(item(String(localized: "Successivo"), symbol: "forward.fill", enabled: hasTrack) { model.perform(.next) })
+        menu.addItem(item(String(localized: "Precedente"), symbol: "backward.fill", enabled: hasTrack) { model.perform(.previous) })
         addTrackActions(to: menu, model: model)
         menu.addItem(.separator())
-        menu.addItem(item(model.settings.floatingVisible ? "Nascondi finestra flottante" : "Mostra finestra flottante", symbol: "pip") {
-            model.toggleFloatingWindow()
-        })
-        if let player = model.player {
-            menu.addItem(item("Apri \(player.name)", symbol: "arrow.up.forward.app") { model.openSourcePlayer() })
+        if model.settings.floatingEnabled {
+            menu.addItem(item(model.settings.floatingVisible ? String(localized: "Nascondi finestra flottante") : String(localized: "Mostra finestra flottante"), symbol: "pip") {
+                model.toggleFloatingWindow()
+            })
+        }
+        if let player = model.player, model.settings.showsOpenPlayer {
+            menu.addItem(item(String(localized: "Apri \(player.name)"), symbol: "arrow.up.forward.app") { model.openSourcePlayer() })
         }
         menu.addItem(.separator())
-        menu.addItem(item("Impostazioni…", symbol: "gearshape", action: onOpenSettings))
-        menu.addItem(item("Diagnostica…", symbol: "stethoscope", action: onOpenDebug))
+        menu.addItem(item(String(localized: "Impostazioni…"), symbol: "gearshape", action: onOpenSettings))
+        menu.addItem(item(String(localized: "Diagnostica…"), symbol: "stethoscope", action: onOpenDebug))
+        if let updater = model.updater, updater.isAvailable {
+            menu.addItem(item(String(localized: "Controlla aggiornamenti…"), symbol: "arrow.down.circle", enabled: updater.canCheck) {
+                updater.checkForUpdates()
+            })
+        }
         menu.addItem(.separator())
-        menu.addItem(item("Esci da OpenTunes", symbol: "power") { NSApp.terminate(nil) })
+        menu.addItem(item(String(localized: "Esci da OpenTunes"), symbol: "power") { NSApp.terminate(nil) })
         return menu
     }
 
@@ -48,17 +55,17 @@ enum QuickMenu {
     private static func addTrackActions(to menu: NSMenu, model: AppModel) {
         var items: [NSMenuItem] = []
         if model.canLove {
-            items.append(item(model.isLoved ? "Togli il love" : "Love", symbol: model.isLoved ? "heart.slash" : "heart") {
+            items.append(item(model.isLoved ? String(localized: "Togli il love") : String(localized: "Love"), symbol: model.isLoved ? "heart.slash" : "heart") {
                 model.toggleLove()
             })
         }
-        if model.store.supportsTrackActions {
-            let rating = NSMenuItem(title: "Valutazione", action: nil, keyEquivalent: "")
+        if model.showsMusicActions {
+            let rating = NSMenuItem(title: String(localized: "Valutazione"), action: nil, keyEquivalent: "")
             rating.image = NSImage(systemSymbolName: "star", accessibilityDescription: nil)
             let stars = NSMenu()
             let current = model.musicState?.stars ?? 0
             for value in 0...5 {
-                let title = value == 0 ? "Nessuna" : String(repeating: "★", count: value) + String(repeating: "☆", count: 5 - value)
+                let title = value == 0 ? String(localized: "Nessuna") : String(repeating: "★", count: value) + String(repeating: "☆", count: 5 - value)
                 let entry = ClosureMenuItem(title: title) { model.performTrackAction(.setRating(value)) }
                 entry.state = value == current ? .on : .off
                 stars.addItem(entry)
@@ -66,17 +73,27 @@ enum QuickMenu {
             rating.submenu = stars
             items.append(rating)
             let disliked = model.musicState?.disliked ?? false
-            let dislike = item("Non mi piace", symbol: "hand.thumbsdown") { model.toggleDislike() }
+            let dislike = item(String(localized: "Non mi piace"), symbol: "hand.thumbsdown") { model.toggleDislike() }
             dislike.state = disliked ? .on : .off
             items.append(dislike)
-            items.append(item("Aggiungi alla libreria", symbol: "plus.circle") { model.addToLibrary() })
+            items.append(item(String(localized: "Aggiungi alla libreria"), symbol: "plus.circle") { model.addToLibrary() })
         }
-        if let other = model.store.switchablePlayers.first {
-            items.append(item("Passa a \(other.displayName)", symbol: "arrow.left.arrow.right") { model.switchPlayer() })
+        if let other = model.switchTarget {
+            items.append(item(String(localized: "Passa a \(other.displayName)"), symbol: "arrow.left.arrow.right") { model.switchPlayer() })
+        }
+        if model.canShare {
+            items.append(item(String(localized: "Copia link universale"), symbol: "link") { model.copyShareLink() })
+            items.append(item(String(localized: "Condividi…"), symbol: "square.and.arrow.up") { model.shareLinkWithPicker() })
+        }
+        if let openDiscover = model.discoverAction {
+            items.append(item(String(localized: "Scopri: top album e simili…"), symbol: "sparkles", action: openDiscover))
+        }
+        if model.settings.statisticsEnabled, let openStatistics = model.onOpenStatistics {
+            items.append(item(String(localized: "Statistiche di ascolto…"), symbol: "chart.bar.xaxis", action: openStatistics))
         }
         let pending = model.scrobbler.pendingCount
         if pending > 0 {
-            items.append(item(pending == 1 ? "1 ascolto in coda — invia ora" : "\(pending) ascolti in coda — invia ora",
+            items.append(item(pending == 1 ? String(localized: "1 ascolto in coda — invia ora") : String(localized: "\(pending) ascolti in coda — invia ora"),
                 symbol: "arrow.trianglehead.2.clockwise") { model.scrobbler.retryNow() })
         }
         guard !items.isEmpty else { return }

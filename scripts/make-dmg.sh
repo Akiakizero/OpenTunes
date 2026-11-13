@@ -10,10 +10,11 @@ DIST="$ROOT/dist"
 
 cd "$ROOT"
 xcodegen generate
-# La chiave Last.fm del progetto (se c'è) arriva dalle variabili d'ambiente.
+# Le chiavi Last.fm e la chiave pubblica di Sparkle (se ci sono) arrivano dalle variabili d'ambiente.
 xcodebuild -scheme OpenTunes -configuration Release -destination 'platform=macOS' \
   -derivedDataPath "$BUILD/DerivedData" \
-  LASTFM_API_KEY="${LASTFM_API_KEY:-}" LASTFM_API_SECRET="${LASTFM_API_SECRET:-}" build
+  LASTFM_API_KEY="${LASTFM_API_KEY:-}" LASTFM_API_SECRET="${LASTFM_API_SECRET:-}" \
+  SPARKLE_PUBLIC_KEY="${SPARKLE_PUBLIC_KEY:-}" DISCORD_CLIENT_ID="${DISCORD_CLIENT_ID:-}" build
 
 APP="$BUILD/DerivedData/Build/Products/Release/OpenTunes.app"
 VERSION="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$APP/Contents/Info.plist")"

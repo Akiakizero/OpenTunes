@@ -28,12 +28,15 @@ public protocol HistoryPersistence: Sendable {
 public actor TrackHistory: ModelActor, HistoryPersistence {
     public nonisolated let modelContainer: ModelContainer
     public nonisolated let modelExecutor: any ModelExecutor
-    /// Voci tenute nel database.
+    /// Voci tenute nel database (bastano per le statistiche di un anno di ascolti medi).
     let maxEntries: Int
+    /// Solo le voci più recenti tengono la miniatura della copertina; le altre servono alle statistiche.
+    let artworkEntries: Int
 
-    public init(modelContainer: ModelContainer, maxEntries: Int = 500) {
+    public init(modelContainer: ModelContainer, maxEntries: Int = 10_000, artworkEntries: Int = 500) {
         self.modelContainer = modelContainer
         self.maxEntries = maxEntries
+        self.artworkEntries = artworkEntries
         modelExecutor = DefaultSerialModelExecutor(modelContext: ModelContext(modelContainer))
     }
 
@@ -67,6 +70,20 @@ public actor TrackHistory: ModelActor, HistoryPersistence {
         prune()
     }
 
+    /// Ascolti da `date` in poi, senza copertine (per le statistiche locali).
+    public func plays(since date: Date) async -> [StoredPlay] {
+        let descriptor = FetchDescriptor<HistoryEntry>(
+            predicate: #Predicate { $0.playedAt >= date }, sortBy: [SortDescriptor(\.playedAt, order: .reverse)])
+        let entries = (try? modelContext.fetch(descriptor)) ?? []
+        return entries.map { entry in
+            StoredPlay(
+                track: Track(
+                    title: entry.title, artist: entry.artist, album: entry.album, albumArtist: entry.albumArtist,
+                    duration: entry.duration, artworkData: nil, playerBundleID: entry.playerBundleID),
+                playedAt: entry.playedAt)
+        }
+    }
+
     public func clear() async {
         try? modelContext.delete(model: HistoryEntry.self)
         try? modelContext.save()
@@ -74,6 +91,14 @@ public actor TrackHistory: ModelActor, HistoryPersistence {
 
     private func prune() {
         let count = (try? modelContext.fetchCount(FetchDescriptor<HistoryEntry>())) ?? 0
+        if count > artworkEntries {
+            // La miniatura della voce appena uscita dalle più recenti non serve più.
+            var old = FetchDescriptor<HistoryEntry>(sortBy: [SortDescriptor(\.playedAt, order: .reverse)])
+            old.fetchOffset = artworkEntries
+            old.fetchLimit = 20
+            for entry in (try? modelContext.fetch(old)) ?? [] where entry.artwork != nil { entry.artwork = nil }
+            try? modelContext.save()
+        }
         guard count > maxEntries else { return }
         var descriptor = FetchDescriptor<HistoryEntry>(sortBy: [SortDescriptor(\.playedAt)])
         descriptor.fetchLimit = count - maxEntries

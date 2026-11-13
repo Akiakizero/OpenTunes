@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import AppKit
+import CoreAudio
 import MediaCore
 import Observation
 import os
@@ -23,14 +24,41 @@ final class AppModel {
     private(set) var artwork: NSImage?
     /// Tinta estratta dalla copertina (`nil` se disattivata o senza copertina).
     private(set) var tint: AccentTint?
+    /// Colori principali della copertina per il visualizer (vuoto se la tinta è spenta o non c'è copertina).
+    private(set) var palette: [RGB] = []
     /// Ultimo volume di sistema noto (0…1).
-    private(set) var volume: Float?
+    var volume: Float?
     /// Preferito, dislike e stelle del brano corrente in Musica (`nil` = non disponibile).
     private(set) var musicState: MusicTrackState?
     /// Ultimo errore di un'azione sul brano, mostrato sotto i pulsanti.
-    private(set) var actionError: String?
+    var actionError: String?
     /// Secret della chiave personale Last.fm (copia in memoria di quella nel Portachiavi).
     private(set) var customLastFMSecret: String
+    /// Testo del brano corrente (caricato solo quando una superficie lo mostra).
+    /// Scritti anche da `AppModel+Extras.swift` (per questo non sono `private(set)`).
+    var lyrics: LyricsState = .idle
+    /// Volume interno del player (Musica, Spotify), `nil` se non disponibile.
+    var playerVolume: Double?
+    /// Dispositivi di uscita audio e quello in uso.
+    var outputDevices: [AudioOutputDevice] = []
+    var currentOutputID: AudioDeviceID?
+    /// Link universale in preparazione (per mostrare l'attesa nei pulsanti).
+    var isPreparingShareLink = false
+    /// La finestra flottante grande mostra il testo al posto della copertina.
+    var floatingShowsLyrics = false
+
+    /// Stato del testo del brano corrente.
+    enum LyricsState: Equatable {
+        case idle
+        case loading
+        case found(Lyrics)
+        case notFound
+        case failed(String)
+
+        var lyrics: Lyrics? {
+            if case .found(let lyrics) = self { lyrics } else { nil }
+        }
+    }
 
     /// Eventi per HUD e notifiche.
     enum Event {
@@ -43,15 +71,33 @@ final class AppModel {
     }
 
     @ObservationIgnored var onEvent: ((Event) -> Void)?
-    @ObservationIgnored private var tasks: [Task<Void, Never>] = []
+    /// Apre la finestra «Scopri» (top album e simili da Last.fm); collegata da `AppDelegate`.
+    @ObservationIgnored var onOpenDiscover: (() -> Void)?
+    /// Aggiornamenti automatici (solo nell'app reale: anteprime e test non avviano Sparkle).
+    @ObservationIgnored var updater: Updater?
+    /// Discord Rich Presence e controllo MIDI (solo nell'app reale; per le impostazioni).
+    @ObservationIgnored var discord: DiscordController?
+    @ObservationIgnored var midi: MIDIControl?
+    /// Apre la finestra delle statistiche locali; collegata da `AppDelegate`.
+    @ObservationIgnored var onOpenStatistics: (() -> Void)?
+    /// Spettro reale dell'audio di sistema per il visualizer (acceso solo quando serve).
+    @ObservationIgnored let spectrum = AudioSpectrum()
+    @ObservationIgnored var tasks: [Task<Void, Never>] = []
     @ObservationIgnored private var artworkHash: String?
+    /// Brano per cui è stato chiesto il testo (evita richieste ripetute).
+    @ObservationIgnored var lyricsKey: String?
+    @ObservationIgnored let lyricsService: LyricsService
+    @ObservationIgnored let shareLinks: ShareLinkService
 
     /// Senza `storage` il database è in memoria e i segreti non toccano il Portachiavi: per anteprime e test.
     init(
         store: NowPlayingStore = NowPlayingStore(), settings: AppSettings = AppSettings(),
-        storage: ModelContainer? = nil, secrets: any SecretStore = MemorySecretStore()
+        storage: ModelContainer? = nil, secrets: any SecretStore = MemorySecretStore(),
+        lyricsService: LyricsService = LyricsService(cacheDirectory: nil), shareLinks: ShareLinkService = ShareLinkService()
     ) {
         self.store = store
+        self.lyricsService = lyricsService
+        self.shareLinks = shareLinks
         self.settings = settings
         self.secrets = secrets
         let container: ModelContainer
@@ -71,11 +117,12 @@ final class AppModel {
     /// Modello dell'app reale: database su disco e Portachiavi.
     static func live() -> AppModel {
         do {
-            return AppModel(storage: try Storage.makeContainer(), secrets: KeychainStore())
+            return AppModel(
+                storage: try Storage.makeContainer(), secrets: KeychainStore(), lyricsService: .shared, shareLinks: .shared)
         } catch {
             Logger(subsystem: "org.opentunes.OpenTunes", category: "AppModel")
                 .error("database non disponibile, uso la memoria: \(error, privacy: .public)")
-            return AppModel(secrets: KeychainStore())
+            return AppModel(secrets: KeychainStore(), lyricsService: .shared, shareLinks: .shared)
         }
     }
 
@@ -83,6 +130,13 @@ final class AppModel {
     var playback: PlaybackState { store.playback }
     var player: PlayerApp? { store.player }
     var hasTrack: Bool { store.track != nil }
+
+    /// Statistiche locali dalla cronologia (`period` = ultimi N secondi, `nil` = tutto). `nil` senza database.
+    func statistics(period: TimeInterval?) async -> ListeningStats? {
+        guard settings.statisticsEnabled, let history else { return nil }
+        let plays = await history.plays(since: Date.now.addingTimeInterval(-(period ?? 3_650 * 86_400)))
+        return ListeningStats(plays: plays, period: period)
+    }
 
     /// Testo per la menu bar secondo il formato scelto.
     var menuBarTitle: String? {
@@ -108,12 +162,20 @@ final class AppModel {
             [weak self] _ in
             self?.actionError = nil
             self?.refreshMusicState()
+            self?.refreshPlayerVolume()
         })
+        startSystemObservers()
     }
 
     /// Avvia gli osservatori che tengono aggiornati copertina, tinta, volume ed eventi.
     func startDerivedState() {
         volume = SystemVolume.current
+        tasks.append(observeChanges({ [store] in store.track.map(Self.lyricsKey) }) { [weak self] key in
+            // Cambio brano: il testo vecchio non vale più. Le viste che lo mostrano lo richiedono con `loadLyrics()`.
+            guard let self, key != lyricsKey else { return }
+            lyricsKey = nil
+            lyrics = .idle
+        })
         tasks.append(observeChanges({ [store] in store.track?.artworkHash }) { [weak self] _ in
             self?.updateArtwork()
         })
@@ -154,7 +216,8 @@ final class AppModel {
         Scrobbler.Configuration(
             rules: settings.scrobbleRules, cleaner: settings.cleanerOptions,
             lastFMEnabled: settings.lastFMEnabled, listenBrainzEnabled: settings.listenBrainzEnabled,
-            excludedBundleIDs: Set(settings.scrobbleExcludedBundleIDs), credentials: lastFMCredentials)
+            excludedBundleIDs: Set(settings.scrobbleExcludedBundleIDs), credentials: lastFMCredentials,
+            listenBrainzServer: ListenBrainzClient.serverURL(from: settings.listenBrainzServer))
     }
 
     private func applyScrobblerSettings() {
@@ -167,7 +230,7 @@ final class AppModel {
             try secrets.setSecret(value, for: SecretAccount.lastFMCustomSecret)
             customLastFMSecret = value
         } catch {
-            actionError = "Portachiavi: \(error)"
+            actionError = String(localized: "Portachiavi: \(String(describing: error))")
         }
     }
 
@@ -181,7 +244,7 @@ final class AppModel {
 
     /// Il pulsante love fa qualcosa: Last.fm collegato o brano di Musica.
     var canLove: Bool {
-        guard let track else { return false }
+        guard settings.loveEnabled, let track else { return false }
         return (scrobbler.isLastFMConnected && track.artist?.isEmpty == false) || store.supportsTrackActions
     }
 
@@ -212,7 +275,7 @@ final class AppModel {
 
     /// Stelle (0…5), dislike e libreria: solo Musica.
     func performTrackAction(_ action: TrackAction, feedback: Bool = false) {
-        guard store.supportsTrackActions else { return }
+        guard settings.musicActionsEnabled, store.supportsTrackActions else { return }
         let title = track?.title ?? ""
         Task {
             do {
@@ -236,6 +299,7 @@ final class AppModel {
 
     /// Passa al prossimo player in esecuzione (Musica ↔ Spotify).
     func switchPlayer() {
+        guard settings.switchPlayerEnabled else { return }
         Task {
             if let player = await store.switchPlayer() {
                 onEvent?(.trackAction(title: player.displayName, symbol: "arrow.left.arrow.right"))
@@ -266,11 +330,13 @@ final class AppModel {
         artworkHash = hash
         artwork = store.track?.artwork
         tint = settings.tintsWithArtwork ? artwork.flatMap(AccentTint.from) : nil
+        palette = settings.tintsWithArtwork ? artwork.map { AccentTint.palette(of: $0) } ?? [] : []
     }
 
     /// Colore della tinta per lo schema indicato.
     func tintColor(for scheme: ColorScheme) -> Color? {
-        tint?.color(for: scheme)
+        if settings.theme == .custom, let accent = CustomTheme.active.accentColor { return accent }
+        return tint?.color(for: scheme)
     }
 
     // MARK: Azioni
@@ -320,7 +386,9 @@ final class AppModel {
         volume = SystemVolume.current
     }
 
+    /// Mostra o nasconde la finestra flottante; non fa niente se l'utente l'ha disattivata.
     func toggleFloatingWindow() {
+        guard settings.floatingEnabled else { return }
         settings.floatingVisible.toggle()
     }
 
@@ -344,7 +412,8 @@ final class AppModel {
         }
     }
 
-    private func send(_ command: MediaCommand) {
+    /// Comando diretto al player (play, pausa esplicite dai comandi URL).
+    func send(_ command: MediaCommand) {
         Task { await store.send(command) }
     }
 }

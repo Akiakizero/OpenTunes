@@ -57,7 +57,7 @@ final class FirstMouseHostingView<Content: View>: NSHostingView<Content> {
 }
 
 /// Gestisce gli elementi in menu bar: contenuto, azioni del mouse, popover, menu rapido
-/// e modalità compatta accanto al notch.
+/// e riduzione automatica (piena → compatta → icona) quando lo spazio non basta.
 @MainActor
 final class StatusBarController: NSObject, NSPopoverDelegate {
     private let model: AppModel
@@ -70,6 +70,9 @@ final class StatusBarController: NSObject, NSPopoverDelegate {
     private var scrollAccumulator: CGFloat = 0
     /// Ultima geometria scritta nel log diagnostico (per non ripeterla ogni 2 secondi).
     private var lastLayoutSummary = ""
+    /// Scelta stabile del livello (piena, compatta, icona) in base allo spazio.
+    private var fit = MenuBarFit()
+    private weak var lastScreen: NSScreen?
     /// Quando il popover si è chiuso: un clic sull'elemento lo chiude (transient) e non deve riaprirlo.
     private var popoverClosedAt = Date.distantPast
 
@@ -96,16 +99,22 @@ final class StatusBarController: NSObject, NSPopoverDelegate {
         installEventMonitor()
 
         let settings = model.settings
-        tasks.append(observeChanges({ settings.separateControlsItem }) { [weak self] _ in self?.rebuildItems() })
+        tasks.append(observeChanges({ "\(settings.separateControlsItem)\(settings.menuBarEnabled)" }) { [weak self] _ in
+            self?.rebuildItems()
+        })
         tasks.append(observeChanges({ [model] in model.hasTrack || !settings.hidesWhenIdle }) { [weak self] visible in
             self?.hosts.forEach { $0.item.isVisible = visible }
         })
         tasks.append(observeChanges({ settings.autoCompact }) { [weak self] _ in self?.updateCompactMode() })
+        // Elementi o titolo diversi cambiano le larghezze: si può riprovare subito un livello più grande.
+        tasks.append(observeChanges({ "\(settings.visibleMenuBarElements)\(settings.maxTitleWidth)" }) { [weak self] _ in
+            self?.fit.forgetFailures()
+        })
 
         // Lo spazio libero cambia senza notifiche (altre app aggiungono elementi): controllo periodico leggero.
         tasks.append(Task { [weak self] in
             while !Task.isCancelled {
-                try? await Task.sleep(for: .seconds(2))
+                try? await Task.sleep(for: .seconds(1))
                 self?.updateCompactMode()
             }
         })
@@ -116,8 +125,14 @@ final class StatusBarController: NSObject, NSPopoverDelegate {
         })
     }
 
+    /// `false` se l'utente ha spento la menu bar dalle impostazioni.
+    var isEnabled: Bool { model.settings.menuBarEnabled }
+
     private func rebuildItems() {
+        if popover.isShown { popover.performClose(nil) }
         hosts.forEach { $0.remove() }
+        hosts = []
+        guard model.settings.menuBarEnabled else { return }
         let roles: [StatusItemRole] = model.settings.separateControlsItem ? [.controls, .info] : [.combined]
         hosts = roles.map { StatusItemHost(role: $0, model: model, state: state) }
         let visible = model.hasTrack || !model.settings.hidesWhenIdle
@@ -128,23 +143,38 @@ final class StatusBarController: NSObject, NSPopoverDelegate {
 
     private func updateCompactMode() {
         guard model.settings.autoCompact, model.hasTrack else {
-            if state.isCompact { state.isCompact = false }
+            fit.reset()
+            if state.level != .full { state.level = .full }
             return
         }
-        let windows = hosts.compactMap(\.window).filter(\.isVisible)
-        guard let screen = windows.first?.screen, !windows.isEmpty else { return }
+        // Menu bar nascosta (app a schermo intero) o schermo spento: niente da misurare.
+        guard NSMenu.menuBarVisible() else { return }
+        let windows = hosts.compactMap(\.window)
+        guard let screen = windows.first(where: { $0.screen != nil })?.screen ?? NSScreen.main, !windows.isEmpty else { return }
         let frame = windows.map(\.frame).reduce(CGRect.null) { $0.union($1) }
-        let fullWidth = hosts.reduce(0) { $0 + $1.layout.fullWidth }
-        let compact = NotchLayout.shouldBeCompact(
-            itemFrame: frame, fullWidth: fullWidth, notch: screen.notchRange, isCompact: state.isCompact)
-        let summary = "frame \(Int(frame.minX))…\(Int(frame.maxX)), piena \(Int(fullWidth)) pt, notch \(screen.notchRange.map { "\(Int($0.lowerBound))…\(Int($0.upperBound))" } ?? "assente")"
+        // Un elemento che il sistema non disegna (troppe icone, menu dell'app lunghi) risulta coperto o fuori schermo.
+        let hidden = windows.contains { window in
+            !window.isVisible || !window.occlusionState.contains(.visible)
+                || window.frame.minX < screen.frame.minX || window.frame.maxX > screen.frame.maxX + 1
+        }
+        if screen != lastScreen {
+            lastScreen = screen
+            fit.forgetFailures()
+        }
+        var widths: [MenuBarLevel: CGFloat] = [:]
+        for level in MenuBarLevel.allCases {
+            widths[level] = hosts.reduce(0) { $0 + ($1.layout.widths[level] ?? 0) }
+        }
+        let observation = MenuBarFit.Observation(
+            rightEdge: frame.maxX, widths: widths, notch: screen.notchRange, isHidden: hidden, now: .now)
+        let summary = "frame \(Int(frame.minX))…\(Int(frame.maxX)), larghezze \(MenuBarLevel.allCases.map { "\($0.label) \(Int(widths[$0] ?? 0))" }.joined(separator: ", ")) pt, notch \(screen.notchRange.map { "\(Int($0.lowerBound))…\(Int($0.upperBound))" } ?? "assente")\(hidden ? ", nascosto dal sistema" : "")"
         if summary != lastLayoutSummary {
             lastLayoutSummary = summary
             model.store.log("menubar", summary)
         }
-        if compact != state.isCompact {
-            state.isCompact = compact
-            model.store.log("menubar", compact ? "modalità compatta (spazio insufficiente accanto al notch)" : "modalità piena")
+        if fit.update(observation) {
+            state.level = fit.level
+            model.store.log("menubar", "livello \(fit.level.label)\(hidden ? " (il sistema nascondeva l'elemento)" : "")")
         }
     }
 
@@ -218,6 +248,8 @@ final class StatusBarController: NSObject, NSPopoverDelegate {
         guard Date.now.timeIntervalSince(popoverClosedAt) > 0.3 else { return }
         guard let button = (host ?? hosts.last)?.item.button else { return }
         model.refreshVolume()
+        model.refreshPlayerVolume()
+        model.refreshOutputDevices()
         NSApp.activate()
         popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
         button.highlight(true)

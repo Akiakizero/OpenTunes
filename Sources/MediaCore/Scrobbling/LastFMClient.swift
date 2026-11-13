@@ -219,7 +219,7 @@ public struct LastFMClient: Sendable {
     }()
 
     /// Chiamata con gli errori dell'API già convertiti in `ScrobbleServiceError`.
-    private func call(
+    func call(
         _ method: String, _ params: [String: String], signed: Bool = true, post: Bool = true, authenticated: Bool = false
     ) async throws -> JSONValue {
         do {

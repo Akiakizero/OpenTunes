@@ -24,3 +24,12 @@
 - name: menu bar
   color: fbca04
   description: Menu bar e popover
+- name: theme
+  color: c5def5
+  description: Temi JSON in themes/
+- name: integration
+  color: 5319e7
+  description: Comandi Rapidi, CLI, Discord, MIDI
+- name: translation
+  color: bfdadc
+  description: Traduzioni del catalogo Localizable.xcstrings

@@ -8,6 +8,7 @@ public actor ArtworkLookup {
     public static let shared = ArtworkLookup()
 
     private var cache: [String: Data?] = [:]
+    private var urlCache: [String: URL?] = [:]
     private let session: URLSession
 
     public init(session: URLSession = .shared) {
@@ -21,6 +22,18 @@ public actor ArtworkLookup {
         let data = await fetch(artist: artist, title: title)
         cache[key] = data
         return data
+    }
+
+    /// Solo l'indirizzo della copertina 600×600 (per Discord, che scarica l'immagine da solo). In cache.
+    public func artworkURL(artist: String, title: String) async -> URL? {
+        let key = "\(artist)\u{1F}\(title)".lowercased()
+        if let cached = urlCache[key] { return cached }
+        var result: URL?
+        if let url = Self.searchURL(artist: artist, title: title), let (body, _) = try? await session.data(from: url) {
+            result = Self.artworkURL(fromSearchResponse: body)
+        }
+        urlCache[key] = result
+        return result
     }
 
     static func searchURL(artist: String, title: String) -> URL? {

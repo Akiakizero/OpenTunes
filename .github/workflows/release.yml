@@ -27,10 +27,20 @@ jobs:
           # Facoltativi: senza, l'app chiede all'utente la propria API key Last.fm.
           LASTFM_API_KEY: ${{ secrets.LASTFM_API_KEY }}
           LASTFM_API_SECRET: ${{ secrets.LASTFM_API_SECRET }}
+          # Chiave pubblica EdDSA di Sparkle (variabile del repository): senza, l'app non cerca aggiornamenti.
+          SPARKLE_PUBLIC_KEY: ${{ vars.SPARKLE_PUBLIC_KEY }}
+          # Facoltativo: ID dell'applicazione Discord del progetto (Rich Presence). Senza, l'utente mette il proprio.
+          DISCORD_CLIENT_ID: ${{ vars.DISCORD_CLIENT_ID }}
         run: scripts/make-dmg.sh
+      - name: Sparkle appcast
+        if: ${{ vars.SPARKLE_PUBLIC_KEY != '' }}
+        env:
+          SPARKLE_PRIVATE_KEY: ${{ secrets.SPARKLE_PRIVATE_KEY }}
+        run: scripts/make-appcast.sh "$GITHUB_REF_NAME"
       - name: Create release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create "$GITHUB_REF_NAME" dist/*.dmg dist/*.dmg.sha256 \
+          # appcast.xml c'è solo con le chiavi di Sparkle configurate.
+          gh release create "$GITHUB_REF_NAME" dist/*.dmg dist/*.dmg.sha256 $(ls dist/appcast.xml 2>/dev/null) \
             --title "OpenTunes $GITHUB_REF_NAME" --generate-notes

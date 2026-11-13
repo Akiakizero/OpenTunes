@@ -95,7 +95,8 @@ struct DesktopWidgetView: View {
                 PlaybackControls(variant: .standard, isPlaying: model.playback.isPlaying) { model.perform($0) }
             }
             .padding(DesignSystem.Spacing.s)
-            .surfaceGlass(tint: model.tintColor(for: colorScheme), cornerRadius: DesignSystem.Radius.large)
+            .surfaceGlass(
+                tint: model.tintColor(for: colorScheme), cornerRadius: DesignSystem.Radius.large, theme: model.settings.theme)
             .padding(DesignSystem.Spacing.s)
         }
     }

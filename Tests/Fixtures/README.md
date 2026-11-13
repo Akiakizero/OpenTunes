@@ -22,3 +22,14 @@ di un array, numeri come stringhe, `ignoredMessage`).
 - `lastfm-error-session.json` — errore 9 (sessione non valida).
 - `lastfm-user-info.json`, `lastfm-recent-tracks.json` (con un brano in riproduzione), `lastfm-loved-tracks.json`
   (un solo brano), `lastfm-top-artists.json` — dati del profilo.
+- `lastfm-top-albums.json` (un album senza copertina), `lastfm-similar-artists.json`, `lastfm-similar-tracks.json`
+  (un solo brano: oggetto invece di array) — dati della finestra «Scopri».
+
+# Fixture di LRCLIB, iTunes e Odesli
+
+Scritte a mano dal formato documentato delle API (non registrazioni reali).
+
+- `lrclib-get.json` — `/api/get` con testo sincronizzato: tag di metadati, due marcatori sulla stessa riga, riga vuota.
+- `lrclib-search.json` — `/api/search`: una versione live con durata diversa, una solo testo e una sincronizzata.
+- `itunes-search-song.json` — iTunes Search API con `trackViewUrl` (parametro `uo` da togliere).
+- `odesli-links.json` — `api.song.link/v1-alpha.1/links` con `pageUrl`.

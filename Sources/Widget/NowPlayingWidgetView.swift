@@ -22,7 +22,9 @@ struct NowPlayingWidgetView: View {
 
     var body: some View {
         Group {
-            if state.hasTrack {
+            if state.isDisabled == true {
+                disabled
+            } else if state.hasTrack {
                 switch family {
                 case .systemSmall: small
                 case .systemLarge: large
@@ -77,6 +79,16 @@ struct NowPlayingWidgetView: View {
             lastFM
             Spacer(minLength: 0)
         }
+    }
+
+    /// L'utente ha spento i widget nelle impostazioni di OpenTunes.
+    private var disabled: some View {
+        VStack(spacing: DesignSystem.Spacing.s) {
+            Image(systemName: "rectangle.slash").font(.title).foregroundStyle(.secondary)
+            Text("Widget disattivato in OpenTunes").font(DesignSystem.Typography.subtitle).foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
     private var idle: some View {

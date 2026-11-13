@@ -22,7 +22,7 @@ struct PopoverView: View {
             } else {
                 emptyState
             }
-            if model.scrobbler.isLastFMConnected {
+            if showsProfileTab {
                 Picker("Sezione", selection: $showsProfile) {
                     Text("Ascoltati di recente").tag(false)
                     Text("Last.fm").tag(true)
@@ -30,9 +30,9 @@ struct PopoverView: View {
                 .pickerStyle(.segmented)
                 .labelsHidden()
             }
-            if showsProfile, model.scrobbler.isLastFMConnected {
+            if showsProfile, showsProfileTab {
                 LastFMProfileView(scrobbler: model.scrobbler)
-            } else {
+            } else if model.settings.showsRecentTracks {
                 recentSection
             }
             Divider()
@@ -42,6 +42,8 @@ struct PopoverView: View {
         .frame(width: DesignSystem.Size.popoverWidth)
         .tint(model.tintColor(for: colorScheme))
     }
+
+    private var showsProfileTab: Bool { model.settings.showsLastFMProfile && model.scrobbler.isLastFMConnected }
 
     private var emptyState: some View {
         VStack(spacing: DesignSystem.Spacing.s) {
@@ -74,7 +76,7 @@ struct PopoverView: View {
                 .prefix(historyLimit))
         if !recent.isEmpty {
             VStack(alignment: .leading, spacing: DesignSystem.Spacing.s) {
-                if !model.scrobbler.isLastFMConnected {
+                if !showsProfileTab {
                     Text("Ascoltati di recente")
                         .font(DesignSystem.Typography.sectionHeader)
                         .foregroundStyle(.secondary)
@@ -88,12 +90,14 @@ struct PopoverView: View {
 
     private var footer: some View {
         HStack(spacing: DesignSystem.Spacing.m) {
-            Button {
-                model.toggleFloatingWindow()
-            } label: {
-                Label(
-                    model.settings.floatingVisible ? "Nascondi finestra" : "Finestra flottante",
-                    systemImage: "pip")
+            if model.settings.floatingEnabled {
+                Button {
+                    model.toggleFloatingWindow()
+                } label: {
+                    Label(
+                        model.settings.floatingVisible ? "Nascondi finestra" : "Finestra flottante",
+                        systemImage: "pip")
+                }
             }
             Spacer()
             Button(action: onOpenSettings) {
@@ -151,11 +155,22 @@ private struct NowPlayingSection: View {
                 shuffle: model.playback.shuffle, repeatMode: model.playback.repeatMode
             ) { model.perform($0) }
 
-            VolumeSlider(model: model)
+            if model.settings.showsSystemVolume || model.settings.showsAudioOutput {
+                HStack(spacing: DesignSystem.Spacing.s) {
+                    if model.settings.showsSystemVolume { VolumeSlider(model: model) } else { Spacer() }
+                    if model.settings.showsAudioOutput { AudioOutputMenu(model: model) }
+                }
+            }
 
-            ScrobbleStatusLine(model: model)
+            if model.settings.showsPlayerVolume {
+                PlayerVolumeSlider(model: model)
+            }
 
-            if let player = model.player {
+            if model.settings.showsScrobbleStatus {
+                ScrobbleStatusLine(model: model)
+            }
+
+            if let player = model.player, model.settings.showsOpenPlayer {
                 Button {
                     model.openSourcePlayer()
                 } label: {
@@ -194,6 +209,71 @@ struct VolumeSlider: View {
                 Image(systemName: "speaker.wave.3.fill").foregroundStyle(.secondary)
             }
             .font(DesignSystem.Typography.caption)
+        }
+    }
+}
+
+/// Scelta dell'uscita audio di sistema (altoparlanti, cuffie, AirPlay…).
+struct AudioOutputMenu: View {
+    let model: AppModel
+
+    var body: some View {
+        if model.outputDevices.count > 1 {
+            Menu {
+                Picker("Uscita audio", selection: Binding(
+                    get: { model.currentOutputID },
+                    set: { id in
+                        if let device = model.outputDevices.first(where: { $0.id == id }) { model.selectOutput(device) }
+                    }
+                )) {
+                    ForEach(model.outputDevices) { device in
+                        Label(device.name, systemImage: device.symbol).tag(Optional(device.id))
+                    }
+                }
+                .pickerStyle(.inline)
+            } label: {
+                Image(systemName: currentSymbol)
+            }
+            .menuStyle(.button)
+            .buttonStyle(.borderless)
+            .menuIndicator(.hidden)
+            .fixedSize()
+            .help("Uscita audio: \(currentName)")
+            .accessibilityLabel("Uscita audio")
+            .accessibilityValue(currentName)
+            .onAppear { model.refreshOutputDevices() }
+        }
+    }
+
+    private var current: AudioOutputDevice? { model.outputDevices.first { $0.id == model.currentOutputID } }
+    private var currentSymbol: String { current?.symbol ?? "hifispeaker" }
+    private var currentName: String { current?.name ?? "—" }
+}
+
+/// Volume interno di Musica o Spotify, sotto quello di sistema (solo se il player lo espone).
+struct PlayerVolumeSlider: View {
+    let model: AppModel
+
+    var body: some View {
+        if let volume = model.playerVolume, let player = model.player {
+            HStack(spacing: DesignSystem.Spacing.s) {
+                Group {
+                    if let icon = player.icon {
+                        Image(nsImage: icon).resizable()
+                    } else {
+                        Image(systemName: "music.note")
+                    }
+                }
+                .frame(width: DesignSystem.Size.smallIcon, height: DesignSystem.Size.smallIcon)
+                Slider(value: Binding(get: { volume }, set: { model.setPlayerVolume($0) }), in: 0...1)
+                    .controlSize(.small)
+                    .accessibilityLabel("Volume di \(player.name)")
+                Text(volume, format: .percent.precision(.fractionLength(0)))
+                    .font(DesignSystem.Typography.time)
+                    .foregroundStyle(.secondary)
+                    .frame(width: DesignSystem.Size.control + DesignSystem.Spacing.s, alignment: .trailing)
+            }
+            .help("Volume di \(player.name), indipendente da quello di sistema")
         }
     }
 }

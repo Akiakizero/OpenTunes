@@ -36,6 +36,21 @@ struct RGB: Equatable, Sendable {
         RGB(r: r + (other.r - r) * t, g: g + (other.g - g) * t, b: b + (other.b - b) * t)
     }
 
+    func distance(to other: RGB) -> Double {
+        ((r - other.r) * (r - other.r) + (g - other.g) * (g - other.g) + (b - other.b) * (b - other.b)).squareRoot()
+    }
+
+    /// Versione luminosa per uno sfondo nero (notch): stessa tinta, luminosità almeno `minimum`,
+    /// saturazione tenuta sotto 0.85 perché i colori pieni sul nero sembrano fluorescenti.
+    func vivid(minimum: Double = 0.75) -> RGB {
+        let top = brightness
+        guard top > 0.001 else { return RGB(r: minimum, g: minimum, b: minimum) }
+        let factor = max(1, minimum / top)
+        var value = RGB(r: min(1, r * factor), g: min(1, g * factor), b: min(1, b * factor))
+        if value.saturation > 0.85 { value = value.mixed(with: .white, amount: (value.saturation - 0.85)) }
+        return value
+    }
+
     static let white = RGB(r: 1, g: 1, b: 1)
     static let black = RGB(r: 0, g: 0, b: 0)
 
@@ -105,16 +120,52 @@ struct AccentTint: Equatable, Sendable {
 
     /// Estrae la tinta da un'immagine ridotta a 24×24.
     static func from(_ image: NSImage) -> AccentTint? {
+        dominant(in: pixels(of: image)).map(AccentTint.init(dominant:))
+    }
+
+    /// Colori principali della copertina, i più diffusi e diversi tra loro (per il visualizer, come i colori che
+    /// la Dynamic Island prende dall'album). Al massimo `count`, dal più diffuso.
+    static func palette(in pixels: [RGB], count: Int = 3) -> [RGB] {
+        struct Bucket { var weight = 0.0; var r = 0.0; var g = 0.0; var b = 0.0 }
+        func key(_ p: RGB) -> Int { (Int(p.r * 7.999) << 6) | (Int(p.g * 7.999) << 3) | Int(p.b * 7.999) }
+        let colorful = pixels.filter { $0.brightness > 0.15 && $0.saturation > 0.12 }
+        let source = colorful.count >= pixels.count / 10 && !colorful.isEmpty ? colorful : pixels
+        var buckets: [Int: Bucket] = [:]
+        for p in source {
+            let weight = 1 + 2 * p.saturation
+            var bucket = buckets[key(p), default: Bucket()]
+            bucket.weight += weight
+            bucket.r += p.r * weight
+            bucket.g += p.g * weight
+            bucket.b += p.b * weight
+            buckets[key(p)] = bucket
+        }
+        let ranked = buckets.values.sorted { $0.weight > $1.weight }
+            .map { RGB(r: $0.r / $0.weight, g: $0.g / $0.weight, b: $0.b / $0.weight) }
+        var result: [RGB] = []
+        for color in ranked where result.count < count {
+            // Scarta i colori troppo simili a quelli già scelti (distanza euclidea in RGB).
+            if result.allSatisfy({ $0.distance(to: color) > 0.25 }) { result.append(color) }
+        }
+        return result
+    }
+
+    static func palette(of image: NSImage, count: Int = 3) -> [RGB] {
+        palette(in: pixels(of: image), count: count)
+    }
+
+    /// Pixel dell'immagine ridotta a 24×24 (senza quelli trasparenti).
+    static func pixels(of image: NSImage) -> [RGB] {
         let side = 24
         guard let cg = image.cgImage(forProposedRect: nil, context: nil, hints: nil),
             let space = CGColorSpace(name: CGColorSpace.sRGB),
             let context = CGContext(
                 data: nil, width: side, height: side, bitsPerComponent: 8, bytesPerRow: side * 4,
                 space: space, bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)
-        else { return nil }
+        else { return [] }
         context.interpolationQuality = .medium
         context.draw(cg, in: CGRect(x: 0, y: 0, width: side, height: side))
-        guard let data = context.data else { return nil }
+        guard let data = context.data else { return [] }
         let bytes = data.bindMemory(to: UInt8.self, capacity: side * side * 4)
         var pixels: [RGB] = []
         pixels.reserveCapacity(side * side)
@@ -127,6 +178,6 @@ struct AccentTint: Equatable, Sendable {
                     g: Double(bytes[i * 4 + 1]) / 255 / alpha,
                     b: Double(bytes[i * 4 + 2]) / 255 / alpha))
         }
-        return dominant(in: pixels).map(AccentTint.init(dominant:))
+        return pixels
     }
 }

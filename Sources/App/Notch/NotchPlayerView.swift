@@ -63,22 +63,29 @@ struct NotchPlayerView: View {
     private var topRadius: CGFloat { state == .open ? DesignSystem.Radius.notchOpenTop : DesignSystem.Radius.notchClosedTop }
     private var bottomRadius: CGFloat { state == .open ? DesignSystem.Radius.notchOpenBottom : DesignSystem.Radius.notchClosedBottom }
 
-    private var leftWing: CGFloat { Self.wings(for: state).left }
-    private var rightWing: CGFloat { Self.wings(for: state).right }
+    private var leftWing: CGFloat { Self.wings(for: state, notchHeight: notch.height).left }
+    private var rightWing: CGFloat { Self.wings(for: state, notchHeight: notch.height).right }
 
-    /// Larghezza delle ali ai lati del notch fisico.
-    static func wings(for state: NotchState) -> (left: CGFloat, right: CGFloat) {
+    /// Larghezza delle ali ai lati del notch fisico. L'ala della copertina è quadrata (alta quanto il notch),
+    /// così la copertina ha lo stesso margine sopra, sotto e verso l'esterno e non finisce sulla curva dell'angolo.
+    static func wings(for state: NotchState, notchHeight: CGFloat) -> (left: CGFloat, right: CGFloat) {
+        let wing = max(DesignSystem.Size.notchWing, notchHeight)
         switch state {
-        case .closed: (DesignSystem.Size.notchWing, DesignSystem.Size.notchWing)
-        case .peek: (DesignSystem.Size.notchWing, DesignSystem.Size.notchPeekWidth)
-        case .hidden, .open: (0, 0)
+        case .closed: return (wing, wing)
+        case .peek: return (wing, DesignSystem.Size.notchPeekWidth)
+        case .hidden, .open: return (0, 0)
         }
+    }
+
+    /// Lato della copertina nel notch chiuso: il notch meno il margine sopra e sotto.
+    static func closedArtworkSize(notchHeight: CGFloat) -> CGFloat {
+        max(DesignSystem.Size.menuBarArtwork, notchHeight - 2 * DesignSystem.Spacing.s)
     }
 
     /// Spostamento orizzontale della forma (ali asimmetriche): `offset` non cambia il frame misurato,
     /// quindi anche il controller lo usa per l'area sensibile al mouse.
-    static func horizontalOffset(for state: NotchState) -> CGFloat {
-        let wings = wings(for: state)
+    static func horizontalOffset(for state: NotchState, notchHeight: CGFloat) -> CGFloat {
+        let wings = wings(for: state, notchHeight: notchHeight)
         return (wings.right - wings.left) / 2
     }
 
@@ -88,8 +95,9 @@ struct NotchPlayerView: View {
                 VStack(spacing: 0) {
                     Color.clear.frame(height: notch.height)
                     expanded
-                        .padding(.horizontal, DesignSystem.Spacing.m)
-                        .padding(.vertical, DesignSystem.Spacing.m)
+                        .padding(.horizontal, DesignSystem.Spacing.l)
+                        .padding(.top, DesignSystem.Spacing.s)
+                        .padding(.bottom, DesignSystem.Spacing.l)
                 }
                 .transition(.opacity.combined(with: .scale(scale: 0.8, anchor: .top)))
             } else {
@@ -101,7 +109,7 @@ struct NotchPlayerView: View {
         .background(.black)
         .clipShape(NotchShape(topCornerRadius: topRadius, bottomCornerRadius: bottomRadius))
         // Le ali possono essere asimmetriche: si sposta la forma perché il centro resti sul notch fisico.
-        .offset(x: Self.horizontalOffset(for: state))
+        .offset(x: Self.horizontalOffset(for: state, notchHeight: notch.height))
         .opacity(state == .hidden ? 0 : 1)
         // Sul nero il testo è sempre chiaro.
         .environment(\.colorScheme, .dark)
@@ -112,41 +120,76 @@ struct NotchPlayerView: View {
     private var wings: some View {
         HStack(spacing: 0) {
             closedArtwork
-                .frame(width: leftWing, alignment: .leading)
+                .frame(width: leftWing)
             Spacer(minLength: notch.width)
             trailing
-                .frame(width: rightWing, alignment: .trailing)
+                .frame(width: rightWing)
         }
-        .padding(.horizontal, DesignSystem.Spacing.xs)
         .frame(height: notch.height)
         .opacity(state == .hidden ? 0 : 1)
+        // Per VoiceOver il notch chiuso è un pulsante che apre il player.
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("OpenTunes: \(model.track?.title ?? "")")
+        .accessibilityAddTraits(.isButton)
+        .accessibilityAction { presentation.onOpenRequest?() }
     }
 
     private var closedArtwork: some View {
         ArtworkView(
             image: model.artwork, identity: model.track?.artworkHash,
-            size: max(DesignSystem.Size.menuBarArtwork, notch.height - 2 * DesignSystem.Spacing.s),
+            size: Self.closedArtworkSize(notchHeight: notch.height),
             cornerRadius: DesignSystem.Radius.tiny)
     }
 
+    /// A destra: l'indicatore centrato nell'ala (simmetrico alla copertina) o il titolo durante il "peek".
     @ViewBuilder private var trailing: some View {
         if state == .peek, let track = model.track {
             MarqueeText(
                 text: track.title, font: DesignSystem.Typography.subtitle,
-                maxWidth: DesignSystem.Size.notchPeekWidth - DesignSystem.Spacing.s)
+                maxWidth: DesignSystem.Size.notchPeekWidth - DesignSystem.Spacing.s - DesignSystem.Spacing.m)
                 .foregroundStyle(.primary)
+                .padding(.leading, DesignSystem.Spacing.s)
+                .padding(.trailing, DesignSystem.Spacing.m)
+                .frame(maxWidth: .infinity, alignment: .leading)
                 .transition(.opacity)
         } else {
             playingIndicator
         }
     }
 
-    private var playingIndicator: some View {
-        Image(systemName: "waveform")
-            .font(DesignSystem.Typography.menuBar)
-            .foregroundStyle(model.tintColor(for: .dark) ?? .primary)
-            .symbolEffect(.variableColor.iterative, isActive: model.playback.isPlaying)
-            .accessibilityLabel(model.playback.isPlaying ? "In riproduzione" : "In pausa")
+    @ViewBuilder private var playingIndicator: some View {
+        let color = model.tintColor(for: .dark) ?? .primary
+        Group {
+            if model.settings.visualizerEnabled {
+                VisualizerBars(isPlaying: model.playback.isPlaying, colors: model.visualizerColors, levels: model.spectrumLevels)
+                    .frame(width: DesignSystem.Size.notchVisualizer.width, height: DesignSystem.Size.notchVisualizer.height)
+            } else {
+                Image(systemName: "waveform")
+                    .font(DesignSystem.Typography.menuBar)
+                    .foregroundStyle(color)
+                    .symbolEffect(.variableColor.iterative, isActive: model.playback.isPlaying)
+            }
+        }
+        .accessibilityElement()
+        .accessibilityLabel(model.playback.isPlaying ? "In riproduzione" : "In pausa")
+    }
+
+    /// Riga del testo in corso sotto l'artista (solo con testo sincronizzato).
+    @ViewBuilder private var lyricLine: some View {
+        if model.settings.lyricsEnabled, model.settings.notchShowsLyrics {
+            TimelineView(.animation(minimumInterval: 0.5, paused: !model.playback.isPlaying)) { context in
+                if let line = model.currentLyricLine(at: context.date), !line.isEmpty {
+                    Text(line)
+                        .font(DesignSystem.Typography.caption)
+                        .foregroundStyle(.tint)
+                        .lineLimit(1)
+                        .contentTransition(.opacity)
+                        .animation(DesignSystem.Motion.artworkChange, value: line)
+                        .accessibilityLabel("Testo: \(line)")
+                }
+            }
+            .task(id: model.track.map(AppModel.lyricsKey)) { model.loadLyrics() }
+        }
     }
 
     // MARK: Senza notch
@@ -157,7 +200,8 @@ struct NotchPlayerView: View {
                 expanded
                     .padding(DesignSystem.Spacing.m)
                     .frame(width: DesignSystem.Size.notchExpandedWidth)
-                    .surfaceGlass(tint: model.tintColor(for: colorScheme), cornerRadius: DesignSystem.Radius.panel)
+                    .surfaceGlass(
+                        tint: model.tintColor(for: colorScheme), cornerRadius: DesignSystem.Radius.panel, theme: model.settings.theme)
                     .padding(.top, geometry.menuBarHeight + DesignSystem.Spacing.s)
                     .transition(.opacity.combined(with: .move(edge: .top)))
             } else {
@@ -173,7 +217,7 @@ struct NotchPlayerView: View {
                 }
                 .padding(.horizontal, DesignSystem.Spacing.s)
                 .frame(width: notch.width, height: notch.height)
-                .glassEffect(.regular.tint(model.tintColor(for: colorScheme)?.opacity(DesignSystem.glassTintOpacity)), in: .capsule)
+                .surfaceGlass(tint: model.tintColor(for: colorScheme), in: .capsule, theme: model.settings.theme)
                 .padding(.top, (geometry.menuBarHeight - notch.height) / 2)
                 .opacity(state == .hidden ? 0 : 1)
                 .contentShape(.capsule)
@@ -186,8 +230,8 @@ struct NotchPlayerView: View {
     // MARK: Aperto
 
     private var expanded: some View {
-        let width = DesignSystem.Size.notchExpandedWidth - DesignSystem.Size.notchExpandedArtwork - 3 * DesignSystem.Spacing.m
-        return HStack(alignment: .center, spacing: DesignSystem.Spacing.m) {
+        let width = DesignSystem.Size.notchExpandedWidth - DesignSystem.Size.notchExpandedArtwork - DesignSystem.Spacing.m - 2 * DesignSystem.Spacing.l
+        return HStack(alignment: .top, spacing: DesignSystem.Spacing.m) {
             ArtworkView(
                 image: model.artwork, identity: model.track?.artworkHash,
                 size: DesignSystem.Size.notchExpandedArtwork, cornerRadius: DesignSystem.Radius.medium)
@@ -201,6 +245,7 @@ struct NotchPlayerView: View {
                             .font(DesignSystem.Typography.subtitle)
                             .foregroundStyle(.secondary)
                             .lineLimit(1)
+                        lyricLine
                     }
                     Spacer(minLength: 0)
                     if model.canLove {

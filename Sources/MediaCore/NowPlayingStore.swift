@@ -192,6 +192,25 @@ public final class NowPlayingStore {
         }
     }
 
+    // MARK: Volume del player
+
+    /// Player del brano corrente se ne espone il volume (Musica, Spotify).
+    public var volumeControllablePlayer: AppleScriptPlayer? {
+        AppleScriptPlayer.allSupported.first { $0.bundleID == track?.playerBundleID && $0.isRunning }
+    }
+
+    /// Volume del player corrente (0…1), `nil` se non disponibile o senza permesso Automazione.
+    public func playerVolume() async -> Double? {
+        guard let player = volumeControllablePlayer else { return nil }
+        return await AppleScriptSource.volume(of: player)
+    }
+
+    /// Imposta il volume del player corrente. Solo su azione dell'utente.
+    public func setPlayerVolume(_ volume: Double) async throws {
+        guard let player = volumeControllablePlayer else { throw MediaSourceError.noActivePlayer }
+        try await AppleScriptSource.setVolume(volume, of: player)
+    }
+
     /// Player controllabili via AppleScript in esecuzione, diversi da quello corrente.
     public var switchablePlayers: [AppleScriptPlayer] {
         AppleScriptPlayer.allSupported.filter { $0.isRunning && $0.bundleID != track?.playerBundleID }

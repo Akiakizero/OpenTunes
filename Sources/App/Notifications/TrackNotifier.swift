@@ -43,7 +43,7 @@ final class TrackNotifier: NSObject, UNUserNotificationCenterDelegate {
         switch model.settings.notificationMode {
         case .off: false
         case .always: true
-        case .whenFloatingHidden: !model.settings.floatingVisible
+        case .whenFloatingHidden: !model.settings.showsFloatingWindow
         }
     }
 

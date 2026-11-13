@@ -27,7 +27,7 @@ final class HUDController {
     func show(_ content: HUDContent) {
         let panel = panel ?? makePanel()
         hosting?.rootView = HUDView(model: model, content: content)
-        glass?.tintColor = model.tint?.dynamicColor(opacity: DesignSystem.glassTintOpacity)
+        glass?.apply(theme: model.settings.theme, tint: model.tint)
         position(panel)
         if !panel.isVisible {
             panel.alphaValue = 0

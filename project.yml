@@ -5,6 +5,8 @@ options:
   deploymentTarget:
     macOS: "26.0"
   generateEmptyDirectories: true
+  # Progetto già allineato alle impostazioni consigliate da questa versione di Xcode (LastUpgradeCheck).
+  xcodeVersion: "27.2"
   groupSortPosition: top
   # L'app è in italiano: date relative, formati e testi di sistema seguono questa lingua.
   developmentLanguage: it
@@ -18,19 +20,36 @@ settings:
     CODE_SIGN_IDENTITY: "-"
     CODE_SIGN_STYLE: Manual
     DEVELOPMENT_TEAM: ""
+    # Gli script di build scrivono in Resources/ (adapter compilato): la sandbox degli script li bloccherebbe.
     ENABLE_USER_SCRIPT_SANDBOXING: NO
+    # Impostazioni consigliate da Xcode.
+    DEAD_CODE_STRIPPING: YES
+    ENABLE_STRICT_OBJC_MSGSEND: YES
+    ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS: YES
+    STRING_CATALOG_GENERATE_SYMBOLS: YES
+    CLANG_ANALYZER_NONNULL: YES
+    CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER: YES
+    GCC_NO_COMMON_BLOCKS: YES
     ENABLE_HARDENED_RUNTIME: YES
     # App Group condiviso da app e widget (stato del brano e copertina). Forma macOS con il prefisso del
     # Team ID: non richiede un provisioning profile. Con la firma ad-hoc il prefisso è vuoto; per widget
     # affidabili conviene una build firmata con DEVELOPMENT_TEAM (vedi CLAUDE.md, «Widget»).
     APP_GROUP_ID: "$(TeamIdentifierPrefix)org.opentunes.shared"
-    MARKETING_VERSION: 0.3.0
+    # Localizzazione: catalogo unico in Sources/Shared/Localizable.xcstrings (italiano di base, inglese).
+    LOCALIZATION_PREFERS_STRING_CATALOGS: YES
+    SWIFT_EMIT_LOC_STRINGS: YES
+    MARKETING_VERSION: 0.5.0
     CURRENT_PROJECT_VERSION: 1
 
 packages:
   KeyboardShortcuts:
     url: https://github.com/sindresorhus/KeyboardShortcuts
     from: 3.1.0
+  # Aggiornamenti automatici (MIT). La chiave pubblica EdDSA arriva da SPARKLE_PUBLIC_KEY alla build;
+  # quella privata sta solo nei secret della CI (vedi docs/aggiornamenti.md).
+  Sparkle:
+    url: https://github.com/sparkle-project/Sparkle
+    from: 2.6.0
 
 targets:
   MediaCore:
@@ -55,6 +74,7 @@ targets:
       - target: MediaCore
       - target: OpenTunesWidget
       - package: KeyboardShortcuts
+      - package: Sparkle
     # Chiave Last.fm del progetto: dalle variabili d'ambiente LASTFM_API_KEY e LASTFM_API_SECRET
     # (segreti del workflow di release). Senza, l'utente inserisce la propria nelle impostazioni.
     info:
@@ -63,6 +83,12 @@ targets:
         LastFMAPIKey: $(LASTFM_API_KEY)
         LastFMAPISecret: $(LASTFM_API_SECRET)
         OpenTunesAppGroup: $(APP_GROUP_ID)
+        # Discord Rich Presence: ID dell'applicazione Discord del progetto (facoltativo, variabile DISCORD_CLIENT_ID).
+        DiscordClientID: $(DISCORD_CLIENT_ID)
+        # Sparkle: feed delle versioni sulle release di GitHub. Senza chiave pubblica l'updater non parte.
+        SUFeedURL: https://github.com/Akiakizero/OpenTunes/releases/latest/download/appcast.xml
+        SUPublicEDKey: $(SPARKLE_PUBLIC_KEY)
+        SUEnableAutomaticChecks: true
         # opentunes://player apre il player (clic sul widget).
         CFBundleURLTypes:
           - CFBundleURLName: org.opentunes.OpenTunes
@@ -77,6 +103,7 @@ targets:
         # App da menu bar: niente icona nel Dock.
         INFOPLIST_KEY_LSUIElement: YES
         INFOPLIST_KEY_NSHumanReadableCopyright: "GPL-3.0-or-later"
+        INFOPLIST_KEY_NSAudioCaptureUsageDescription: "OpenTunes analizza l'audio in uscita solo per far muovere il visualizer a tempo di musica: niente viene registrato o inviato."
         INFOPLIST_KEY_NSAppleEventsUsageDescription: "OpenTunes legge il brano in riproduzione e invia play, pausa e salto ad Apple Music e Spotify quando il Now Playing di sistema non è disponibile."
         CODE_SIGN_ENTITLEMENTS: Sources/App/OpenTunes.entitlements
         LD_RUNPATH_SEARCH_PATHS: "$(inherited) @executable_path/../Frameworks"
@@ -106,6 +133,7 @@ targets:
       - path: Sources/Shared
       - path: Sources/DesignSystem/DesignSystem.swift
       - path: Sources/DesignSystem/AccentTint.swift
+      - path: Sources/DesignSystem/CustomTheme.swift
     info:
       path: Sources/Widget/Info.plist
       properties:
@@ -118,6 +146,10 @@ targets:
       properties:
         com.apple.security.app-sandbox: true
         com.apple.security.application-groups: ["$(APP_GROUP_ID)"]
+        # Build ad-hoc: l'App Group senza Team ID non è autorizzato, lo stato arriva da questa cartella
+        # (vedi SharedContainer). Sola lettura, solo questa cartella.
+        com.apple.security.temporary-exception.files.home-relative-path.read-only:
+          - "/Library/Application Support/OpenTunes/Widget/"
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: org.opentunes.OpenTunes.Widget

@@ -10,39 +10,50 @@
 
 ## 1. Integrazioni
 
-- [ ] **Discord Rich Presence** con copertina, titolo e link al brano (riferimento: [applemusicrp](https://github.com/wxllow/applemusicrp), licenza da verificare)
-- [ ] **App Intents / Comandi Rapidi**: "Che brano sta suonando?", love, copia link, mostra testo
-- [ ] **Spotlight e Siri** tramite gli stessi App Intents
-- [ ] **CLI** (`opentunes now`, `opentunes next`, `opentunes love`) per chi usa il terminale, Raycast o Alfred
-- [ ] Integrazione opzionale con BetterTouchTool o Keyboard Maestro tramite URL scheme
+- [x] **Discord Rich Presence** con copertina, titolo e tempo (`DiscordIPC` in MediaCore, `DiscordController`; riferimento: [applemusicrp](https://github.com/wxllow/applemusicrp), MIT, nessun codice copiato)
+- [x] **App Intents / Comandi Rapidi**: "Che brano sta suonando?", love, copia link, mostra testo, play/pausa, salto (`App/Automation/OpenTunesIntents.swift`)
+- [x] **Spotlight e Siri** tramite gli stessi App Intents (`OpenTunesShortcuts`, frasi in italiano e inglese)
+- [x] **CLI** (`opentunes now`, `opentunes next`, `opentunes love`) per chi usa il terminale, Raycast o Alfred (script zsh incluso nell'app, comandi via URL, stato in `now-playing.json`)
+- [x] Integrazione opzionale con BetterTouchTool o Keyboard Maestro tramite URL scheme (`URLCommand`)
 
 ## 2. Identità visiva propria
 
 - [ ] Evolvere lo stile oltre quello di NepTunes: lettering, icona e temi disegnati da te
-- [ ] Temi selezionabili e condivisibili (file JSON importabili)
-- [ ] Possibilità per la community di proporre temi tramite PR
+- [x] Temi selezionabili e condivisibili (file JSON importabili, `CustomTheme`)
+- [x] Possibilità per la community di proporre temi tramite PR (`themes/`, template di issue «Proponi un tema»)
 
 ## 3. Idee da valutare
 
-- [ ] Statistiche di ascolto locali (senza Last.fm), con grafici settimanali
-- [ ] Modalità "focus": la finestra flottante mostra solo copertina e testo grandi
-- [ ] Controllo da MIDI (es. pad MPD218 per play/pausa e successivo)
+- [x] Statistiche di ascolto locali (senza Last.fm), con grafici settimanali (`ListeningStats`, `StatisticsView`)
+- [x] Modalità "focus": la finestra flottante mostra solo copertina e testo grandi (`FloatingSize.focus`)
+- [x] Controllo da MIDI (es. pad MPD218 per play/pausa e successivo) (`MIDIControl`, con «Impara»)
 - [ ] Core in **Rust** condiviso con una versione Linux/GNOME (MPRIS) — solo se la versione Linux diventa un obiettivo concreto; collegamento a Swift con UniFFI
-- [ ] Supporto a ulteriori servizi di scrobbling (Libre.fm, Maloja)
+- [x] Maloja e istanze proprie di ListenBrainz (server personalizzato)
+- [ ] Libre.fm (API compatibile con Last.fm ma con autenticazione separata: serve un terzo servizio nella coda)
 
 ## 4. Community
 
 - [ ] GitHub Discussions per idee e supporto
 - [ ] Traduzioni su Weblate
-- [ ] Etichette "good first issue" sempre presenti
+- [ ] Etichette "good first issue" sempre presenti (etichette in `.github/labels.yml`, anche `theme`, `integration`, `translation`)
 - [ ] Roadmap pubblica (GitHub Projects)
-- [ ] Guida per contribuire con Claude Code: come usare `CLAUDE.md`, come proporre una PR
+- [x] Guida per contribuire con Claude Code: come usare `CLAUDE.md`, come proporre una PR (`CONTRIBUTING.md`)
 
 ## 5. Manutenzione
 
 - [ ] Test sulla beta di macOS 28 a partire da giugno (WWDC)
 - [ ] Monitorare il repository di mediaremote-adapter per cambiamenti di Apple
 - [ ] Rivedere le dipendenze ogni release
+
+## Stato (0.5.0, 2026-11-13)
+
+Fatto nella 0.5.0: integrazioni (Comandi Rapidi, Siri, Spotlight, CLI, URL, Discord), temi JSON, statistiche locali,
+modalità focus, MIDI, Maloja, guida per contribuire, sezione «Non previsto» nel README. Prima della fase 5 sono state
+corrette le superfici (spettro reale con l'algoritmo di cava, menu bar che si riduce in modo stabile, widget di macOS
+con la firma ad-hoc) ed è arrivato un interruttore per ogni funzione.
+
+Restano aperti: identità visiva propria (lettering e icona), Libre.fm, core in Rust (solo se serve Linux), e le voci
+continue di community e manutenzione (Discussions, Weblate, roadmap pubblica, beta di macOS 28).
 
 ## Riferimenti open-source
 

@@ -166,9 +166,19 @@ struct NotchTests {
 
     @Test("Con il titolo a destra la forma si sposta per restare centrata sul notch")
     func peekOffset() {
-        #expect(NotchPlayerView.horizontalOffset(for: .closed) == 0)
-        #expect(NotchPlayerView.horizontalOffset(for: .open) == 0)
-        #expect(NotchPlayerView.horizontalOffset(for: .peek) == (DesignSystem.Size.notchPeekWidth - DesignSystem.Size.notchWing) / 2)
+        #expect(NotchPlayerView.horizontalOffset(for: .closed, notchHeight: 38) == 0)
+        #expect(NotchPlayerView.horizontalOffset(for: .open, notchHeight: 38) == 0)
+        #expect(NotchPlayerView.horizontalOffset(for: .peek, notchHeight: 38) == (DesignSystem.Size.notchPeekWidth - 38) / 2)
+    }
+
+    @Test("Nel notch chiuso la copertina ha lo stesso margine sopra, sotto e verso l'esterno")
+    func closedArtworkInset() {
+        let height: CGFloat = 38
+        let wing = NotchPlayerView.wings(for: .closed, notchHeight: height).left
+        let artwork = NotchPlayerView.closedArtworkSize(notchHeight: height)
+        #expect(wing == height)
+        #expect((wing - artwork) / 2 == (height - artwork) / 2)
+        #expect(artwork < height)
     }
 }
 

@@ -131,6 +131,7 @@ private struct ListenBrainzSection: View {
                     }
                 }
             } else {
+                TextField("Server", text: $settings.listenBrainzServer, prompt: Text("listenbrainz.org (o Maloja: https://server)"))
                 HStack {
                     SecureField("Token utente", text: $token)
                         .onSubmit(connect)
@@ -145,7 +146,7 @@ private struct ListenBrainzSection: View {
         } header: {
             Text("ListenBrainz")
         } footer: {
-            Text("Il token è salvato nel Portachiavi.")
+            Text("Il token è salvato nel Portachiavi. Per Maloja o un'istanza propria di ListenBrainz scrivi l'indirizzo del server prima di collegare il token.")
         }
     }
 

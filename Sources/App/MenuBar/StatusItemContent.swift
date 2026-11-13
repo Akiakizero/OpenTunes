@@ -8,7 +8,8 @@ import SwiftUI
 @Observable
 @MainActor
 final class StatusItemState {
-    var isCompact = false
+    /// Livello scelto da `MenuBarFit` (piena, compatta, solo icona).
+    var level: MenuBarLevel = .full
 }
 
 /// Geometria riportata dalla vista al controller, per instradare i clic (non osservata).
@@ -20,8 +21,8 @@ final class StatusItemLayout {
     func isButton(at point: CGPoint) -> Bool {
         buttonFrames.values.contains { $0.contains(point) }
     }
-    /// Larghezza in modalità piena, misurata anche quando l'elemento è compatto.
-    var fullWidth: CGFloat = 0
+    /// Larghezza di ogni livello, misurata anche quando l'elemento ne mostra un altro.
+    var widths: [MenuBarLevel: CGFloat] = [:]
 }
 
 /// Ruolo di un elemento in menu bar: unico, oppure "info" + "controlli" separati.
@@ -49,14 +50,18 @@ struct StatusItemContent: View {
     nonisolated static let coordinateSpace = "statusItem"
 
     var body: some View {
-        content(compact: state.isCompact, measuring: false)
+        content(level: state.level, measuring: false)
             .fixedSize()
             .background(alignment: .leading) {
-                // Misura della versione piena, invisibile e senza effetti sul layout.
-                content(compact: false, measuring: true)
-                    .fixedSize()
-                    .hidden()
-                    .onGeometryChange(for: CGFloat.self) { $0.size.width } action: { layout.fullWidth = $0 }
+                // Misura di tutti i livelli, invisibile e senza effetti sul layout.
+                ZStack(alignment: .leading) {
+                    ForEach(MenuBarLevel.allCases, id: \.self) { level in
+                        content(level: level, measuring: true)
+                            .fixedSize()
+                            .onGeometryChange(for: CGFloat.self) { $0.size.width } action: { layout.widths[level] = $0 }
+                    }
+                }
+                .hidden()
             }
             .onGeometryChange(for: CGFloat.self) { $0.size.width } action: { onWidthChange($0) }
             .frame(maxHeight: .infinity)
@@ -64,13 +69,13 @@ struct StatusItemContent: View {
     }
 
     @ViewBuilder
-    private func content(compact: Bool, measuring: Bool) -> some View {
+    private func content(level: MenuBarLevel, measuring: Bool) -> some View {
         HStack(spacing: DesignSystem.Spacing.s) {
             if model.hasTrack {
-                ForEach(elements(compact: compact)) { element in
-                    view(for: element, compact: compact, measuring: measuring)
+                ForEach(elements(level: level)) { element in
+                    view(for: element, compact: level < .full, measuring: measuring)
                 }
-                if !compact, role != .controls, model.settings.showsQueueIndicator, model.scrobbler.pendingCount > 0 {
+                if level == .full, role != .controls, model.settings.showsQueueIndicator, model.scrobbler.pendingCount > 0 {
                     queueIndicator
                 }
             } else {
@@ -82,14 +87,19 @@ struct StatusItemContent: View {
         .padding(.horizontal, DesignSystem.Spacing.xs)
     }
 
-    /// In modalità compatta restano solo copertina (o icona) e play/pausa.
-    private func elements(compact: Bool) -> [MenuBarElement] {
+    /// Compatta: copertina (o icona) e play/pausa. Icona: solo la copertina (l'elemento dei controlli separato
+    /// tiene play/pausa, perché un elemento della status bar non può essere vuoto).
+    private func elements(level: MenuBarLevel) -> [MenuBarElement] {
         let visible = model.settings.visibleMenuBarElements.filter { role.elements.contains($0) }
-        guard compact else {
+        switch level {
+        case .full:
             // Se l'utente nasconde tutto, resta l'icona/copertina per non far sparire l'elemento.
             return visible.isEmpty && role != .controls ? [.artwork] : visible
+        case .compact:
+            return role == .controls ? [.controls] : [.artwork] + (role == .combined ? [.controls] : [])
+        case .icon:
+            return role == .controls ? [.controls] : [.artwork]
         }
-        return role == .controls ? [.controls] : [.artwork] + (role == .combined ? [.controls] : [])
     }
 
     @ViewBuilder
@@ -116,6 +126,7 @@ struct StatusItemContent: View {
             .onGeometryChange(for: CGRect.self) { $0.frame(in: .named(Self.coordinateSpace)) } action: {
                 if !measuring { layout.buttonFrames[.controls] = $0 }
             }
+            .onDisappear { if !measuring { layout.buttonFrames[.controls] = nil } }
         case .love:
             if model.canLove {
                 Button { model.toggleLove() } label: {

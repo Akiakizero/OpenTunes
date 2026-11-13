@@ -23,10 +23,11 @@ final class WidgetBridge {
     }
 
     func start() {
-        guard SharedContainer.url != nil else {
-            logger.error("App Group non disponibile: i widget non riceveranno lo stato")
+        guard let folder = SharedContainer.prepare() else {
+            logger.error("cartella condivisa non disponibile: i widget non riceveranno lo stato")
             return
         }
+        logger.info("stato dei widget in \(folder.path, privacy: .public)")
         WidgetCommandBridge.handler = { [weak self] command in self?.handle(command) }
         tasks.append(observeChanges({ [weak self] in self?.currentState() }) { [weak self] state in
             guard let state else { return }
@@ -35,6 +36,7 @@ final class WidgetBridge {
     }
 
     private func handle(_ command: WidgetCommand) {
+        guard model.settings.systemWidgetEnabled else { return }
         switch command {
         case .playPause: model.perform(.playPause)
         case .next: model.perform(.next)
@@ -44,7 +46,8 @@ final class WidgetBridge {
     }
 
     private func currentState() -> WidgetState {
-        Self.state(
+        guard model.settings.systemWidgetEnabled else { return .disabled }
+        return Self.state(
             track: model.track, playback: model.playback, playerName: model.player?.name, tint: model.tint,
             canLove: model.canLove, isLoved: model.isLoved, profile: model.scrobbler.isLastFMConnected ? model.scrobbler.profile : nil)
     }
