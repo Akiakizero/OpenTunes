@@ -6,7 +6,8 @@ import SwiftUI
 /// Crea il modello e collega le superfici: menu bar, finestra flottante, HUD, notifiche, hotkey.
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
-    private let model = AppModel()
+    /// Creato solo quando serve: sotto i test e nelle anteprime non si apre il database né il Portachiavi.
+    private lazy var model = AppModel.live()
     private lazy var statusBar = StatusBarController(model: model)
     private lazy var floatingPanel = FloatingPanelController(model: model)
     private lazy var hud = HUDController(model: model)
@@ -72,6 +73,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             }
         case .volumeChanged(let level):
             if settings.hudOnVolumeChange { hud.show(.volume(level)) }
+        case .trackAction(let title, let symbol):
+            hud.show(.track(title: title, symbol: symbol))
         }
     }
 

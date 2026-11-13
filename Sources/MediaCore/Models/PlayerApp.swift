@@ -46,7 +46,7 @@ public struct PlayerApp: Sendable, Hashable, Identifiable {
 
     public static let known: [PlayerApp] = [appleMusic, spotify, tidal, safari, chrome]
 
-    static let browserBundleIDs: Set<String> = [
+    public static let browserBundleIDs: Set<String> = [
         "com.apple.Safari", "com.apple.SafariTechnologyPreview", "com.google.Chrome",
         "com.google.Chrome.canary", "org.mozilla.firefox", "com.microsoft.edgemac",
         "com.brave.Browser", "company.thebrowser.Browser", "com.vivaldi.Vivaldi", "com.operasoftware.Opera",

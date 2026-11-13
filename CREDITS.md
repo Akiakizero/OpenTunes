@@ -21,4 +21,12 @@ Codice di terzi incluso in OpenTunes. Aggiornare questo file nella stessa PR in 
 - Layout di popover, finestra flottante, HUD e impostazioni: riferimento visivo agli screenshot pubblici di NepTunes
   (solo proporzioni e disposizione; nessun asset, icona o testo copiato).
 
+- Firma e chiamate dell'API Last.fm (`LastFMClient`): struttura studiata da `WebService.swift` di
+  [Audioscrobbler](https://github.com/heyvito/audioscrobbler) (MIT) e dalla documentazione di Last.fm; codice scritto da zero.
+- Regole di scrobbling (30 s, 50 %, 240 s) e pulizia dei titoli per gli scrobble (`ScrobbleRules`, `TitleCleaner`):
+  comportamento di [web-scrobbler](https://github.com/web-scrobbler/web-scrobbler) (MIT); regole scritte da zero.
+- Coda offline con nuovi tentativi: idea da [foo_scrobbler_mac](https://github.com/zfoxer/foo_scrobbler_mac) (MIT);
+  filtro dei player con browser esclusi: idea da [osx-scrobbler](https://github.com/theli-ua/osx-scrobbler) (Apache-2.0).
+  Nessun codice copiato.
+
 L'analisi completa dei progetti di riferimento è in `docs/analisi/`.

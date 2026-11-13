@@ -23,11 +23,21 @@ Piano per fasi in `docs/` (fase 0 = fondamenta); analisi dei progetti di riferim
   `observeChanges` (basato su `Observations`). Menu bar in `App/MenuBar`, finestra flottante in `App/FloatingPanel`,
   HUD in `App/HUD`. Volume = volume di sistema (CoreAudio), non del player.
 - Blacklist, normalizzazione dei titoli dei browser, cronologia e lookup copertine stanno in `NowPlayingStore`.
+- Fase 2: azioni sul brano di Musica (preferito, dislike, stelle, libreria) e «cambia player» passano da
+  `NowPlayingStore` (`perform`, `trackState`, `switchPlayer`), implementate in `AppleScriptSource` via `AppleScriptRunner`.
+- Scrobbling in `Sources/MediaCore/Scrobbling`: `ScrobbleEngine` è puro (snapshot + tick → eventi, testabile senza
+  rete); `Scrobbler` lo collega a `ScrobbleQueue` (SwiftData, `Sources/MediaCore/Storage`) e ai client.
+  Ogni ascolto si salva in coda **prima** dell'invio. Le chiamate HTTP passano da `HTTPTransport` (finto nei test).
+- Segreti (session key Last.fm, token ListenBrainz, secret personale) solo via `SecretStore`: `KeychainStore`
+  nell'app, `MemorySecretStore` in test e anteprime. Mai in `UserDefaults`.
+- `AppModel()` senza argomenti = database in memoria e niente Portachiavi (anteprime, test); l'app usa `AppModel.live()`.
 
 ## Build
 - Requisiti: Xcode 26+, `brew install xcodegen`. Se `xcode-select` punta ai Command Line Tools:
   `export DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer`.
-- Generare il progetto: `xcodegen generate` (il `.xcodeproj` non è versionato)
+- Generare il progetto: `xcodegen generate` (il `.xcodeproj` e `Sources/App/Info.plist` non sono versionati)
+- API key Last.fm del progetto: variabili `LASTFM_API_KEY`/`LASTFM_API_SECRET` alla build (→ Info.plist
+  `LastFMAPIKey`/`LastFMAPISecret`); senza, l'utente usa la propria chiave dalle impostazioni.
 - Build e test: `xcodebuild -scheme OpenTunes -destination 'platform=macOS' test`
 - L'adapter si compila da solo (pre-build) con `scripts/build-mediaremote-adapter.sh` da `Vendor/mediaremote-adapter/`
   in `Resources/MediaRemoteAdapter/` (ignorato da git) e viene copiato nel bundle.

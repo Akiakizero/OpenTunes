@@ -9,6 +9,8 @@ struct PopoverView: View {
     var onOpenSettings: () -> Void
 
     @Environment(\.colorScheme) private var colorScheme
+    /// Sezione in basso: cronologia locale o profilo Last.fm.
+    @State private var showsProfile = false
 
     /// Quanti brani recenti mostrare.
     private let historyLimit = 5
@@ -20,7 +22,19 @@ struct PopoverView: View {
             } else {
                 emptyState
             }
-            recentSection
+            if model.scrobbler.isLastFMConnected {
+                Picker("Sezione", selection: $showsProfile) {
+                    Text("Ascoltati di recente").tag(false)
+                    Text("Last.fm").tag(true)
+                }
+                .pickerStyle(.segmented)
+                .labelsHidden()
+            }
+            if showsProfile, model.scrobbler.isLastFMConnected {
+                LastFMProfileView(scrobbler: model.scrobbler)
+            } else {
+                recentSection
+            }
             Divider()
             footer
         }
@@ -60,9 +74,11 @@ struct PopoverView: View {
                 .prefix(historyLimit))
         if !recent.isEmpty {
             VStack(alignment: .leading, spacing: DesignSystem.Spacing.s) {
-                Text("Ascoltati di recente")
-                    .font(DesignSystem.Typography.sectionHeader)
-                    .foregroundStyle(.secondary)
+                if !model.scrobbler.isLastFMConnected {
+                    Text("Ascoltati di recente")
+                        .font(DesignSystem.Typography.sectionHeader)
+                        .foregroundStyle(.secondary)
+                }
                 ForEach(recent) { entry in
                     RecentTrackRow(entry: entry)
                 }
@@ -103,20 +119,29 @@ private struct NowPlayingSection: View {
     let model: AppModel
     let track: Track
 
+    /// Spazio del titolo accanto ai pulsanti love e "Altro".
+    private var titleWidth: CGFloat {
+        DesignSystem.Size.popoverArtwork - 2 * DesignSystem.Size.control - DesignSystem.Spacing.s
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: DesignSystem.Spacing.m) {
             ArtworkView(
                 image: model.artwork, identity: track.artworkHash,
                 size: DesignSystem.Size.popoverArtwork, cornerRadius: DesignSystem.Radius.medium)
 
-            VStack(alignment: .leading, spacing: DesignSystem.Spacing.xxs) {
-                MarqueeText(text: track.title, font: DesignSystem.Typography.title, maxWidth: DesignSystem.Size.popoverArtwork)
-                if let artist = track.artist {
-                    Text(artist).font(DesignSystem.Typography.subtitle).lineLimit(1)
+            HStack(alignment: .top, spacing: DesignSystem.Spacing.s) {
+                VStack(alignment: .leading, spacing: DesignSystem.Spacing.xxs) {
+                    MarqueeText(text: track.title, font: DesignSystem.Typography.title, maxWidth: titleWidth)
+                    if let artist = track.artist {
+                        Text(artist).font(DesignSystem.Typography.subtitle).lineLimit(1)
+                    }
+                    if let album = track.album {
+                        Text(album).font(DesignSystem.Typography.subtitle).foregroundStyle(.secondary).lineLimit(1)
+                    }
                 }
-                if let album = track.album {
-                    Text(album).font(DesignSystem.Typography.subtitle).foregroundStyle(.secondary).lineLimit(1)
-                }
+                Spacer(minLength: 0)
+                TrackActionsView(model: model)
             }
 
             ProgressBar(playback: model.playback, duration: track.duration) { model.seek(to: $0) }
@@ -127,6 +152,8 @@ private struct NowPlayingSection: View {
             ) { model.perform($0) }
 
             VolumeSlider(model: model)
+
+            ScrobbleStatusLine(model: model)
 
             if let player = model.player {
                 Button {

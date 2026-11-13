@@ -3,7 +3,7 @@
 # a ogni release aggiornare `version` e `sha256` (il valore è nel file .dmg.sha256 della release).
 # Sostituire UTENTE con il nome dell'account GitHub.
 cask "opentunes" do
-  version "0.1.0"
+  version "0.2.0"
   sha256 "SOSTITUIRE_CON_SHA256_DEL_DMG"
 
   url "https://github.com/UTENTE/OpenTunes/releases/download/v#{version}/OpenTunes-#{version}.dmg"

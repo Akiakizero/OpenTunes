@@ -16,6 +16,9 @@ struct GeneralSettingsView: View {
         @Bindable var settings = model.settings
         Form {
             Section {
+                LabeledContent("Versione", value: AppInfo.version)
+            }
+            Section {
                 Toggle("Apri OpenTunes al login", isOn: $launchAtLogin)
                     .onChange(of: launchAtLogin) { _, enabled in
                         do {
@@ -268,7 +271,7 @@ struct OtherSettingsView: View {
             Section {
                 LabeledContent("Sorgente attiva", value: model.store.activeSourceID ?? "nessuna")
                 Button("Apri la diagnostica…", action: onOpenDebug)
-                LabeledContent("Versione", value: Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "—")
+                LabeledContent("Versione", value: AppInfo.version)
                 Text("OpenTunes è software libero (GPL-3.0-or-later). Non è affiliato a NepTunes né ad Apple.")
                     .font(DesignSystem.Typography.caption)
                     .foregroundStyle(.secondary)

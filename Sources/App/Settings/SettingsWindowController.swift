@@ -31,11 +31,14 @@ final class SettingsWindowController {
         add(GeneralSettingsView(model: model), title: "Generali", symbol: "gearshape", to: tabs)
         add(MenuBarSettingsView(model: model), title: "Menu bar", symbol: "menubar.rectangle", to: tabs)
         add(PositionSettingsView(model: model), title: "Posizione", symbol: "macwindow.on.rectangle", to: tabs)
+        add(ScrobblingSettingsView(model: model), title: "Scrobbling", symbol: "dot.radiowaves.up.forward", to: tabs)
         add(ShortcutsSettingsView(), title: "Scorciatoie", symbol: "keyboard", to: tabs)
         add(OtherSettingsView(model: model, onOpenDebug: openDebug), title: "Altro", symbol: "ellipsis.circle", to: tabs)
 
         let window = NSWindow(contentViewController: tabs)
         window.styleMask = [.titled, .closable]
+        // Con le schede il titolo è quello della scheda: la versione va nel sottotitolo.
+        window.subtitle = "OpenTunes \(AppInfo.version)"
         window.isReleasedWhenClosed = false
         window.center()
         window.setFrameAutosaveName("Settings")
@@ -51,6 +54,13 @@ final class SettingsWindowController {
         item.label = title
         item.image = NSImage(systemSymbolName: symbol, accessibilityDescription: title)
         tabs.addTabViewItem(item)
+    }
+}
+
+/// Versione dell'app, letta dall'Info.plist (`MARKETING_VERSION` in project.yml).
+enum AppInfo {
+    static var version: String {
+        Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "—"
     }
 }
 

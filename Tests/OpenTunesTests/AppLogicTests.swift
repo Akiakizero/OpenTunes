@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import AppKit
+import MediaCore
 import Testing
 @testable import OpenTunes
 
@@ -101,7 +102,8 @@ struct AppSettingsTests {
         defer { defaults.removePersistentDomain(forName: suite) }
         defaults.set(["controls"], forKey: "menuBarOrder")
         let settings = AppSettings(defaults: defaults)
-        #expect(settings.menuBarOrder == [.controls, .artwork, .title])
+        #expect(settings.menuBarOrder == [.controls, .artwork, .title, .love])
+        #expect(!settings.isVisible(.love), "gli elementi nuovi come il love partono nascosti")
         settings.setVisible(.title, false)
         settings.leftClick = .playPause
         let reloaded = AppSettings(defaults: defaults)
@@ -121,5 +123,57 @@ struct DefaultSettingsTests {
         let settings = AppSettings(defaults: defaults)
         #expect(!settings.hudOnTrackChange)
         #expect(settings.notificationMode == .off)
+    }
+}
+
+@MainActor
+@Suite("Preferenze dello scrobbling")
+struct ScrobblingSettingsTests {
+    func makeSettings() throws -> (AppSettings, UserDefaults, String) {
+        let suite = "org.opentunes.tests.\(UUID().uuidString)"
+        let defaults = try #require(UserDefaults(suiteName: suite))
+        return (AppSettings(defaults: defaults), defaults, suite)
+    }
+
+    @Test("Browser esclusi di default, i player nuovi fanno scrobbling")
+    func playerFilter() throws {
+        let (settings, defaults, suite) = try makeSettings()
+        defer { defaults.removePersistentDomain(forName: suite) }
+        #expect(!settings.scrobbles("com.apple.Safari"))
+        #expect(settings.scrobbles("com.apple.Music"))
+        #expect(settings.scrobbles("org.videolan.vlc"))
+        settings.setScrobbles("com.apple.Safari", true)
+        settings.setScrobbles("org.videolan.vlc", false)
+        let reloaded = AppSettings(defaults: defaults)
+        #expect(reloaded.scrobbles("com.apple.Safari") && !reloaded.scrobbles("org.videolan.vlc"))
+    }
+
+    @Test("Soglia e pulizia passano allo scrobbler")
+    func configuration() throws {
+        let (settings, defaults, suite) = try makeSettings()
+        defer { defaults.removePersistentDomain(forName: suite) }
+        settings.scrobblePercent = 80
+        settings.scrobbleCapsAtFourMinutes = false
+        settings.cleansFeaturing = true
+        let model = AppModel(settings: settings)
+        let configuration = model.scrobblerConfiguration
+        #expect(configuration.rules.threshold(duration: 600) == 480)
+        #expect(configuration.cleaner.removesFeaturing)
+        #expect(configuration.excludedBundleIDs.contains("com.google.Chrome"))
+    }
+
+    @Test("La chiave personale vale solo se completa; la secret va nel Portachiavi")
+    func customKey() throws {
+        let (settings, defaults, suite) = try makeSettings()
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let secrets = MemorySecretStore()
+        let model = AppModel(settings: settings, secrets: secrets)
+        settings.lastFMUsesCustomKey = true
+        settings.lastFMCustomAPIKey = "KEY"
+        #expect(model.lastFMCredentials == nil)
+        model.setCustomLastFMSecret(" SECRET ")
+        #expect(model.lastFMCredentials == LastFMCredentials(apiKey: "KEY", secret: "SECRET"))
+        #expect(secrets.secret(for: SecretAccount.lastFMCustomSecret) == "SECRET")
+        #expect(defaults.string(forKey: "lastFMCustomSecret") == nil, "mai in chiaro nelle preferenze")
     }
 }

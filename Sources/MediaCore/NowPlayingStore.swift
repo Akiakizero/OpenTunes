@@ -18,7 +18,7 @@ public final class NowPlayingStore {
         public let message: String
     }
 
-    /// Una voce della cronologia in memoria (la persistenza arriva in fase 2).
+    /// Una voce della cronologia (salvata con `attachHistory`).
     public struct PlayedTrack: Identifiable, Sendable, Equatable {
         public let id: Int
         public let track: Track
@@ -65,6 +65,13 @@ public final class NowPlayingStore {
     /// Copertina trovata online per il brano corrente (chiave: titolo+artista).
     @ObservationIgnored private var lookedUpArtwork: (key: String, data: Data)?
     @ObservationIgnored private let artworkLookup: ArtworkLookup
+    /// Scritture verso la cronologia persistente, in ordine (un solo consumatore).
+    @ObservationIgnored private var historyWrites: AsyncStream<HistoryWrite>.Continuation?
+
+    private enum HistoryWrite: Sendable {
+        case record(StoredPlay)
+        case clear
+    }
     private let maxEvents: Int
     private let maxHistory: Int
 
@@ -122,6 +129,90 @@ public final class NowPlayingStore {
             record(source.id, "comando inviato: \(command)")
         } catch {
             record(source.id, "comando \(command) fallito: \(error)")
+        }
+    }
+
+    // MARK: Cronologia persistente
+
+    /// Carica la cronologia salvata e da qui in poi salva ogni brano nuovo.
+    /// I brani ascoltati prima del caricamento restano in cima.
+    public func attachHistory(_ persistence: any HistoryPersistence) async {
+        let stored = await persistence.load(limit: maxHistory)
+        let current = recentTracks
+        var merged = current
+        for play in stored where !merged.contains(where: { $0.track.isSameItem(as: play.track) }) {
+            nextHistoryID += 1
+            merged.append(PlayedTrack(id: nextHistoryID, track: play.track, date: play.playedAt))
+        }
+        recentTracks = Array(merged.prefix(maxHistory))
+        let (stream, continuation) = AsyncStream<HistoryWrite>.makeStream()
+        historyWrites = continuation
+        Task {
+            for await write in stream {
+                switch write {
+                case .record(let play): await persistence.record(play)
+                case .clear: await persistence.clear()
+                }
+            }
+        }
+        for entry in current.reversed() { continuation.yield(.record(StoredPlay(track: entry.track, playedAt: entry.date))) }
+        record("store", "cronologia caricata: \(stored.count) brani")
+    }
+
+    /// Svuota la cronologia (anche quella salvata), tranne il brano in corso.
+    public func clearHistory() {
+        recentTracks.removeAll { entry in !(track.map { entry.track.isSameItem(as: $0) } ?? false) }
+        historyWrites?.yield(.clear)
+        for entry in recentTracks { historyWrites?.yield(.record(StoredPlay(track: entry.track, playedAt: entry.date))) }
+    }
+
+    // MARK: Azioni sul brano
+
+    /// `true` se il player corrente supporta preferito, stelle e aggiunta alla libreria (oggi: Musica).
+    public var supportsTrackActions: Bool {
+        track?.playerBundleID == AppleScriptPlayer.music.bundleID
+    }
+
+    /// Preferito, dislike e stelle del brano corrente (`nil` se il player non li espone
+    /// o il permesso Automazione non è ancora concesso).
+    public func trackState() async -> MusicTrackState? {
+        guard supportsTrackActions else { return nil }
+        return await AppleScriptSource.musicTrackState()
+    }
+
+    /// Esegue un'azione sul brano corrente. Solo su azione dell'utente (può chiedere il permesso Automazione).
+    public func perform(_ action: TrackAction) async throws {
+        guard supportsTrackActions else { throw MediaSourceError.noActivePlayer }
+        do {
+            try await AppleScriptSource.perform(action)
+            record("applescript", "azione sul brano: \(action)")
+        } catch {
+            record("applescript", "azione \(action) fallita: \(error)")
+            throw error
+        }
+    }
+
+    /// Player controllabili via AppleScript in esecuzione, diversi da quello corrente.
+    public var switchablePlayers: [AppleScriptPlayer] {
+        AppleScriptPlayer.allSupported.filter { $0.isRunning && $0.bundleID != track?.playerBundleID }
+    }
+
+    /// Mette in pausa il player corrente e avvia il prossimo player in esecuzione (Musica ↔ Spotify).
+    /// Restituisce il player avviato. Solo su azione dell'utente.
+    @discardableResult
+    public func switchPlayer() async -> AppleScriptPlayer? {
+        guard let target = switchablePlayers.first else {
+            record("store", "cambio player: nessun altro player in esecuzione")
+            return nil
+        }
+        if playback.isPlaying { await send(.pause) }
+        do {
+            try await AppleScriptSource.play(target)
+            record("store", "cambio player: \(target.displayName)")
+            return target
+        } catch {
+            record("store", "cambio player fallito: \(error)")
+            return nil
         }
     }
 
@@ -206,8 +297,10 @@ public final class NowPlayingStore {
         if let first = recentTracks.first, first.track.isSameItem(as: track) { return }
         recentTracks.removeAll { $0.track.isSameItem(as: track) }
         nextHistoryID += 1
-        recentTracks.insert(PlayedTrack(id: nextHistoryID, track: track, date: .now), at: 0)
+        let entry = PlayedTrack(id: nextHistoryID, track: track, date: .now)
+        recentTracks.insert(entry, at: 0)
         if recentTracks.count > maxHistory { recentTracks.removeLast(recentTracks.count - maxHistory) }
+        historyWrites?.yield(.record(StoredPlay(track: track, playedAt: entry.date)))
     }
 
     /// Aggiorna la copertina nella cronologia quando arriva dopo il titolo (succede spesso).
@@ -216,6 +309,7 @@ public final class NowPlayingStore {
             first.track.artworkHash != track.artworkHash, track.artworkData != nil
         else { return }
         recentTracks[0] = PlayedTrack(id: first.id, track: track, date: first.date)
+        historyWrites?.yield(.record(StoredPlay(track: track, playedAt: first.date)))
     }
 
     static func lookupKey(_ track: Track) -> String {

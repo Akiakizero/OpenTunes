@@ -28,6 +28,7 @@ enum QuickMenu {
         })
         menu.addItem(item("Successivo", symbol: "forward.fill", enabled: hasTrack) { model.perform(.next) })
         menu.addItem(item("Precedente", symbol: "backward.fill", enabled: hasTrack) { model.perform(.previous) })
+        addTrackActions(to: menu, model: model)
         menu.addItem(.separator())
         menu.addItem(item(model.settings.floatingVisible ? "Nascondi finestra flottante" : "Mostra finestra flottante", symbol: "pip") {
             model.toggleFloatingWindow()
@@ -41,6 +42,46 @@ enum QuickMenu {
         menu.addItem(.separator())
         menu.addItem(item("Esci da OpenTunes", symbol: "power") { NSApp.terminate(nil) })
         return menu
+    }
+
+    /// Love, stelle, dislike, libreria, cambio player e coda degli ascolti.
+    private static func addTrackActions(to menu: NSMenu, model: AppModel) {
+        var items: [NSMenuItem] = []
+        if model.canLove {
+            items.append(item(model.isLoved ? "Togli il love" : "Love", symbol: model.isLoved ? "heart.slash" : "heart") {
+                model.toggleLove()
+            })
+        }
+        if model.store.supportsTrackActions {
+            let rating = NSMenuItem(title: "Valutazione", action: nil, keyEquivalent: "")
+            rating.image = NSImage(systemSymbolName: "star", accessibilityDescription: nil)
+            let stars = NSMenu()
+            let current = model.musicState?.stars ?? 0
+            for value in 0...5 {
+                let title = value == 0 ? "Nessuna" : String(repeating: "★", count: value) + String(repeating: "☆", count: 5 - value)
+                let entry = ClosureMenuItem(title: title) { model.performTrackAction(.setRating(value)) }
+                entry.state = value == current ? .on : .off
+                stars.addItem(entry)
+            }
+            rating.submenu = stars
+            items.append(rating)
+            let disliked = model.musicState?.disliked ?? false
+            let dislike = item("Non mi piace", symbol: "hand.thumbsdown") { model.toggleDislike() }
+            dislike.state = disliked ? .on : .off
+            items.append(dislike)
+            items.append(item("Aggiungi alla libreria", symbol: "plus.circle") { model.addToLibrary() })
+        }
+        if let other = model.store.switchablePlayers.first {
+            items.append(item("Passa a \(other.displayName)", symbol: "arrow.left.arrow.right") { model.switchPlayer() })
+        }
+        let pending = model.scrobbler.pendingCount
+        if pending > 0 {
+            items.append(item(pending == 1 ? "1 ascolto in coda — invia ora" : "\(pending) ascolti in coda — invia ora",
+                symbol: "arrow.trianglehead.2.clockwise") { model.scrobbler.retryNow() })
+        }
+        guard !items.isEmpty else { return }
+        menu.addItem(.separator())
+        items.forEach(menu.addItem)
     }
 
     private static func item(_ title: String, symbol: String, enabled: Bool = true, action: @escaping () -> Void) -> NSMenuItem {

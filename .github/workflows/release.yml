@@ -23,6 +23,10 @@ jobs:
           xcodebuild -scheme OpenTunes -destination 'platform=macOS' \
             -derivedDataPath build/DerivedData test
       - name: Build .dmg
+        env:
+          # Facoltativi: senza, l'app chiede all'utente la propria API key Last.fm.
+          LASTFM_API_KEY: ${{ secrets.LASTFM_API_KEY }}
+          LASTFM_API_SECRET: ${{ secrets.LASTFM_API_SECRET }}
         run: scripts/make-dmg.sh
       - name: Create release
         env:

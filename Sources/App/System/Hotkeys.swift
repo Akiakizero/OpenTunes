@@ -11,6 +11,9 @@ extension KeyboardShortcuts.Name {
     static let volumeUp = Self("volumeUp")
     static let volumeDown = Self("volumeDown")
     static let toggleFloatingWindow = Self("toggleFloatingWindow")
+    static let love = Self("love")
+    static let addToLibrary = Self("addToLibrary")
+    static let switchPlayer = Self("switchPlayer")
 }
 
 @MainActor
@@ -23,6 +26,9 @@ enum Hotkeys {
         (.volumeUp, "Alza il volume"),
         (.volumeDown, "Abbassa il volume"),
         (.toggleFloatingWindow, "Mostra/nascondi finestra flottante"),
+        (.love, "Love / preferito"),
+        (.addToLibrary, "Aggiungi alla libreria di Musica"),
+        (.switchPlayer, "Cambia player attivo"),
     ]
 
     static func register(model: AppModel) {
@@ -33,5 +39,9 @@ enum Hotkeys {
         KeyboardShortcuts.onKeyDown(for: .volumeUp) { model.changeVolume(by: SystemVolume.step) }
         KeyboardShortcuts.onKeyDown(for: .volumeDown) { model.changeVolume(by: -SystemVolume.step) }
         KeyboardShortcuts.onKeyUp(for: .toggleFloatingWindow) { model.toggleFloatingWindow() }
+        // Le azioni da scorciatoia danno un riscontro con l'HUD.
+        KeyboardShortcuts.onKeyUp(for: .love) { model.toggleLove(feedback: true) }
+        KeyboardShortcuts.onKeyUp(for: .addToLibrary) { model.addToLibrary(feedback: true) }
+        KeyboardShortcuts.onKeyUp(for: .switchPlayer) { model.switchPlayer() }
     }
 }

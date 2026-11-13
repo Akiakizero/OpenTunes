@@ -14,8 +14,12 @@ final class StatusItemState {
 /// Geometria riportata dalla vista al controller, per instradare i clic (non osservata).
 @MainActor
 final class StatusItemLayout {
-    /// Area dei pulsanti in coordinate della vista: i clic qui vanno ai pulsanti SwiftUI.
-    var controlsFrame: CGRect = .zero
+    /// Aree dei pulsanti in coordinate della vista: i clic qui vanno ai pulsanti SwiftUI.
+    var buttonFrames: [MenuBarElement: CGRect] = [:]
+
+    func isButton(at point: CGPoint) -> Bool {
+        buttonFrames.values.contains { $0.contains(point) }
+    }
     /// Larghezza in modalità piena, misurata anche quando l'elemento è compatto.
     var fullWidth: CGFloat = 0
 }
@@ -28,7 +32,7 @@ enum StatusItemRole {
         switch self {
         case .combined: Set(MenuBarElement.allCases)
         case .info: [.artwork, .title]
-        case .controls: [.controls]
+        case .controls: [.controls, .love]
         }
     }
 }
@@ -65,6 +69,9 @@ struct StatusItemContent: View {
             if model.hasTrack {
                 ForEach(elements(compact: compact)) { element in
                     view(for: element, compact: compact, measuring: measuring)
+                }
+                if !compact, role != .controls, model.settings.showsQueueIndicator, model.scrobbler.pendingCount > 0 {
+                    queueIndicator
                 }
             } else {
                 Image(systemName: "music.note")
@@ -107,9 +114,36 @@ struct StatusItemContent: View {
                 model.perform($0)
             }
             .onGeometryChange(for: CGRect.self) { $0.frame(in: .named(Self.coordinateSpace)) } action: {
-                if !measuring { layout.controlsFrame = $0 }
+                if !measuring { layout.buttonFrames[.controls] = $0 }
+            }
+        case .love:
+            if model.canLove {
+                Button { model.toggleLove() } label: {
+                    Image(systemName: model.isLoved ? "heart.fill" : "heart")
+                        .font(DesignSystem.Typography.menuBar)
+                        .frame(minWidth: DesignSystem.Size.menuBarControl, minHeight: DesignSystem.Size.menuBarControl)
+                        .contentShape(.rect)
+                        .contentTransition(.symbolEffect(.replace))
+                }
+                .buttonStyle(ControlButtonStyle())
+                .help(model.isLoved ? "Togli il love" : "Love")
+                .accessibilityLabel(model.isLoved ? "Togli il love" : "Love")
+                .onGeometryChange(for: CGRect.self) { $0.frame(in: .named(Self.coordinateSpace)) } action: {
+                    if !measuring { layout.buttonFrames[.love] = $0 }
+                }
+                .onDisappear { if !measuring { layout.buttonFrames[.love] = nil } }
             }
         }
+    }
+
+    /// Piccola icona quando ci sono ascolti non ancora inviati (es. senza rete).
+    private var queueIndicator: some View {
+        let count = model.scrobbler.pendingCount
+        return Image(systemName: "arrow.trianglehead.2.clockwise")
+            .font(DesignSystem.Typography.caption)
+            .foregroundStyle(.secondary)
+            .help(count == 1 ? "1 ascolto in attesa di invio" : "\(count) ascolti in attesa di invio")
+            .accessibilityLabel(count == 1 ? "1 ascolto in attesa di invio" : "\(count) ascolti in attesa di invio")
     }
 }
 

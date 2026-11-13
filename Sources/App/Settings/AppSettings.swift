@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import Foundation
+import MediaCore
 import Observation
 
 /// Elementi della menu bar, riordinabili.
 enum MenuBarElement: String, CaseIterable, Codable, Identifiable, Sendable {
-    case artwork, title, controls
+    case artwork, title, controls, love
 
     var id: String { rawValue }
 
@@ -14,13 +15,17 @@ enum MenuBarElement: String, CaseIterable, Codable, Identifiable, Sendable {
         case .artwork: "Copertina"
         case .title: "Titolo e artista"
         case .controls: "Pulsanti"
+        case .love: "Love (Last.fm / Musica)"
         }
     }
+
+    /// Elementi aggiunti in versioni successive che partono nascosti.
+    static let hiddenByDefault: Set<MenuBarElement> = [.love]
 }
 
 /// Cosa fa un clic sull'elemento in menu bar.
 enum MouseAction: String, CaseIterable, Identifiable, Sendable {
-    case openPopover, playPause, nextTrack, previousTrack, quickMenu, toggleFloatingWindow, none
+    case openPopover, playPause, nextTrack, previousTrack, quickMenu, toggleFloatingWindow, love, none
 
     var id: String { rawValue }
 
@@ -32,6 +37,7 @@ enum MouseAction: String, CaseIterable, Identifiable, Sendable {
         case .previousTrack: "Brano precedente"
         case .quickMenu: "Menu rapido"
         case .toggleFloatingWindow: "Mostra/nascondi finestra flottante"
+        case .love: "Love"
         case .none: "Niente"
         }
     }
@@ -131,13 +137,40 @@ final class AppSettings {
     var normalizesBrowserTitles: Bool { didSet { save(normalizesBrowserTitles, "normalizesBrowserTitles") } }
     var looksUpMissingArtwork: Bool { didSet { save(looksUpMissingArtwork, "looksUpMissingArtwork") } }
 
+    // MARK: Scrobbling
+
+    var lastFMEnabled: Bool { didSet { save(lastFMEnabled, "lastFMEnabled") } }
+    var listenBrainzEnabled: Bool { didSet { save(listenBrainzEnabled, "listenBrainzEnabled") } }
+    /// Chiave personale Last.fm (la secret sta nel Portachiavi).
+    var lastFMUsesCustomKey: Bool { didSet { save(lastFMUsesCustomKey, "lastFMUsesCustomKey") } }
+    var lastFMCustomAPIKey: String { didSet { save(lastFMCustomAPIKey, "lastFMCustomAPIKey") } }
+    /// Percentuale del brano da ascoltare (50 = regola di Last.fm).
+    var scrobblePercent: Double { didSet { save(scrobblePercent, "scrobblePercent") } }
+    /// Tetto dei 4 minuti.
+    var scrobbleCapsAtFourMinutes: Bool { didSet { save(scrobbleCapsAtFourMinutes, "scrobbleCapsAtFourMinutes") } }
+    /// Player esclusi dallo scrobbling (per default i browser: i video di YouTube non sono musica).
+    var scrobbleExcludedBundleIDs: [String] { didSet { save(scrobbleExcludedBundleIDs, "scrobbleExcludedBundleIDs") } }
+    /// Player visti finora, per scegliere nelle impostazioni quali possono fare scrobbling.
+    var seenPlayerBundleIDs: [String] { didSet { save(seenPlayerBundleIDs, "seenPlayerBundleIDs") } }
+    var cleansRemaster: Bool { didSet { save(cleansRemaster, "cleansRemaster") } }
+    var cleansVersionTags: Bool { didSet { save(cleansVersionTags, "cleansVersionTags") } }
+    var cleansVideoTags: Bool { didSet { save(cleansVideoTags, "cleansVideoTags") } }
+    var cleansFeaturing: Bool { didSet { save(cleansFeaturing, "cleansFeaturing") } }
+    var fixesAlbumArtist: Bool { didSet { save(fixesAlbumArtist, "fixesAlbumArtist") } }
+    /// Il love su Last.fm imposta anche il preferito in Musica (e viceversa dal pulsante).
+    var syncsLoveWithMusic: Bool { didSet { save(syncsLoveWithMusic, "syncsLoveWithMusic") } }
+    /// Indicatore in menu bar quando ci sono ascolti in coda.
+    var showsQueueIndicator: Bool { didSet { save(showsQueueIndicator, "showsQueueIndicator") } }
+
     init(defaults: UserDefaults = .standard, persists: Bool = true) {
         self.defaults = defaults
         self.persists = persists
         let order = (defaults.stringArray(forKey: "menuBarOrder") ?? []).compactMap(MenuBarElement.init(rawValue:))
-        // Gli elementi mancanti (es. aggiunti in una versione nuova) vanno in coda.
-        menuBarOrder = order + MenuBarElement.allCases.filter { !order.contains($0) }
-        menuBarHidden = Set((defaults.stringArray(forKey: "menuBarHidden") ?? []).compactMap(MenuBarElement.init(rawValue:)))
+        // Gli elementi mancanti (es. aggiunti in una versione nuova) vanno in coda; alcuni partono nascosti.
+        let added = MenuBarElement.allCases.filter { !order.contains($0) }
+        menuBarOrder = order + added
+        let savedHidden = (defaults.stringArray(forKey: "menuBarHidden") ?? []).compactMap(MenuBarElement.init(rawValue:))
+        menuBarHidden = Set(savedHidden).union(MenuBarElement.hiddenByDefault.intersection(added))
         titleTemplate = defaults.string(forKey: "titleTemplate") ?? "{artist} — {title}"
         maxTitleWidth = defaults.object(forKey: "maxTitleWidth") as? Double ?? 180
         scrollsTitle = defaults.object(forKey: "scrollsTitle") as? Bool ?? true
@@ -163,6 +196,41 @@ final class AppSettings {
         ignoredBundleIDs = defaults.stringArray(forKey: "ignoredBundleIDs") ?? ["us.zoom.xos"]
         normalizesBrowserTitles = defaults.object(forKey: "normalizesBrowserTitles") as? Bool ?? true
         looksUpMissingArtwork = defaults.object(forKey: "looksUpMissingArtwork") as? Bool ?? true
+
+        lastFMEnabled = defaults.object(forKey: "lastFMEnabled") as? Bool ?? true
+        listenBrainzEnabled = defaults.object(forKey: "listenBrainzEnabled") as? Bool ?? true
+        lastFMUsesCustomKey = defaults.bool(forKey: "lastFMUsesCustomKey")
+        lastFMCustomAPIKey = defaults.string(forKey: "lastFMCustomAPIKey") ?? ""
+        scrobblePercent = defaults.object(forKey: "scrobblePercent") as? Double ?? 50
+        scrobbleCapsAtFourMinutes = defaults.object(forKey: "scrobbleCapsAtFourMinutes") as? Bool ?? true
+        scrobbleExcludedBundleIDs = defaults.stringArray(forKey: "scrobbleExcludedBundleIDs")
+            ?? PlayerApp.browserBundleIDs.sorted()
+        seenPlayerBundleIDs = defaults.stringArray(forKey: "seenPlayerBundleIDs") ?? []
+        cleansRemaster = defaults.object(forKey: "cleansRemaster") as? Bool ?? true
+        cleansVersionTags = defaults.object(forKey: "cleansVersionTags") as? Bool ?? true
+        cleansVideoTags = defaults.object(forKey: "cleansVideoTags") as? Bool ?? true
+        cleansFeaturing = defaults.bool(forKey: "cleansFeaturing")
+        fixesAlbumArtist = defaults.object(forKey: "fixesAlbumArtist") as? Bool ?? true
+        syncsLoveWithMusic = defaults.object(forKey: "syncsLoveWithMusic") as? Bool ?? true
+        showsQueueIndicator = defaults.object(forKey: "showsQueueIndicator") as? Bool ?? true
+    }
+
+    /// Regole di scrobbling scelte dall'utente.
+    var scrobbleRules: ScrobbleRules {
+        ScrobbleRules(fraction: scrobblePercent / 100, maximumWait: scrobbleCapsAtFourMinutes ? 240 : nil)
+    }
+
+    var cleanerOptions: TitleCleaner.Options {
+        TitleCleaner.Options(
+            removesRemaster: cleansRemaster, removesVersionTags: cleansVersionTags, removesVideoTags: cleansVideoTags,
+            removesFeaturing: cleansFeaturing, fixesAlbumArtist: fixesAlbumArtist)
+    }
+
+    func scrobbles(_ bundleID: String) -> Bool { !scrobbleExcludedBundleIDs.contains(bundleID) }
+
+    func setScrobbles(_ bundleID: String, _ enabled: Bool) {
+        scrobbleExcludedBundleIDs.removeAll { $0 == bundleID }
+        if !enabled { scrobbleExcludedBundleIDs.append(bundleID) }
     }
 
     var titleFormat: TitleFormat { TitleFormat(titleTemplate) }

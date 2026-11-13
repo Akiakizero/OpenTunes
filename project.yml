@@ -47,11 +47,18 @@ targets:
     dependencies:
       - target: MediaCore
       - package: KeyboardShortcuts
+    # Chiave Last.fm del progetto: dalle variabili d'ambiente LASTFM_API_KEY e LASTFM_API_SECRET
+    # (segreti del workflow di release). Senza, l'utente inserisce la propria nelle impostazioni.
+    info:
+      path: Sources/App/Info.plist
+      properties:
+        LastFMAPIKey: $(LASTFM_API_KEY)
+        LastFMAPISecret: $(LASTFM_API_SECRET)
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: org.opentunes.OpenTunes
         PRODUCT_NAME: OpenTunes
-        MARKETING_VERSION: 0.1.0
+        MARKETING_VERSION: 0.2.0
         CURRENT_PROJECT_VERSION: 1
         GENERATE_INFOPLIST_FILE: YES
         INFOPLIST_KEY_CFBundleDisplayName: OpenTunes

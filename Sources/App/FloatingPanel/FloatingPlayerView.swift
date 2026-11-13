@@ -59,6 +59,15 @@ struct FloatingPlayerView: View {
                         .lineLimit(1)
                 }
                 Spacer(minLength: 0)
+                if model.canLove {
+                    Button { model.toggleLove() } label: {
+                        Image(systemName: model.isLoved ? "heart.fill" : "heart")
+                            .contentTransition(.symbolEffect(.replace))
+                    }
+                    .buttonStyle(.glass)
+                    .help(model.isLoved ? "Togli il love" : "Love")
+                    .accessibilityLabel(model.isLoved ? "Togli il love" : "Love")
+                }
                 Menu {
                     menuItems
                 } label: {
@@ -95,11 +104,18 @@ struct FloatingPlayerView: View {
             let controls = 3 * DesignSystem.Size.control + 2 * DesignSystem.Spacing.l
             return size.width - artwork - controls - 4 * DesignSystem.Spacing.m
         }
-        // Larghezza meno margini e pulsante "Altro".
-        return DesignSystem.Size.floatingLarge.width - 2 * DesignSystem.Spacing.l - DesignSystem.Size.control - DesignSystem.Spacing.s
+        // Larghezza meno margini e pulsanti love e "Altro".
+        return DesignSystem.Size.floatingLarge.width - 2 * DesignSystem.Spacing.l - 2 * (DesignSystem.Size.control + DesignSystem.Spacing.s)
     }
 
     @ViewBuilder private var menuItems: some View {
+        if model.canLove {
+            Button { model.toggleLove() } label: {
+                Label(model.isLoved ? "Togli il love" : "Love", systemImage: model.isLoved ? "heart.slash" : "heart")
+            }
+        }
+        TrackActionsMenuItems(model: model)
+        Divider()
         Picker("Taglia", selection: Binding(get: { model.settings.floatingSize }, set: { model.settings.floatingSize = $0 })) {
             ForEach(FloatingSize.allCases) { Text($0.label).tag($0) }
         }

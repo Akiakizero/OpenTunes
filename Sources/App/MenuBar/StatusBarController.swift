@@ -164,7 +164,7 @@ final class StatusBarController: NSObject, NSPopoverDelegate {
         switch event.type {
         case .leftMouseDown:
             // I clic sui pulsanti vanno ai pulsanti SwiftUI.
-            if host.layout.controlsFrame.contains(host.location(of: event)) { return false }
+            if host.layout.isButton(at: host.location(of: event)) { return false }
             run(model.settings.leftClick, from: host)
         case .rightMouseDown:
             run(model.settings.rightClick, from: host)
@@ -186,6 +186,7 @@ final class StatusBarController: NSObject, NSPopoverDelegate {
         case .previousTrack: model.perform(.previous)
         case .quickMenu: showQuickMenu(from: host)
         case .toggleFloatingWindow: model.toggleFloatingWindow()
+        case .love: model.toggleLove()
         case .none: break
         }
     }

@@ -3,6 +3,8 @@
 
 # Xcode / XcodeGen (il progetto si rigenera da project.yml)
 *.xcodeproj/
+# Generato da XcodeGen (sezione `info` di project.yml)
+Sources/App/Info.plist
 *.xcworkspace/
 xcuserdata/
 DerivedData/

@@ -9,3 +9,16 @@ registrazioni reali. `artworkData` è un PNG 1×1 in base64.
 - `stream-browser-youtube.jsonl` — YouTube in Safari: `bundleIdentifier` del processo WebKit e
   `parentApplicationBundleIdentifier` del browser.
 - `get-null.json` — output di `get` quando non suona nulla.
+
+# Fixture di Last.fm
+
+Risposte JSON di `ws.audioscrobbler.com/2.0/?format=json` scritte a mano dal formato documentato
+dell'API (non registrazioni reali): servono a provare le stranezze di Last.fm (oggetto singolo al posto
+di un array, numeri come stringhe, `ignoredMessage`).
+
+- `lastfm-scrobble-mixed.json` — `track.scrobble` con un ascolto accettato, uno ignorato (artista, codice 1)
+  e uno oltre il limite giornaliero (codice 5).
+- `lastfm-scrobble-single.json` — `track.scrobble` con un solo ascolto (oggetto invece di array).
+- `lastfm-error-session.json` — errore 9 (sessione non valida).
+- `lastfm-user-info.json`, `lastfm-recent-tracks.json` (con un brano in riproduzione), `lastfm-loved-tracks.json`
+  (un solo brano), `lastfm-top-artists.json` — dati del profilo.
