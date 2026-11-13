@@ -65,6 +65,21 @@ enum FloatingSize: String, CaseIterable, Identifiable, Sendable {
     var label: String { self == .compact ? "Compatta" : "Grande" }
 }
 
+/// Layout del widget live sulla scrivania.
+enum DesktopWidgetLayout: String, CaseIterable, Identifiable, Sendable {
+    case card, horizontal, artwork
+
+    var id: String { rawValue }
+
+    var label: String {
+        switch self {
+        case .card: "Scheda (copertina sopra)"
+        case .horizontal: "Orizzontale"
+        case .artwork: "Solo copertina"
+        }
+    }
+}
+
 enum NotificationMode: String, CaseIterable, Identifiable, Sendable {
     case off, always, whenFloatingHidden
 
@@ -126,6 +141,22 @@ final class AppSettings {
     var hudOnTrackChange: Bool { didSet { save(hudOnTrackChange, "hudOnTrackChange") } }
     var hudOnVolumeChange: Bool { didSet { save(hudOnVolumeChange, "hudOnVolumeChange") } }
     var hudPosition: HUDPosition { didSet { save(hudPosition.rawValue, "hudPosition") } }
+
+    // MARK: Widget sulla scrivania, notch e Dock
+
+    var desktopWidgetVisible: Bool { didSet { save(desktopWidgetVisible, "desktopWidgetVisible") } }
+    var desktopWidgetLayout: DesktopWidgetLayout { didSet { save(desktopWidgetLayout.rawValue, "desktopWidgetLayout") } }
+    /// Bloccato: non si sposta né si ridimensiona.
+    var desktopWidgetLocked: Bool { didSet { save(desktopWidgetLocked, "desktopWidgetLocked") } }
+    /// Grafico dei top artisti Last.fm sotto i controlli.
+    var desktopWidgetShowsChart: Bool { didSet { save(desktopWidgetShowsChart, "desktopWidgetShowsChart") } }
+    var notchEnabled: Bool { didSet { save(notchEnabled, "notchEnabled") } }
+    /// Si apre passando sopra il notch (altrimenti solo con un clic).
+    var notchOpensOnHover: Bool { didSet { save(notchOpensOnHover, "notchOpensOnHover") } }
+    /// Al cambio brano il notch mostra per qualche secondo il titolo.
+    var notchPeeksOnTrackChange: Bool { didSet { save(notchPeeksOnTrackChange, "notchPeeksOnTrackChange") } }
+    /// Copertina come icona del Dock (l'app compare nel Dock).
+    var dockShowsArtwork: Bool { didSet { save(dockShowsArtwork, "dockShowsArtwork") } }
 
     // MARK: Notifiche
 
@@ -190,6 +221,15 @@ final class AppSettings {
         hudOnTrackChange = defaults.object(forKey: "hudOnTrackChange") as? Bool ?? false
         hudOnVolumeChange = defaults.object(forKey: "hudOnVolumeChange") as? Bool ?? true
         hudPosition = Self.value(defaults, "hudPosition") ?? .bottom
+
+        desktopWidgetVisible = defaults.bool(forKey: "desktopWidgetVisible")
+        desktopWidgetLayout = Self.value(defaults, "desktopWidgetLayout") ?? .card
+        desktopWidgetLocked = defaults.bool(forKey: "desktopWidgetLocked")
+        desktopWidgetShowsChart = defaults.bool(forKey: "desktopWidgetShowsChart")
+        notchEnabled = defaults.object(forKey: "notchEnabled") as? Bool ?? true
+        notchOpensOnHover = defaults.object(forKey: "notchOpensOnHover") as? Bool ?? true
+        notchPeeksOnTrackChange = defaults.object(forKey: "notchPeeksOnTrackChange") as? Bool ?? true
+        dockShowsArtwork = defaults.bool(forKey: "dockShowsArtwork")
 
         notificationMode = Self.value(defaults, "notificationMode") ?? .off
 

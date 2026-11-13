@@ -26,3 +26,6 @@ dist/
 
 # Screenshot di terzi usati solo come riferimento: mai pubblicarli
 docs/riferimenti-ui/
+
+# Generato da XcodeGen (target OpenTunesWidget)
+Sources/Widget/Info.plist

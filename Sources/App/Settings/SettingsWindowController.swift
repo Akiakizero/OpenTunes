@@ -31,6 +31,7 @@ final class SettingsWindowController {
         add(GeneralSettingsView(model: model), title: "Generali", symbol: "gearshape", to: tabs)
         add(MenuBarSettingsView(model: model), title: "Menu bar", symbol: "menubar.rectangle", to: tabs)
         add(PositionSettingsView(model: model), title: "Posizione", symbol: "macwindow.on.rectangle", to: tabs)
+        add(SurfacesSettingsView(model: model), title: "Superfici", symbol: "rectangle.3.group", to: tabs)
         add(ScrobblingSettingsView(model: model), title: "Scrobbling", symbol: "dot.radiowaves.up.forward", to: tabs)
         add(ShortcutsSettingsView(), title: "Scorciatoie", symbol: "keyboard", to: tabs)
         add(OtherSettingsView(model: model, onOpenDebug: openDebug), title: "Altro", symbol: "ellipsis.circle", to: tabs)

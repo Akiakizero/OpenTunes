@@ -1,0 +1,23 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+name: Proponi una funzione
+description: Un'idea per OpenTunes
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Cosa vorresti fare
+      description: Il problema o il caso d'uso, prima della soluzione.
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Come te lo immagini
+  - type: textarea
+    id: references
+    attributes:
+      label: Riferimenti
+      description: |
+        App che lo fanno già (indica la licenza se la conosci). Niente screenshot o testi di app proprietarie
+        da copiare: vedi CONTRIBUTING.md.

@@ -1,0 +1,26 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Etichette del repository. Si creano con `scripts/sync-labels.sh` (usa `gh`, serve l'accesso al repository).
+- name: bug
+  color: d73a4a
+  description: Qualcosa non funziona
+- name: enhancement
+  color: a2eeef
+  description: Nuova funzione o miglioramento
+- name: good first issue
+  color: 7057ff
+  description: Adatta a chi contribuisce per la prima volta
+- name: help wanted
+  color: "008672"
+  description: Serve una mano
+- name: notch
+  color: 1d1d1f
+  description: Player nel notch
+- name: widget
+  color: 0e8a16
+  description: Widget di macOS e widget sulla scrivania
+- name: scrobbling
+  color: d93f0b
+  description: Last.fm e ListenBrainz
+- name: menu bar
+  color: fbca04
+  description: Menu bar e popover

@@ -20,6 +20,12 @@ settings:
     DEVELOPMENT_TEAM: ""
     ENABLE_USER_SCRIPT_SANDBOXING: NO
     ENABLE_HARDENED_RUNTIME: YES
+    # App Group condiviso da app e widget (stato del brano e copertina). Forma macOS con il prefisso del
+    # Team ID: non richiede un provisioning profile. Con la firma ad-hoc il prefisso è vuoto; per widget
+    # affidabili conviene una build firmata con DEVELOPMENT_TEAM (vedi CLAUDE.md, «Widget»).
+    APP_GROUP_ID: "$(TeamIdentifierPrefix)org.opentunes.shared"
+    MARKETING_VERSION: 0.3.0
+    CURRENT_PROJECT_VERSION: 1
 
 packages:
   KeyboardShortcuts:
@@ -44,8 +50,10 @@ targets:
     sources:
       - path: Sources/App
       - path: Sources/DesignSystem
+      - path: Sources/Shared
     dependencies:
       - target: MediaCore
+      - target: OpenTunesWidget
       - package: KeyboardShortcuts
     # Chiave Last.fm del progetto: dalle variabili d'ambiente LASTFM_API_KEY e LASTFM_API_SECRET
     # (segreti del workflow di release). Senza, l'utente inserisce la propria nelle impostazioni.
@@ -54,12 +62,15 @@ targets:
       properties:
         LastFMAPIKey: $(LASTFM_API_KEY)
         LastFMAPISecret: $(LASTFM_API_SECRET)
+        OpenTunesAppGroup: $(APP_GROUP_ID)
+        # opentunes://player apre il player (clic sul widget).
+        CFBundleURLTypes:
+          - CFBundleURLName: org.opentunes.OpenTunes
+            CFBundleURLSchemes: [opentunes]
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: org.opentunes.OpenTunes
         PRODUCT_NAME: OpenTunes
-        MARKETING_VERSION: 0.2.0
-        CURRENT_PROJECT_VERSION: 1
         GENERATE_INFOPLIST_FILE: YES
         INFOPLIST_KEY_CFBundleDisplayName: OpenTunes
         INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.music
@@ -84,6 +95,36 @@ targets:
           ditto "${SRCROOT}/Resources/MediaRemoteAdapter" "$DEST"
           rm -f "$DEST/.built-from"
         basedOnDependencyAnalysis: false
+
+  # Widget WidgetKit (Centro notifiche e scrivania). Non include MediaCore: legge solo lo stato
+  # che l'app scrive nell'App Group; i pulsanti sono App Intents eseguiti nel processo dell'app.
+  OpenTunesWidget:
+    type: app-extension
+    platform: macOS
+    sources:
+      - path: Sources/Widget
+      - path: Sources/Shared
+      - path: Sources/DesignSystem/DesignSystem.swift
+      - path: Sources/DesignSystem/AccentTint.swift
+    info:
+      path: Sources/Widget/Info.plist
+      properties:
+        CFBundleDisplayName: OpenTunes
+        OpenTunesAppGroup: $(APP_GROUP_ID)
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    entitlements:
+      path: Sources/Widget/OpenTunesWidget.entitlements
+      properties:
+        com.apple.security.app-sandbox: true
+        com.apple.security.application-groups: ["$(APP_GROUP_ID)"]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: org.opentunes.OpenTunes.Widget
+        PRODUCT_NAME: OpenTunesWidget
+        GENERATE_INFOPLIST_FILE: YES
+        SKIP_INSTALL: YES
+        LD_RUNPATH_SEARCH_PATHS: "$(inherited) @executable_path/../Frameworks @executable_path/../../../../Frameworks"
 
   MediaCoreTests:
     type: bundle.unit-test
@@ -120,6 +161,7 @@ schemes:
       targets:
         OpenTunes: all
         MediaCore: all
+        OpenTunesWidget: all
         MediaCoreTests: [test]
         OpenTunesTests: [test]
     test:

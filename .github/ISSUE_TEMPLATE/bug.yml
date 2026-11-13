@@ -1,0 +1,55 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+name: Segnala un problema
+description: Qualcosa non funziona come dovrebbe
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Grazie! Prima di aprire la issue controlla che non ce ne sia già una uguale.
+        Le issue si possono scrivere in italiano o in inglese.
+  - type: textarea
+    id: what
+    attributes:
+      label: Cosa succede
+      description: Cosa hai fatto, cosa ti aspettavi e cosa è successo invece.
+    validations:
+      required: true
+  - type: dropdown
+    id: surface
+    attributes:
+      label: Superficie
+      multiple: true
+      options:
+        - Menu bar
+        - Popover
+        - Finestra flottante
+        - Widget di macOS
+        - Widget sulla scrivania
+        - Notch
+        - Dock
+        - HUD o notifiche
+        - Scrobbling (Last.fm / ListenBrainz)
+        - Impostazioni
+        - Altro
+  - type: input
+    id: player
+    attributes:
+      label: Player
+      placeholder: es. Apple Music, Spotify, YouTube in Safari
+  - type: input
+    id: versions
+    attributes:
+      label: Versioni
+      description: Versione di OpenTunes (Impostazioni › Generali) e di macOS; Mac con o senza notch.
+      placeholder: OpenTunes 0.3.0, macOS 26.2, MacBook Pro 16" (notch)
+    validations:
+      required: true
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: Diagnostica
+      description: |
+        Impostazioni › Altro › «Apri la diagnostica…» mostra la sorgente attiva e gli ultimi eventi: incolla qui le righe utili.
+        Togli titoli o dati personali che non vuoi condividere.
+      render: text

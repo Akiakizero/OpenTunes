@@ -31,6 +31,13 @@ Piano per fasi in `docs/` (fase 0 = fondamenta); analisi dei progetti di riferim
 - Segreti (session key Last.fm, token ListenBrainz, secret personale) solo via `SecretStore`: `KeychainStore`
   nell'app, `MemorySecretStore` in test e anteprime. Mai in `UserDefaults`.
 - `AppModel()` senza argomenti = database in memoria e niente Portachiavi (anteprime, test); l'app usa `AppModel.live()`.
+- Fase 3: widget WidgetKit nel target `OpenTunesWidget` (`Sources/Widget`, in sandbox, **senza MediaCore**). L'app scrive
+  lo stato nell'App Group (`$(TeamIdentifierPrefix)org.opentunes.shared`) con `WidgetBridge`; il codice comune ai due
+  target sta in `Sources/Shared` (`WidgetState`, App Intents). I pulsanti sono `AudioPlaybackIntent`: girano nel processo
+  dell'app e arrivano ad `AppModel` tramite `WidgetCommandBridge`. Ricaricare i widget solo se cambia qualcosa di visibile.
+- Widget sulla scrivania in `App/DesktopWidget` (livello `desktopIconWindow + 1`, posizione per UUID del display),
+  player nel notch in `App/Notch` (pannello sopra la menu bar che ignora i clic finché il mouse non è sulla forma,
+  seguito con monitor globali di `mouseMoved`), copertina nel Dock in `App/Dock`.
 
 ## Build
 - Requisiti: Xcode 26+, `brew install xcodegen`. Se `xcode-select` punta ai Command Line Tools:
@@ -47,12 +54,19 @@ Piano per fasi in `docs/` (fase 0 = fondamenta); analisi dei progetti di riferim
 ## Debug
 - `OPENTUNES_LOG_FILE=/percorso` (es. con `open --env`) scrive gli eventi di `NowPlayingStore` in un file,
   comprese le decisioni della modalità compatta (`[menubar]`, con frame dell'elemento e del notch).
-- `OPENTUNES_DEBUG_SHOW=popover|hud|volume|settings` apre quella superficie 3 s dopo l'avvio (screenshot, GIF).
+- `OPENTUNES_DEBUG_SHOW=popover|hud|volume|settings|desktop|notch` apre quella superficie 3 s dopo l'avvio (screenshot, GIF).
 - `scripts/record-gif.sh <nome> <x,y,l,a> [secondi]` crea `docs/media/<nome>.gif` (sequenza di screenshot + ffmpeg).
   Le GIF mostrano il brano e lo sfondo reali: registrarle con contenuti scelti apposta.
 - Le anteprime SwiftUI avviano l'app: `AppDelegate` non parte con `XCODE_RUNNING_FOR_PREVIEWS=1` e
   `AppModel.preview()` usa `AppSettings(persists: false)`, così le anteprime non toccano le preferenze reali.
 - Su macOS 27 gli elementi della menu bar sono disegnati da `MenuBarAgent`: non compaiono in `CGWindowList` dell'app.
+
+## Widget
+- Le anteprime di Xcode non supportano i widget su macOS. Per controllarli: `NowPlayingWidgetView(entry:family:)`
+  con `ImageRenderer` (le viste a tempo come `ProgressView(timerInterval:)` lì non si disegnano).
+- Con la firma ad-hoc i widget possono non vedere l'App Group: per provarli compilare con `DEVELOPMENT_TEAM=…`.
+- Ogni nuova build ad-hoc fa ricomparire la richiesta del Portachiavi all'avvio (cambia la firma): l'app resta ferma
+  in `KeychainStore.secret(for:)` finché l'utente non risponde.
 
 ## Test
 - Swift Testing (`import Testing`) in `Tests/MediaCoreTests` e `Tests/OpenTunesTests` (logica dell'app, host = app,

@@ -5,6 +5,7 @@ Codice di terzi incluso in OpenTunes. Aggiornare questo file nella stessa PR in 
 | Componente | Progetto | Licenza | Dove | Note |
 | --- | --- | --- | --- | --- |
 | KeyboardShortcuts (dipendenza Swift Package, scorciatoie globali) | [sindresorhus/KeyboardShortcuts](https://github.com/sindresorhus/KeyboardShortcuts) — Copyright (c) Sindre Sorhus | MIT | risolta da SPM (`project.yml`, ≥ 3.1.0) | non copiata nel repository |
+| Forma del notch (`NotchShape`) e misura del notch da `auxiliaryTopLeftArea`/`auxiliaryTopRightArea` (`NotchGeometry`) | [MrKai77/DynamicNotchKit](https://github.com/MrKai77/DynamicNotchKit) — Copyright (c) 2025 Kai Azim | MIT | `Sources/App/Notch/NotchShape.swift`, `Sources/App/Notch/NotchGeometry.swift` | adattati dal commit `cd0b3e5` (v1.1.0); il resto del player nel notch è scritto da zero (vedi sotto) |
 | mediaremote-adapter (script, framework, test client) | [ungive/mediaremote-adapter](https://github.com/ungive/mediaremote-adapter) — Copyright (c) 2025 Jonas van den Berg and contributors | BSD-3-Clause | `Vendor/mediaremote-adapter/` (vedi `VENDORING.md`) | sorgenti copiati senza modifiche al commit `14eed93`; compilati da `scripts/build-mediaremote-adapter.sh` |
 
 ## Idee e tecniche studiate (nessun codice copiato)
@@ -29,4 +30,37 @@ Codice di terzi incluso in OpenTunes. Aggiornare questo file nella stessa PR in 
   filtro dei player con browser esclusi: idea da [osx-scrobbler](https://github.com/theli-ua/osx-scrobbler) (Apache-2.0).
   Nessun codice copiato.
 
+- Player nel notch (stati chiuso/aperto, ali ai lati del notch, pannello sopra la menu bar, capsula sugli schermi
+  senza notch): comportamento studiato da [DynamicNotchKit](https://github.com/MrKai77/DynamicNotchKit) (MIT),
+  [Boring Notch](https://github.com/TheBoredTeam/boring.notch) (GPL-3.0) e
+  [DynamicNotch](https://github.com/jackson-storm/DynamicNotch) (GPL-3.0). DynamicNotchKit non è usato come dipendenza:
+  la sua API si basa su `ObservableObject`/Combine e la variante flottante usa `NSVisualEffectView`, mentre il progetto
+  usa `@Observable` e solo il vetro di sistema. Nessun codice copiato oltre a quello indicato nella tabella.
+
 L'analisi completa dei progetti di riferimento è in `docs/analisi/`.
+
+## Testo della licenza MIT di DynamicNotchKit
+
+```
+MIT License
+
+Copyright (c) 2025 Kai Azim
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```

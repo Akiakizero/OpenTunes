@@ -13,6 +13,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private lazy var hud = HUDController(model: model)
     private lazy var notifier = TrackNotifier(model: model)
     private lazy var settingsWindow = SettingsWindowController(model: model)
+    private lazy var desktopWidget = DesktopWidgetController(model: model)
+    private lazy var notch = NotchController(model: model)
+    private lazy var dockIcon = DockIconController(model: model)
+    private lazy var widgetBridge = WidgetBridge(model: model)
     private var debugWindow: NSWindow?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
@@ -28,12 +32,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         settingsWindow.onOpenDebug = { [weak self] in self?.showDebugWindow() }
         statusBar.start()
         floatingPanel.start()
+        desktopWidget.start()
+        notch.start()
+        dockIcon.start()
+        widgetBridge.start()
         _ = notifier
         Hotkeys.register(model: model)
         showDebugSurface(environment["OPENTUNES_DEBUG_SHOW"])
     }
 
-    /// Solo per debug e screenshot: `OPENTUNES_DEBUG_SHOW=popover|hud|volume|settings` apre una superficie all'avvio.
+    /// Solo per debug e screenshot: `OPENTUNES_DEBUG_SHOW=popover|hud|volume|settings|desktop|notch` apre una superficie all'avvio.
     private func showDebugSurface(_ name: String?) {
         guard let name else { return }
         Task {
@@ -44,6 +52,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             case "hud": hud.show(.track(title: model.track?.title ?? "", symbol: "forward.fill"))
             case "volume": hud.show(.volume(model.volume ?? 0.5))
             case "settings": settingsWindow.show()
+            case "desktop": model.settings.desktopWidgetVisible = true
+            case "notch": notch.showOpenForDebug()
             default: break
             }
         }
@@ -53,6 +63,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
         settingsWindow.show()
         return false
+    }
+
+    /// `opentunes://player` (clic sul widget WidgetKit) apre il player della menu bar.
+    func application(_ application: NSApplication, open urls: [URL]) {
+        guard urls.contains(where: { $0.scheme == "opentunes" }), model.hasTrack else {
+            settingsWindow.show()
+            return
+        }
+        statusBar.togglePopover()
     }
 
     private func handle(_ event: AppModel.Event) {
