@@ -31,7 +31,8 @@ enum ProcessRunner {
             errData.withLock { $0.append(d) }
         }
 
-        let timedOut = Mutex(false)
+        // Un riferimento Sendable (e non un `Mutex` locale) si può catturare nel task del timeout.
+        let timedOut = TimeoutFlag()
         let status: Int32 = try await withCheckedThrowingContinuation { continuation in
             process.terminationHandler = { p in continuation.resume(returning: p.terminationStatus) }
             do {
@@ -46,7 +47,7 @@ enum ProcessRunner {
             Task.detached {
                 try? await Task.sleep(for: timeout)
                 if kill(pid, 0) == 0 {
-                    timedOut.withLock { $0 = true }
+                    timedOut.value.withLock { $0 = true }
                     kill(pid, SIGTERM)
                 }
             }
@@ -62,6 +63,10 @@ enum ProcessRunner {
             status: status,
             stdout: outData.withLock { $0 },
             stderr: errData.withLock { $0 },
-            timedOut: timedOut.withLock { $0 })
+            timedOut: timedOut.value.withLock { $0 })
     }
+}
+
+private final class TimeoutFlag: Sendable {
+    let value = Mutex(false)
 }
