@@ -129,11 +129,8 @@ public final class Scrobbler {
         flushSignal = signal
 
         // Snapshot del Now Playing → motore.
-        // Closure tipizzata a parte: la closure letterale dentro `Observations(...)` manda in crash
-        // il compilatore di Xcode 26.6 (IRGen del thunk), usato dalla CI.
-        let current: @MainActor @Sendable () -> NowPlayingSnapshot? = { [store] in store.snapshot }
-        tasks.append(Task { [weak self] in
-            for await snapshot in Observations(current) {
+        tasks.append(Task { [weak self, store] in
+            for await snapshot in observations({ store.snapshot }) {
                 self?.observe(snapshot)
             }
         })
@@ -525,4 +522,11 @@ public final class Scrobbler {
     private func log(_ message: String) {
         store.log("scrobble", message)
     }
+}
+
+/// `Observations` creato in una funzione generica: con il tipo concreto (`NowPlayingSnapshot?`) il compilatore
+/// di Xcode 26.6, usato dalla CI, va in crash generando il thunk della closure.
+@MainActor
+func observations<T: Sendable>(_ value: @escaping @MainActor @Sendable () -> T) -> Observations<T, Never> {
+    Observations(value)
 }
