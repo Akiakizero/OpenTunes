@@ -42,11 +42,12 @@ enum ProcessRunner {
                 return
             }
             let pid = process.processIdentifier
+            // Il task cattura solo il pid (`Process` non è Sendable): `terminate()` equivale a SIGTERM.
             Task.detached {
                 try? await Task.sleep(for: timeout)
-                if kill(pid, 0) == 0, process.isRunning {
+                if kill(pid, 0) == 0 {
                     timedOut.withLock { $0 = true }
-                    process.terminate()
+                    kill(pid, SIGTERM)
                 }
             }
         }
