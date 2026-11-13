@@ -4,5 +4,9 @@
 <dict>
 	<key>com.apple.security.automation.apple-events</key>
 	<true/>
+	<!-- La firma è ad-hoc (senza Team ID): con l'Hardened Runtime la library validation rifiuterebbe
+	     MediaCore.framework incluso nell'app e l'app si chiuderebbe all'avvio. -->
+	<key>com.apple.security.cs.disable-library-validation</key>
+	<true/>
 </dict>
 </plist>
