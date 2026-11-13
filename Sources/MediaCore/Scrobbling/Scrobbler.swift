@@ -129,8 +129,11 @@ public final class Scrobbler {
         flushSignal = signal
 
         // Snapshot del Now Playing → motore.
-        tasks.append(Task { [weak self, store] in
-            for await snapshot in Observations({ @MainActor in store.snapshot }) {
+        // Closure tipizzata a parte: la closure letterale dentro `Observations(...)` manda in crash
+        // il compilatore di Xcode 26.6 (IRGen del thunk), usato dalla CI.
+        let current: @MainActor @Sendable () -> NowPlayingSnapshot? = { [store] in store.snapshot }
+        tasks.append(Task { [weak self] in
+            for await snapshot in Observations(current) {
                 self?.observe(snapshot)
             }
         })
