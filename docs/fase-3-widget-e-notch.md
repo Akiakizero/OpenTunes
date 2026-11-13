@@ -7,7 +7,7 @@
 - [ ] Widget WidgetKit in tre taglie aggiornati entro pochi secondi dal cambio brano — implementato (ricarica 0,4 s dopo il cambio, avanzamento con `ProgressView(timerInterval:)`); da verificare con una build firmata con Team ID
 - [x] Widget live fluido sul desktop, con barra di avanzamento in tempo reale
 - [ ] Player nel notch stabile sul MacBook Pro 16" — implementato e provato sullo schermo da 1728×1117 (stato aperto); manca una settimana d'uso
-- [ ] Release pubblica `v0.3` con cask Homebrew nel tap personale — versione 0.3.0 e cask pronti; tag e tap da fare a mano (`docs/lancio/README.md`)
+- [ ] Release pubblica `v0.3` con cask Homebrew nel tap personale — release `v0.3.0` pubblicata il 2026-11-13 con .dmg e sha256 (il cask in `packaging/homebrew/` è aggiornato); il repository è ancora **privato**, quindi release e tap non sono pubblici: il tap si crea quando il repository diventa pubblico
 - [ ] Post di lancio su r/macapps (nel megathread "App Pile" o nel feed principale se i requisiti sono soddisfatti) — bozza in `docs/lancio/reddit-macapps.md`
 
 ## 1. Widget WidgetKit (Centro notifiche e desktop)
@@ -48,7 +48,7 @@
 ## 5. Lancio v0.3
 
 - [ ] README completo: GIF di ogni superficie, tabella funzioni, confronto con NepTunes (senza usare i loro asset) — tabella e confronto fatti; GIF delle superfici nuove da registrare con contenuti scelti apposta
-- [x] `CONTRIBUTING.md`, modelli di issue e PR, etichette "good first issue" (`.github/labels.yml` + `scripts/sync-labels.sh`, da lanciare sul repository)
+- [x] `CONTRIBUTING.md`, modelli di issue e PR, etichette "good first issue" (`.github/labels.yml` + `scripts/sync-labels.sh`, già create sul repository)
 - [ ] Scheda su [AlternativeTo](https://alternativeto.net) come alternativa a NepTunes — testo in `docs/lancio/alternativeto.md`
 - [ ] PR su [open-source-mac-os-apps](https://github.com/serhii-londar/open-source-mac-os-apps) — voce pronta in `docs/lancio/open-source-mac-os-apps.md`
 - [ ] Post su r/macapps (rispettando le regole: dichiarare di essere lo sviluppatore, max una volta ogni 30 giorni) — bozza pronta
@@ -84,8 +84,13 @@
 ## Stato al 2026-11-13
 
 Il codice della fase è completo (widget, widget sulla scrivania, notch, Dock, tinte) con test in
-`Tests/OpenTunesTests/Phase3Tests.swift`. Restano i passi manuali: build firmata per provare i widget di macOS,
-GIF delle superfici, tag `v0.3.0`, tap Homebrew, etichette su GitHub e i post (vedi `docs/lancio/`).
+`Tests/OpenTunesTests/Phase3Tests.swift`; la CI passa anche con Xcode 26.6 del runner (aggirato un crash del compilatore
+con `Observations` in `Scrobbler`). Release `v0.3.0` ed etichette sono su GitHub, nel repository privato.
+
+Restano, e non si possono fare dall'ambiente di sviluppo:
+- build firmata con un Team ID per provare i widget di macOS (sul Mac di sviluppo non c'è un certificato di firma);
+- una settimana d'uso del notch sul MacBook Pro 16" e GIF delle superfici con contenuti scelti apposta;
+- rendere pubblico il repository, poi tap Homebrew, PR su open-source-mac-os-apps, AlternativeTo e post (`docs/lancio/`).
 
 - Le anteprime di Xcode non supportano i widget su macOS: `NowPlayingWidgetView` riceve la taglia come parametro,
   così si può disegnare anche con `ImageRenderer` fuori da WidgetKit.
