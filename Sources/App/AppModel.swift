@@ -170,7 +170,13 @@ final class AppModel {
     /// Avvia gli osservatori che tengono aggiornati copertina, tinta, volume ed eventi.
     func startDerivedState() {
         volume = SystemVolume.current
-        tasks.append(observeChanges({ [store] in store.track.map(Self.lyricsKey) }) { [weak self] key in
+        // Closure esplicita, senza il riferimento a metodo `map(Self.lyricsKey)`: con quello il codice generato da
+        // Xcode 26.6 (CI e build di release) va in crash in `swift_unknownObjectRetain`.
+        let currentLyricsKey: @MainActor @Sendable () -> String? = { [store] in
+            guard let track = store.track else { return nil }
+            return AppModel.lyricsKey(track)
+        }
+        tasks.append(observeChanges(currentLyricsKey) { [weak self] key in
             // Cambio brano: il testo vecchio non vale più. Le viste che lo mostrano lo richiedono con `loadLyrics()`.
             guard let self, key != lyricsKey else { return }
             lyricsKey = nil
