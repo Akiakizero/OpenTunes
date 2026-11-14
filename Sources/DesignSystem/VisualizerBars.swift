@@ -41,15 +41,17 @@ struct VisualizerBars: View {
             Canvas { canvas, size in
                 let time = context.date.timeIntervalSinceReferenceDate
                 let real = animates ? levels?() : nil
-                // Barre e spazi della stessa larghezza circa, come nella Dynamic Island.
-                let width = size.width / (CGFloat(barCount) * 1.8 - 0.8)
-                let gap = width * 0.8
+                // Barre sottili con spazi più larghi delle barre, come nella Dynamic Island.
+                let width = size.width / (CGFloat(barCount) * 2.4 - 1.4)
+                let gap = width * 1.4
                 var bars = Path()
                 for index in 0..<barCount {
                     let level: Double = if let real, !real.isEmpty {
-                        Double(real[min(real.count - 1, index * real.count / barCount)])
+                        // Bassi e medi al centro, acuti ai lati; profilo più alto al centro (Dynamic Island).
+                        Double(real[Self.band(forBar: index, barCount: barCount, bandCount: real.count)])
+                            * Self.envelope(bar: index, barCount: barCount)
                     } else if animates {
-                        Self.level(bar: index, time: time)
+                        Self.level(bar: index, time: time) * Self.envelope(bar: index, barCount: barCount)
                     } else {
                         Self.restingLevel
                     }
@@ -68,6 +70,22 @@ struct VisualizerBars: View {
 
     private var gradientColors: [Color] {
         colors.count == 1 ? [colors[0], colors[0].mix(with: .white, by: 0.35)] : colors
+    }
+
+    /// Banda dello spettro per la barra in posizione `bar`: la banda 0 (bassi) va al centro, le successive si
+    /// alternano verso i lati (…4 2 0 1 3 5…), così il profilo è simmetrico come nella Dynamic Island.
+    static func band(forBar bar: Int, barCount: Int, bandCount: Int) -> Int {
+        let center = (barCount - 1) / 2
+        let rank = bar <= center ? (center - bar) * 2 : (bar - center) * 2 - 1
+        return min(bandCount - 1, max(0, rank * bandCount / max(1, barCount)))
+    }
+
+    /// Altezza massima relativa della barra: 1 al centro, più bassa ai lati (50/60/90/100/90/60% con 6 barre).
+    static func envelope(bar: Int, barCount: Int) -> Double {
+        guard barCount > 1 else { return 1 }
+        let middle = Double(barCount - 1) / 2
+        let distance = abs(Double(bar) - middle) / middle
+        return 1 - 0.45 * distance * distance
     }
 
     /// Altezza 0.2…1 della barra all'istante `time`: tre seni a frequenze diverse per barra, senza scatti.

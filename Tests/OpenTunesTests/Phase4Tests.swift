@@ -93,6 +93,17 @@ struct ModelLyricsTests {
         #expect(model.currentLyricLine() == "Inizio")
     }
 
+    @Test("Visualizer: bassi al centro e profilo simmetrico come nella Dynamic Island")
+    func dynamicIslandLayout() {
+        let bands = (0..<6).map { VisualizerBars.band(forBar: $0, barCount: 6, bandCount: 6) }
+        #expect(bands == [4, 2, 0, 1, 3, 5])
+        #expect(Set(bands).count == 6)
+        let envelope = (0..<6).map { VisualizerBars.envelope(bar: $0, barCount: 6) }
+        #expect(envelope[2] > envelope[1] && envelope[1] > envelope[0])
+        #expect(abs(envelope[0] - envelope[5]) < 1e-9)
+        #expect(envelope.allSatisfy { (0.5...1).contains($0) })
+    }
+
     @Test("Visualizer: altezze sempre tra 0.2 e 1")
     func visualizer() {
         for bar in 0..<6 {
