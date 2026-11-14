@@ -181,6 +181,8 @@ struct SpectrumAnalyzer: @unchecked Sendable {
     private var ordered: [Float]
     private var real: [Float]
     private var imaginary: [Float]
+    private var outputReal: [Float]
+    private var outputImaginary: [Float]
     private var magnitudes: [Float]
     private var raw: [Double]
     /// Limiti delle bande in bin dell'FFT e peso di equalizzazione, ricalcolati se cambia la frequenza di campionamento.
@@ -206,6 +208,8 @@ struct SpectrumAnalyzer: @unchecked Sendable {
         ordered = Array(repeating: 0, count: Self.fftSize)
         real = Array(repeating: 0, count: Self.fftSize / 2)
         imaginary = Array(repeating: 0, count: Self.fftSize / 2)
+        outputReal = Array(repeating: 0, count: Self.fftSize / 2)
+        outputImaginary = Array(repeating: 0, count: Self.fftSize / 2)
         magnitudes = Array(repeating: 0, count: Self.fftSize / 2)
         window = vDSP.window(ofType: Float.self, usingSequence: .hanningDenormalized, count: Self.fftSize, isHalfWindow: false)
         fft = vDSP.FFT(log2n: vDSP_Length(log2(Double(Self.fftSize))), radix: .radix2, ofType: DSPSplitComplex.self)
@@ -253,14 +257,20 @@ struct SpectrumAnalyzer: @unchecked Sendable {
         let n = Self.fftSize
         // Campioni in ordine cronologico, con la finestra di Hann.
         for i in 0..<n { ordered[i] = ring[(ringIndex + i) % n] * window[i] }
+        // FFT non in-place: ingresso e uscita in buffer separati (in-place non è garantito su tutte le versioni).
         real.withUnsafeMutableBufferPointer { realBuffer in
             imaginary.withUnsafeMutableBufferPointer { imaginaryBuffer in
-                var split = DSPSplitComplex(realp: realBuffer.baseAddress!, imagp: imaginaryBuffer.baseAddress!)
-                ordered.withUnsafeBytes { bytes in
-                    vDSP_ctoz(bytes.bindMemory(to: DSPComplex.self).baseAddress!, 2, &split, 1, vDSP_Length(n / 2))
+                outputReal.withUnsafeMutableBufferPointer { outRealBuffer in
+                    outputImaginary.withUnsafeMutableBufferPointer { outImaginaryBuffer in
+                        var split = DSPSplitComplex(realp: realBuffer.baseAddress!, imagp: imaginaryBuffer.baseAddress!)
+                        var output = DSPSplitComplex(realp: outRealBuffer.baseAddress!, imagp: outImaginaryBuffer.baseAddress!)
+                        ordered.withUnsafeBytes { bytes in
+                            vDSP_ctoz(bytes.bindMemory(to: DSPComplex.self).baseAddress!, 2, &split, 1, vDSP_Length(n / 2))
+                        }
+                        fft.forward(input: split, output: &output)
+                        magnitudes.withUnsafeMutableBufferPointer { vDSP.absolute(output, result: &$0) }
+                    }
                 }
-                fft.forward(input: split, output: &split)
-                magnitudes.withUnsafeMutableBufferPointer { vDSP.absolute(split, result: &$0) }
             }
         }
         // Ampiezze riportate circa a 0…1 per un seno a piena scala.
@@ -268,7 +278,8 @@ struct SpectrumAnalyzer: @unchecked Sendable {
         for band in 0..<bands {
             var sum: Float = 0
             for bin in layout.ranges[band] { sum += magnitudes[bin] }
-            raw[band] = Double(sum) * scale * layout.eq[band]
+            let value = Double(sum) * scale * layout.eq[band]
+            raw[band] = value.isFinite ? value : 0
         }
         smooth(silent: silent)
     }
@@ -289,9 +300,11 @@ struct SpectrumAnalyzer: @unchecked Sendable {
                 peak[band] = value
                 fall[band] = 0
             }
+            if !value.isFinite { value = 0 }
             previous[band] = value
             // Integrale: media mobile esponenziale che toglie il tremolio.
             value = memory[band] * Self.noiseReduction / integralMod + value
+            if !value.isFinite { value = 0 }
             memory[band] = value
             if value > 1 {
                 overshoot = true
@@ -307,7 +320,7 @@ struct SpectrumAnalyzer: @unchecked Sendable {
             // All'avvio sale in fretta finché una barra non tocca il massimo.
             if sensitivityInit { sensitivity *= 1 + 0.1 * framerateMod }
         }
-        sensitivity = min(max(sensitivity, 1e-4), 1e6)
+        sensitivity = sensitivity.isFinite ? min(max(sensitivity, 1e-4), 1e6) : 1
     }
 
     /// Limiti delle bande (bin dell'FFT) distribuiti in scala logaritmica tra `lowFrequency` e `highFrequency`,

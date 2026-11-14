@@ -22,3 +22,9 @@ jobs:
           set -o pipefail
           xcodebuild -scheme OpenTunes -destination 'platform=macOS' \
             -derivedDataPath build/DerivedData test
+      - name: Crash report dei test
+        if: failure()
+        run: |
+          for f in $(ls -t ~/Library/Logs/DiagnosticReports/OpenTunes*.ips 2>/dev/null | head -2); do
+            echo "=== $f"; head -c 12000 "$f"; echo
+          done
