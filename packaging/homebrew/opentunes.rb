@@ -3,7 +3,7 @@
 # a ogni release aggiornare `version` e `sha256` (il valore è nel file .dmg.sha256 della release).
 cask "opentunes" do
   version "0.5.0"
-  sha256 "c2387ec654b177c0bd83a1ead6ef18ef5638a0e2d6f375419c9e6610fbb4b62e"
+  sha256 "db46becae3b841182eb5875d5cd53b6f0445113b3863e33ea97064592948e71a"
 
   url "https://github.com/Akiakizero/OpenTunes/releases/download/v#{version}/OpenTunes-#{version}.dmg"
   name "OpenTunes"
