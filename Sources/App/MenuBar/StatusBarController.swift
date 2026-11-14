@@ -72,7 +72,8 @@ final class StatusBarController: NSObject, NSPopoverDelegate {
     private var lastLayoutSummary = ""
     /// Scelta stabile del livello (piena, compatta, icona) in base allo spazio.
     private var fit = MenuBarFit()
-    private weak var lastScreen: NSScreen?
+    /// Schermo dell'ultima misura (numero del display: AppKit crea istanze nuove di `NSScreen`).
+    private var lastScreenNumber: Int?
     /// Quando il popover si è chiuso: un clic sull'elemento lo chiude (transient) e non deve riaprirlo.
     private var popoverClosedAt = Date.distantPast
 
@@ -157,9 +158,10 @@ final class StatusBarController: NSObject, NSPopoverDelegate {
             !window.isVisible || !window.occlusionState.contains(.visible)
                 || window.frame.minX < screen.frame.minX || window.frame.maxX > screen.frame.maxX + 1
         }
-        if screen != lastScreen {
-            lastScreen = screen
-            fit.forgetFailures()
+        let screenNumber = (screen.deviceDescription[NSDeviceDescriptionKey("NSScreenNumber")] as? NSNumber)?.intValue
+        if screenNumber != lastScreenNumber {
+            if lastScreenNumber != nil { fit.forgetFailures() }
+            lastScreenNumber = screenNumber
         }
         var widths: [MenuBarLevel: CGFloat] = [:]
         for level in MenuBarLevel.allCases {

@@ -173,14 +173,34 @@ extension AppModel {
         tasks.append(observeChanges({ [weak self] in self?.needsSpectrum ?? false }) { [weak self] needed in
             guard let self else { return }
             if needed { spectrum.start() } else { spectrum.stop() }
+            store.log("spectrum", needed ? (spectrum.isRunning ? "cattura avviata" : "cattura non disponibile") : "cattura ferma")
+        })
+        // Diagnostica: nel log (OPENTUNES_LOG_FILE) si vede se le barre seguono l'audio vero o l'animazione.
+        tasks.append(Task { [weak self] in
+            var last: Bool?
+            while !Task.isCancelled {
+                try? await Task.sleep(for: .seconds(2))
+                guard let self, spectrum.isRunning else { last = nil; continue }
+                let receiving = spectrum.isReceivingAudio
+                if receiving != last {
+                    last = receiving
+                    store.log("spectrum", receiving ? "audio ricevuto: barre dallo spettro reale"
+                        : "nessun audio (silenzio o permesso «Registrazione audio di sistema» negato): animazione")
+                }
+            }
         })
         tasks.append(Task { [weak self] in
+            var spectrumOutput = AudioOutput.defaultDeviceID
             for await _ in AudioOutput.changes() {
-                // Il dispositivo aggregato dello spettro è legato all'uscita: va ricreato.
-                if let self, spectrum.isRunning {
+                // Il dispositivo aggregato dello spettro è legato all'uscita: va ricreato, ma solo se cambia davvero
+                // l'uscita predefinita. Anche creare l'aggregato cambia l'elenco dei dispositivi: ricrearlo a ogni
+                // notifica era un ciclo infinito (migliaia di dispositivi, nessun audio ricevuto, barre finte).
+                let output = AudioOutput.defaultDeviceID
+                if let self, output != spectrumOutput, spectrum.isRunning {
                     spectrum.stop()
                     spectrum.start()
                 }
+                spectrumOutput = output
                 self?.refreshOutputDevices()
                 self?.refreshVolume()
             }

@@ -25,12 +25,15 @@ La prima release pubblica dopo la 0.3.0: comprende anche tutta la fase 4 (sotto)
 - **Widget di macOS** (Centro notifiche e scrivania) di nuovo con il brano in riproduzione: con la firma ad-hoc l'App
   Group senza Team ID non è autorizzato e il widget in sandbox non lo leggeva. Ora lo stato passa da una cartella che il
   widget legge con un'eccezione di sola lettura.
-- **Visualizer**: le barre seguono davvero la musica. Si legge il flusso del tap audio (prima, con uscite come le AirPods,
-  si leggeva il microfono) e l'analisi usa l'algoritmo di cava: equalizzazione per frequenza, sensibilità automatica,
+- **Visualizer**: le barre seguono davvero la musica. Prima erano sempre l'animazione di ripiego: mancava nell'app la
+  descrizione del permesso «Registrazione audio di sistema» (macOS rifiutava la cattura) e la cattura si ricreava di
+  continuo (creare il dispositivo aggregato cambiava l'elenco dei dispositivi e faceva ripartire lo spettro). Si legge il
+  flusso del tap audio (prima, con uscite come le AirPods, si leggeva il microfono) e l'analisi usa l'algoritmo di cava: equalizzazione per frequenza, sensibilità automatica,
   gravità e filtro integrale a 60 analisi al secondo. Nuovo aspetto in stile Dynamic Island: capsule centrate colorate
   con una sfumatura dei colori della copertina, puntini nel silenzio.
 - **Menu bar** stabile quando manca spazio: passa da sola a copertina + play/pausa e poi alla sola copertina (anche senza
   notch, se il sistema nasconde l'elemento), con isteresi e memoria della larghezza che non stava: niente più salti.
+  Accanto al notch resta sempre un margine (macOS nasconde gli elementi anche a pochi punti dal notch).
 - **Widget sulla scrivania** di nuovo visibile: su macOS 27 una finestra del Window Server allo stesso livello lo
   copriva; ora sta al livello dei widget di macOS.
 

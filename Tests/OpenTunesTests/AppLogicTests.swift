@@ -63,7 +63,7 @@ struct MenuBarFitTests {
         var fit = MenuBarFit()
         observe(&fit, edge: 1100, notch: notch, at: 0)
         #expect(fit.level == .compact)
-        observe(&fit, edge: 1155, notch: notch, at: 10)  // 855: dentro il margine
+        observe(&fit, edge: 1165, notch: notch, at: 10)  // 865: fuori dal notch ma dentro il margine per salire
         #expect(fit.level == .compact)
         observe(&fit, edge: 1200, notch: notch, at: 20)  // 900
         #expect(fit.level == .full)
@@ -93,6 +93,24 @@ struct MenuBarFitTests {
         observe(&fit, edge: 1200, notch: nil, at: 5)
         #expect(fit.level == .compact)
         observe(&fit, edge: 1200, notch: nil, at: 10, widths: [.full: 200, .compact: 70, .icon: 30])
+        #expect(fit.level == .full)
+    }
+
+    @Test("Con il notch resta un margine anche per restare: a 6 punti dal notch il sistema lo nasconde")
+    func notchMargin() {
+        var fit = MenuBarFit()
+        observe(&fit, edge: 1156, notch: notch, at: 0)  // 1156 - 300 = 856: 6 punti dal notch, troppo vicino
+        #expect(fit.level == .compact)
+    }
+
+    @Test("Dopo un fallimento non riprova finché il bordo destro non si sposta davvero")
+    func noFlapping() {
+        var fit = MenuBarFit()
+        observe(&fit, edge: 1235, notch: nil, hidden: true, at: 0)
+        #expect(fit.level == .compact)
+        observe(&fit, edge: 1243, notch: nil, at: 13)  // 8 punti: non basta
+        #expect(fit.level == .compact)
+        observe(&fit, edge: 1275, notch: nil, at: 23)
         #expect(fit.level == .full)
     }
 

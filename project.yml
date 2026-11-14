@@ -83,6 +83,9 @@ targets:
         LastFMAPIKey: $(LASTFM_API_KEY)
         LastFMAPISecret: $(LASTFM_API_SECRET)
         OpenTunesAppGroup: $(APP_GROUP_ID)
+        # Permesso «Registrazione audio di sistema» per lo spettro del visualizer. Va qui e non come
+        # INFOPLIST_KEY_…: Xcode non conosce questa chiave e la scarterebbe (macOS rifiuta allora il process tap).
+        NSAudioCaptureUsageDescription: "OpenTunes analizza l'audio in uscita solo per far muovere il visualizer a tempo di musica: niente viene registrato o inviato."
         # Discord Rich Presence: ID dell'applicazione Discord del progetto (facoltativo, variabile DISCORD_CLIENT_ID).
         DiscordClientID: $(DISCORD_CLIENT_ID)
         # Sparkle: feed delle versioni sulle release di GitHub. Senza chiave pubblica l'updater non parte.
@@ -103,7 +106,6 @@ targets:
         # App da menu bar: niente icona nel Dock.
         INFOPLIST_KEY_LSUIElement: YES
         INFOPLIST_KEY_NSHumanReadableCopyright: "GPL-3.0-or-later"
-        INFOPLIST_KEY_NSAudioCaptureUsageDescription: "OpenTunes analizza l'audio in uscita solo per far muovere il visualizer a tempo di musica: niente viene registrato o inviato."
         INFOPLIST_KEY_NSAppleEventsUsageDescription: "OpenTunes legge il brano in riproduzione e invia play, pausa e salto ad Apple Music e Spotify quando il Now Playing di sistema non è disponibile."
         CODE_SIGN_ENTITLEMENTS: Sources/App/OpenTunes.entitlements
         LD_RUNPATH_SEARCH_PATHS: "$(inherited) @executable_path/../Frameworks"

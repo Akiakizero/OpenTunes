@@ -84,7 +84,8 @@ struct MenuBarFit: Equatable, Sendable {
             // Il livello più grande che sta a destra del notch (con margine per salire).
             let cap = MenuBarLevel.allCases.reversed().first { candidate in
                 let width = o.widths[candidate] ?? .infinity
-                return o.rightEdge - width >= notch.upperBound + (candidate > level ? Self.margin : 0)
+                // Il sistema nasconde gli elementi anche a pochi punti dal notch: serve sempre `margin`, il doppio per salire.
+                return o.rightEdge - width >= notch.upperBound + (candidate > level ? 2 * Self.margin : Self.margin)
             } ?? .icon
             if cap < target {
                 target = cap
@@ -115,7 +116,7 @@ struct MenuBarFit: Equatable, Sendable {
         lastChange = .distantPast
     }
 
-    /// Dimentica i fallimenti senza cambiare livello (cambio di schermo: lo spazio è diverso).
+    /// Dimentica i fallimenti senza cambiare livello (cambio di schermo o di elementi: lo spazio è diverso).
     mutating func forgetFailures() {
         failure = nil
     }

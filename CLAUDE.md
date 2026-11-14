@@ -58,6 +58,9 @@ Piano per fasi in `docs/` (fase 0 = fondamenta); analisi dei progetti di riferim
   (`canShare`, `showsMusicActions`, `switchTarget`, `discoverAction`…), non solo la vista.
 - Menu bar: `MenuBarFit` (in `NotchLayout.swift`, puro e testato) sceglie piena/compatta/icona; con il notch calcola
   lo spazio, senza notch scende quando il sistema nasconde l'elemento e ricorda la larghezza fallita.
+- `NSAudioCaptureUsageDescription` sta nelle `info.properties` di `project.yml`: come `INFOPLIST_KEY_…` Xcode la scarta.
+  Lo spettro si ricrea solo se cambia l'uscita predefinita (l'aggregato stesso cambia l'elenco dei dispositivi).
+  Nel log (`OPENTUNES_LOG_FILE`) `[spectrum]` dice se le barre vengono dall'audio reale.
 - Spettro: `SpectrumAnalyzer` è un porting dell'algoritmo di `cavacore.c` (MIT, testo in CREDITS); il tap si legge
   dall'**ultimo** buffer dell'IOProc (prima vengono gli ingressi del dispositivo, es. il microfono delle AirPods).
 - Localizzazione: catalogo unico `Sources/Shared/Localizable.xcstrings` (base italiano, inglese). Testi nelle viste
