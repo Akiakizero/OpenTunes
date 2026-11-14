@@ -425,18 +425,29 @@ final class AppModel {
 }
 
 /// Esegue `onChange` con il valore iniziale e a ogni sua modifica (deduplicando i valori uguali).
+///
+/// Implementato con `withObservationTracking` e un `AsyncStream` invece di `Observations`: con Xcode 26.6 (CI e build
+/// di release) il thunk che converte la closure `@MainActor` in `@isolated(any)` per `Observations` va in crash
+/// (`swift_unknownObjectRetain`). Il risultato è lo stesso: il valore si rilegge sul main actor dopo ogni modifica.
 @MainActor
 func observeChanges<T: Equatable & Sendable>(
     _ value: @escaping @MainActor @Sendable () -> T,
     onChange: @escaping @MainActor (T) -> Void
 ) -> Task<Void, Never> {
-    Task { @MainActor in
+    let (changes, continuation) = AsyncStream<Void>.makeStream(bufferingPolicy: .bufferingNewest(1))
+    return Task { @MainActor in
         var last: T?
-        for await current in Observations(value) {
+        @MainActor func read() {
+            let current = withObservationTracking { value() } onChange: { continuation.yield() }
             if current != last {
                 last = current
                 onChange(current)
             }
         }
+        read()
+        for await _ in changes {
+            read()
+        }
+        continuation.finish()
     }
 }

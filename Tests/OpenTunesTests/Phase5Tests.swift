@@ -181,3 +181,26 @@ struct ListenBrainzServerTests {
         #expect(ListenBrainzClient.serverURL(from: "https://lb.example.org/1")?.absoluteString == "https://lb.example.org/1/")
     }
 }
+
+@Suite("Osservazione dei cambiamenti")
+@MainActor
+struct ObserveChangesTests {
+    @Test("Valore iniziale, poi i cambi (senza duplicati)")
+    func observes() async {
+        let settings = AppSettings(persists: false)
+        var seen: [Bool] = []
+        let task = observeChanges({ settings.loveEnabled }) { seen.append($0) }
+        defer { task.cancel() }
+        func wait(for count: Int) async {
+            for _ in 0..<100 where seen.count < count { try? await Task.sleep(for: .milliseconds(10)) }
+        }
+        await wait(for: 1)
+        #expect(seen == [true])
+        settings.loveEnabled = false
+        await wait(for: 2)
+        settings.loveEnabled = false
+        settings.loveEnabled = true
+        await wait(for: 3)
+        #expect(seen == [true, false, true], "visti: \(seen)")
+    }
+}

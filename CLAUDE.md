@@ -20,7 +20,7 @@ Piano per fasi in `docs/` (fase 0 = fondamenta); analisi dei progetti di riferim
 - Niente App Sandbox: l'adapter richiede di avviare `/usr/bin/perl`.
 - App (fase 1): entry point AppKit (`OpenTunesApp` + `AppDelegate`, `LSUIElement`). `AppModel` è lo stato condiviso
   delle superfici (store, `AppSettings`, copertina, tinta, volume); le superfici AppKit reagiscono con
-  `observeChanges` (basato su `Observations`). Menu bar in `App/MenuBar`, finestra flottante in `App/FloatingPanel`,
+  `observeChanges` (`withObservationTracking` + `AsyncStream`: `Observations` con closure `@MainActor` va in crash con Xcode 26.6). Menu bar in `App/MenuBar`, finestra flottante in `App/FloatingPanel`,
   HUD in `App/HUD`. Volume = volume di sistema (CoreAudio), non del player.
 - Blacklist, normalizzazione dei titoli dei browser, cronologia e lookup copertine stanno in `NowPlayingStore`.
 - Fase 2: azioni sul brano di Musica (preferito, dislike, stelle, libreria) e «cambia player» passano da
