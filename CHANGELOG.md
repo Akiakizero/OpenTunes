@@ -30,7 +30,7 @@ La prima release pubblica dopo la 0.3.0: comprende anche tutta la fase 4 (sotto)
   continuo (creare il dispositivo aggregato cambiava l'elenco dei dispositivi e faceva ripartire lo spettro). Si legge il
   flusso del tap audio (prima, con uscite come le AirPods, si leggeva il microfono) e l'analisi usa l'algoritmo di cava: equalizzazione per frequenza, sensibilità automatica,
   gravità e filtro integrale a 60 analisi al secondo. Nuovo aspetto in stile Dynamic Island: sei capsule sottili
-  centrate, più alte al centro (bassi e medi al centro, acuti ai lati), colorate con una sfumatura dei colori della
+  centrate con le frequenze in ordine (bassi a sinistra, acuti a destra), colorate con una sfumatura dei colori della
   copertina, puntini nel silenzio.
 - **Menu bar** stabile quando manca spazio: passa da sola a copertina + play/pausa e poi alla sola copertina (anche senza
   notch, se il sistema nasconde l'elemento), con isteresi e memoria della larghezza che non stava: niente più salti.

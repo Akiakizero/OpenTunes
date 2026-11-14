@@ -4,7 +4,8 @@ import SwiftUI
 
 /// Barre che seguono la musica (notch e finestra flottante), nello stile della Dynamic Island di iPhone:
 /// capsule sottili centrate in verticale che crescono verso l'alto e verso il basso, colorate con una sfumatura
-/// orizzontale dei colori della copertina. Nel silenzio e in pausa restano dei puntini.
+/// orizzontale dei colori della copertina. Nel silenzio e in pausa restano dei puntini. Con lo spettro reale le barre
+/// sono in ordine di frequenza, dai bassi (sinistra) agli acuti (destra).
 ///
 /// Con `levels` (spettro reale di `AudioSpectrum`) ogni barra è una banda dell'audio in uscita, dai bassi a sinistra
 /// agli acuti a destra; se non arriva audio (permesso negato) diventano un'animazione continua (somme di seni).
@@ -47,9 +48,8 @@ struct VisualizerBars: View {
                 var bars = Path()
                 for index in 0..<barCount {
                     let level: Double = if let real, !real.isEmpty {
-                        // Bassi e medi al centro, acuti ai lati; profilo più alto al centro (Dynamic Island).
+                        // Frequenze in ordine: bassi a sinistra, acuti a destra.
                         Double(real[Self.band(forBar: index, barCount: barCount, bandCount: real.count)])
-                            * Self.envelope(bar: index, barCount: barCount)
                     } else if animates {
                         Self.level(bar: index, time: time) * Self.envelope(bar: index, barCount: barCount)
                     } else {
@@ -72,15 +72,14 @@ struct VisualizerBars: View {
         colors.count == 1 ? [colors[0], colors[0].mix(with: .white, by: 0.35)] : colors
     }
 
-    /// Banda dello spettro per la barra in posizione `bar`: la banda 0 (bassi) va al centro, le successive si
-    /// alternano verso i lati (…4 2 0 1 3 5…), così il profilo è simmetrico come nella Dynamic Island.
+    /// Banda dello spettro per la barra in posizione `bar`, in ordine di frequenza: la prima barra sono i bassi,
+    /// l'ultima gli acuti (con meno barre che bande, ogni barra prende la banda più vicina).
     static func band(forBar bar: Int, barCount: Int, bandCount: Int) -> Int {
-        let center = (barCount - 1) / 2
-        let rank = bar <= center ? (center - bar) * 2 : (bar - center) * 2 - 1
-        return min(bandCount - 1, max(0, rank * bandCount / max(1, barCount)))
+        min(bandCount - 1, max(0, bar * bandCount / max(1, barCount)))
     }
 
-    /// Altezza massima relativa della barra: 1 al centro, più bassa ai lati (50/60/90/100/90/60% con 6 barre).
+    /// Altezza massima relativa della barra nell'animazione di ripiego: 1 al centro, più bassa ai lati
+    /// (50/60/90/100/90/60% con 6 barre, come nella Dynamic Island).
     static func envelope(bar: Int, barCount: Int) -> Double {
         guard barCount > 1 else { return 1 }
         let middle = Double(barCount - 1) / 2
