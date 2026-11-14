@@ -1,3 +1,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
-# Domande e idee libere: issue vuota (le Discussions non sono attive).
+# Domande e idee libere: issue vuota. Le vulnerabilità vanno segnalate in privato (SECURITY.md).
 blank_issues_enabled: true
+contact_links:
+  - name: Segnala una vulnerabilità (in privato)
+    url: https://github.com/Akiakizero/OpenTunes/security/advisories/new
+    about: Non aprire issue pubbliche per i problemi di sicurezza.

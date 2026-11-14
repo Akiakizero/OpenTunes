@@ -1,6 +1,11 @@
 # OpenTunes
 
-> Nome provvisorio.
+[![CI](https://github.com/Akiakizero/OpenTunes/actions/workflows/ci.yml/badge.svg)](https://github.com/Akiakizero/OpenTunes/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/Akiakizero/OpenTunes/actions/workflows/codeql.yml/badge.svg)](https://github.com/Akiakizero/OpenTunes/actions/workflows/codeql.yml)
+[![Release](https://img.shields.io/github/v/release/Akiakizero/OpenTunes)](https://github.com/Akiakizero/OpenTunes/releases/latest)
+[![Licenza: GPL-3.0](https://img.shields.io/badge/licenza-GPL--3.0-blue)](LICENSE)
+
+**Sito:** https://akiakizero.github.io/OpenTunes/
 
 App macOS open source che mostra il brano in riproduzione (Apple Music, Spotify, YouTube nel browser e
 qualsiasi player che pubblica il Now Playing di sistema) e permette di controllarlo.
@@ -82,14 +87,16 @@ Non affiliato a NepTunes né ad Apple.
 
 ## Installazione
 
-Scarica il `.dmg` dalla [pagina delle release](../../releases), trascina OpenTunes in Applicazioni e,
-finché l'app non è notarizzata, togli la quarantena:
+Scarica il `.dmg` dalla [pagina delle release](../../releases), controlla che sia integro con il file `.sha256`
+della stessa release, trascina OpenTunes in Applicazioni e, finché l'app non è notarizzata, togli la quarantena:
 
 ```sh
+shasum -a 256 -c OpenTunes-0.5.0.dmg.sha256   # deve rispondere «OK»
 xattr -dr com.apple.quarantine /Applications/OpenTunes.app
 ```
 
-Con Homebrew (tap personale, vedi `packaging/homebrew/`): `brew install --cask Akiakizero/tap/opentunes`.
+Gli aggiornamenti successivi arrivano con Sparkle e sono firmati (EdDSA). Il cask Homebrew è pronto in
+`packaging/homebrew/` ma il tap non è ancora pubblicato.
 
 ## Widget e App Group
 
@@ -145,6 +152,11 @@ conversione di brani, statistiche nel cloud o account OpenTunes, versioni per iO
 
 Leggi [CONTRIBUTING.md](CONTRIBUTING.md): issue «good first issue», temi in `themes/`, traduzioni nel catalogo
 `Sources/Shared/Localizable.xcstrings` e una guida per lavorare con Claude Code a partire da `CLAUDE.md`.
+
+## Sicurezza
+
+Le vulnerabilità si segnalano in privato: vedi [SECURITY.md](SECURITY.md). Il repository usa CodeQL, secret scanning,
+Dependabot e workflow con permessi minimi; nessun segreto è nel codice.
 
 ## Licenza
 

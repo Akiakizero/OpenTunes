@@ -1,0 +1,14 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Aggiornamenti automatici delle azioni di GitHub (fissate per SHA nei workflow). Le dipendenze Swift
+# (Sparkle, KeyboardShortcuts) sono in project.yml: si controllano a mano a ogni release (vedi SECURITY.md).
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      actions:
+        patterns: ["*"]
+    commit-message:
+      prefix: "CI"

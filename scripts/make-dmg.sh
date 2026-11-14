@@ -26,5 +26,7 @@ mkdir -p "$STAGE" "$DIST"
 ditto "$APP" "$STAGE/OpenTunes.app"
 ln -s /Applications "$STAGE/Applications"
 hdiutil create -volname "OpenTunes $VERSION" -srcfolder "$STAGE" -ov -format UDZO "$DMG"
-shasum -a 256 "$DMG" | tee "$DMG.sha256"
+# Solo il nome del file (non il percorso della CI): così `shasum -a 256 -c OpenTunes-x.y.z.dmg.sha256` funziona
+# nella cartella in cui l'utente ha scaricato i due file.
+(cd "$(dirname "$DMG")" && shasum -a 256 "$(basename "$DMG")") | tee "$DMG.sha256"
 echo "$DMG"

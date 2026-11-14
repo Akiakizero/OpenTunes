@@ -1,0 +1,6 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Ogni PR chiede la revisione del maintainer; i workflow e i file di sicurezza sono i più delicati.
+* @Akiakizero
+/.github/ @Akiakizero
+/SECURITY.md @Akiakizero
+/project.yml @Akiakizero

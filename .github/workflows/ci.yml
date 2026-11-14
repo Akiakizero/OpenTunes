@@ -6,11 +6,23 @@ on:
   push:
     branches: [main]
 
+# Permessi minimi: la CI legge il codice e basta (anche per le PR da fork).
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build-and-test:
     runs-on: macos-26
+    timeout-minutes: 45
     steps:
-      - uses: actions/checkout@v4
+      # Azioni fissate per SHA (il commento indica la versione): un tag spostato non può cambiare il codice eseguito.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - name: Xcode disponibili
         run: ls -d /Applications/Xcode*; xcodebuild -version
       - name: Install XcodeGen

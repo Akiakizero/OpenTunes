@@ -29,3 +29,6 @@ docs/riferimenti-ui/
 
 # Generato da XcodeGen (target OpenTunesWidget)
 Sources/Widget/Info.plist
+
+# Dati di copertura dei test
+*.profraw

@@ -108,7 +108,11 @@ Piano per fasi in `docs/` (fase 0 = fondamenta); analisi dei progetti di riferim
 - `scripts/make-dmg.sh` → `dist/OpenTunes-<versione>.dmg`; il workflow `.github/workflows/release.yml` parte con un tag `v*`
   e, con le chiavi di Sparkle configurate, allega anche `appcast.xml` (`scripts/make-appcast.sh`).
 - Il primo `xcodebuild -resolvePackageDependencies` deve poter scaricare l'archivio binario di Sparkle da GitHub.
-- Sito: `site/index.html` (+ GIF di `docs/media`), pubblicato da `.github/workflows/pages.yml`.
+- Sito: `site/index.html` (statico, niente script né risorse esterne, CSP nel `<meta>`), pubblicato da
+  `.github/workflows/pages.yml` su https://akiakizero.github.io/OpenTunes/.
+- Sicurezza del repository: `SECURITY.md` (segnalazioni private), CodeQL (`codeql.yml`), Dependabot per le azioni,
+  workflow con `permissions` minimi e azioni fissate per SHA (`# vX.Y.Z` nel commento), `persist-credentials: false`.
+  I segreti servono solo a `release.yml` (tag `v*`, environment `release`).
 - Cask Homebrew da copiare nel tap: `packaging/homebrew/opentunes.rb`.
 
 ## Licenze
