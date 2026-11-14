@@ -71,8 +71,10 @@ struct MenuBarFit: Equatable, Sendable {
         let o = observation
         let settled = o.now.timeIntervalSince(lastChange) >= Self.settleTime
         var target = level
-        if o.isHidden {
-            // Il sistema l'ha nascosto: si scende di uno e si ricorda cosa non stava.
+        // Nascosto perché finisce sotto il notch (o troppo vicino): lo spazio si calcola, non serve ricordarlo.
+        let hiddenByNotch = o.notch.map { o.rightEdge - (o.widths[level] ?? .infinity) < $0.upperBound + Self.margin } ?? false
+        if o.isHidden, !hiddenByNotch {
+            // Il sistema l'ha nascosto per altri motivi: si scende di uno e si ricorda cosa non stava.
             if level > .icon, o.now.timeIntervalSince(lastChange) >= 1 {
                 failure = Failure(width: o.widths[level] ?? .infinity, rightEdge: o.rightEdge, date: o.now)
                 target = level.smaller

@@ -114,6 +114,19 @@ struct MenuBarFitTests {
         #expect(fit.level == .full)
     }
 
+    @Test("Nascosto dal notch durante il cambio: risale appena lo spazio basta")
+    func notchHideIsNotAFailure() {
+        var fit = MenuBarFit()
+        // Piena sotto il notch (minX 760), poi compatta misurata a metà del cambio ancora troppo vicina.
+        observe(&fit, edge: 1060, notch: notch, hidden: true, at: 0)
+        #expect(fit.level == .compact)
+        observe(&fit, edge: 860 + 54 - 10, notch: notch, hidden: true, at: 2)
+        #expect(fit.level == .icon)
+        // Assestato: c'è posto per la compatta (1068 - 54 = 1014 ≥ 850 + 16).
+        observe(&fit, edge: 1068, notch: notch, at: 4)
+        #expect(fit.level == .compact)
+    }
+
     @Test("Reset torna alla versione piena")
     func reset() {
         var fit = MenuBarFit()

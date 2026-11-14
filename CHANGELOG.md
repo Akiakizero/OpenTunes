@@ -33,7 +33,8 @@ La prima release pubblica dopo la 0.3.0: comprende anche tutta la fase 4 (sotto)
   con una sfumatura dei colori della copertina, puntini nel silenzio.
 - **Menu bar** stabile quando manca spazio: passa da sola a copertina + play/pausa e poi alla sola copertina (anche senza
   notch, se il sistema nasconde l'elemento), con isteresi e memoria della larghezza che non stava: niente più salti.
-  Accanto al notch resta sempre un margine (macOS nasconde gli elementi anche a pochi punti dal notch).
+  Accanto al notch resta sempre un margine (macOS nasconde gli elementi anche a pochi punti dal notch) e il calcolo
+  dello spazio comprende il margine che il sistema aggiunge attorno all'elemento.
 - **Widget sulla scrivania** di nuovo visibile: su macOS 27 una finestra del Window Server allo stesso livello lo
   copriva; ora sta al livello dei widget di macOS.
 

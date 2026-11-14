@@ -153,6 +153,8 @@ final class StatusBarController: NSObject, NSPopoverDelegate {
         let windows = hosts.compactMap(\.window)
         guard let screen = windows.first(where: { $0.screen != nil })?.screen ?? NSScreen.main, !windows.isEmpty else { return }
         let frame = windows.map(\.frame).reduce(CGRect.null) { $0.union($1) }
+        // All'avvio l'elemento ha per un attimo un frame in (0, 0) prima di essere sistemato: non è una misura.
+        guard windows.allSatisfy({ $0.frame.minX != 0 || $0.frame.minY != 0 }) else { return }
         // Un elemento che il sistema non disegna (troppe icone, menu dell'app lunghi) risulta coperto o fuori schermo.
         let hidden = windows.contains { window in
             !window.isVisible || !window.occlusionState.contains(.visible)
@@ -163,9 +165,13 @@ final class StatusBarController: NSObject, NSPopoverDelegate {
             if lastScreenNumber != nil { fit.forgetFailures() }
             lastScreenNumber = screenNumber
         }
+        // Larghezze del contenuto più il margine che il sistema aggiunge attorno a ogni elemento (misurato sul frame
+        // reale): senza, la previsione accanto al notch sbaglia di ~16 punti.
+        let contentWidth = hosts.reduce(0) { $0 + ($1.layout.widths[state.level] ?? 0) }
+        let padding = contentWidth > 0 ? max(0, frame.width - contentWidth) : 0
         var widths: [MenuBarLevel: CGFloat] = [:]
         for level in MenuBarLevel.allCases {
-            widths[level] = hosts.reduce(0) { $0 + ($1.layout.widths[level] ?? 0) }
+            widths[level] = hosts.reduce(0) { $0 + ($1.layout.widths[level] ?? 0) } + padding
         }
         let observation = MenuBarFit.Observation(
             rightEdge: frame.maxX, widths: widths, notch: screen.notchRange, isHidden: hidden, now: .now)
