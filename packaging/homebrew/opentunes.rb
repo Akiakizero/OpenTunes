@@ -2,8 +2,8 @@
 # Cask per il tap personale. Va copiato in un repository `homebrew-tap` come `Casks/opentunes.rb`;
 # a ogni release aggiornare `version` e `sha256` (il valore è nel file .dmg.sha256 della release).
 cask "opentunes" do
-  version "0.3.0"
-  sha256 "e11bc3859b7bce3d2892ed88c932afd42d9bce4256feb1b5bce9fc9d611863b7"
+  version "0.5.0"
+  sha256 "c2387ec654b177c0bd83a1ead6ef18ef5638a0e2d6f375419c9e6610fbb4b62e"
 
   url "https://github.com/Akiakizero/OpenTunes/releases/download/v#{version}/OpenTunes-#{version}.dmg"
   name "OpenTunes"
