@@ -113,6 +113,9 @@ Piano per fasi in `docs/` (fase 0 = fondamenta); analisi dei progetti di riferim
 - Sicurezza del repository: `SECURITY.md` (segnalazioni private), CodeQL (`codeql.yml`), Dependabot per le azioni,
   workflow con `permissions` minimi e azioni fissate per SHA (`# vX.Y.Z` nel commento), `persist-credentials: false`.
   I segreti servono solo a `release.yml` (tag `v*`, environment `release`).
+  Impostazioni del repository (Dependabot, token in sola lettura, regole su `main` e sui tag, secret scanning, Pages…)
+  in `scripts/github-hardening.sh`, da rilanciare dopo aver reso pubblico il repository. `main` è protetto: si lavora
+  con PR (il proprietario può aggirare la regola in emergenza).
 - Cask Homebrew da copiare nel tap: `packaging/homebrew/opentunes.rb`.
 
 ## Licenze
